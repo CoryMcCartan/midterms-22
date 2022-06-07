@@ -1,5 +1,8 @@
 # Federal Election Predictions 2022
-### Cory McCartan
+
+<img src="cover.png" style="width: 100%;">
+
+#### Cory McCartan
 
 -----
 
