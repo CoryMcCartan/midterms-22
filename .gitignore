@@ -1,0 +1,11 @@
+.DS_Store
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+*.tmp
+*.swp
+*.bak
+*.pdf
+*.rds
