@@ -22,4 +22,4 @@ graph TD
 
 ## File structure
 - Code for all the analyses in [`R/`](R/)
-- Data, along with details on data sources, in [`data/`](data/)
+<!-- - Data, along with details on data sources, in [`data/`](data/) -->
