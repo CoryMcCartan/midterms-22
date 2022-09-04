@@ -47,14 +47,16 @@ graph TD
     classDef data fill:#efeff4,stroke#aaa,line-height:1.5,font-size:9pt
 ```
 
-### Fundamentals Model
+### Fundamentals model
 
 Bayesian linear regression of national two-way contested vote share for the
 incumbent president's party on logit retirements; midterm, house, and
 presidential control indicators; GDP change over the past year, log unemployment
 rate; and logit presidential approval.
 Coefficients are given an [R2-D2 prior](https://arxiv.org/abs/2111.10718).
-Coefficient estimates:
+[Data table here](data/fundamentals.csv).
+
+**Coefficient estimates:**
 ```{r fund_model_est, fig.height=3}
 library(ggplot2)
 m <- readRDS(here("data-raw/produced/fundamentals_model_2022.rds"))
@@ -64,7 +66,7 @@ brms::mcmc_plot(m) +
     theme(axis.text.y=element_text(face="bold"))
 ```
 
-Fundamentals-only prediction for 2022:
+**Fundamentals-only prediction for 2022:**
 ```{r fund_model_pred, fig.height=3}
 pred <- readRDS(here("data/fundamentals_pred_2022.rds"))
 ggplot(NULL, aes(plogis(pred), fill=pred > 0)) + 
@@ -76,3 +78,9 @@ ggplot(NULL, aes(plogis(pred), fill=pred > 0)) +
     theme(panel.grid.minor=element_blank(),
           axis.title.x=element_text(face="bold"))
 ```
+
+## Firm error model
+
+## National intent model
+
+## Outcomes model
