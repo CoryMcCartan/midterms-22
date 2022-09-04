@@ -16,9 +16,7 @@ A dynamic Bayesian model to forecast the 2022 U.S. House elections.
 - Tracked, processed data are in [`data/`](data/); untracked and raw
   data are in [`data-raw/`](data-raw/).
 
-## Model details
-
-#### Model structure
+## Model structure and details
 
 ``` mermaid
 graph TD
@@ -42,14 +40,14 @@ unemployment rate; and logit presidential approval. Coefficients are
 given an [R2-D2 prior](https://arxiv.org/abs/2111.10718). [Data table
 here](data/fundamentals.csv).
 
-**Coefficient estimates:**
+**Parameter estimates:**
 <img src="doc/fund_model_est-1.svg" width="100%" />
 
 **Fundamentals-only prediction for 2022:**
 <img src="doc/fund_model_pred-1.svg" width="100%" />
 
-## Firm error model
+### Firm error model
 
-## National intent model
+### National intent model
 
-## Outcomes model
+### Outcomes model
