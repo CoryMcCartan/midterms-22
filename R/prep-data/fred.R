@@ -13,6 +13,8 @@ build_q_series <- function(vars, units=rep_along(vars, "lin")) {
         drop_na()
 }
 
+# see <https://researchdmr.com/HummelRothschild_FundamentalModel.pdf> for a useful discussion
+
 d = build_q_series(c("GDPC1", "CPIAUCSL", "UNRATE"),
                    c("pc1", "pc1", "log")) |>
     rename(gdp_chg=GDPC1, cpi_chg=CPIAUCSL, lunemp=UNRATE)

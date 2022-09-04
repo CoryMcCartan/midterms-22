@@ -1,3 +1,3 @@
-# `explore/`
+# `R/explore/`
 
 Exploratory analyses.
