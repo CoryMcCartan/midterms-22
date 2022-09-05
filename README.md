@@ -20,7 +20,8 @@ A dynamic Bayesian model to forecast the 2022 U.S. House elections.
 
 ``` mermaid
 graph TD
-    mod_firms[<font size=5>FIRMS]:::model --> |Prior on firm error| mod_natl[<font size=5>NATIONAL INTENT]:::model
+    mod_firms[<font size=5><a href="#firm-error-model">FIRMS</a>]:::model
+    mod_firms --> |Prior on firm error| mod_natl[<font size=5>NATIONAL INTENT]:::model
     mod_fund[<font size=5>FUNDAMENTALS]:::model --> |Prior on E-day intent| mod_natl
     d_ret([Historical<br />House returns]):::data -.-> mod_race
     mod_natl --> |Covariate| mod_race[<font size=5>OUTCOMES]:::model
@@ -52,35 +53,43 @@ The firm error model goes hand-in-hand with the firm error component of
 the national intent model, below. The idea is to use historical firm
 performance in polling the generic ballot and presidential races as a
 prior for firm performance this cycle. We can decompose firm error into
-several components: - Constant year-to-year bias in all firms in polling
-these races - Year-specific bias shared by all firms, to varying
-extents. We call the extent to which a firm is affected by the
-year-specific shared bias the “herding,” which is a slightly
-idiosyncratic usage. - Firm bias. - Bias from polling methodology
-(IVR/online/phone/mixed/unknown). - Bias from LV polls. Due to limited
-data we only code an indicator for if a poll is an LV poll, and don’t
-distinguish between RV/A/V polls. Given total firm bias from all these
-sources, firms also vary in how close their results cluster around this
-bias. If a firm consistently reports numbers 5pp too favorable for
-Democrats, we can adjust for that. Less consistency means less
-adjustment is possible. Polling variance is affected by several
-factors: - Sample size - Time to the election - LV vs. other polls -
-Firm variance
+several components:
+
+- Constant year-to-year bias in all firms in polling these races
+- Year-specific bias shared by all firms, to varying extents. We call
+  the extent to which a firm is affected by the year-specific shared
+  bias the “herding,” which is a slightly idiosyncratic usage.
+- Firm bias.
+- Bias from polling methodology (IVR/online/phone/mixed/unknown).
+- Bias from LV polls. Due to limited data we only code an indicator for
+  if a
+
+poll is an LV poll, and don’t distinguish between RV/A/V polls. Given
+total firm bias from all these sources, firms also vary in how close
+their results cluster around this bias. If a firm consistently reports
+numbers 5pp too favorable for Democrats, we can adjust for that. Less
+consistency means less adjustment is possible. Polling variance is
+affected by several factors:
+
+- Sample size
+- Time to the election
+- LV vs. other polls
+- Firm variance
 
 We operationalize this framework with the following model, which is fit
 to around 5,100 historical polling results.
 
-![\begin{align}
+![\begin{align\*}
 y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\\\
 \mu_i &= \beta\_\mu + \alpha^{(f)}\_{f\[i\]} + m\_{f\[i\]}\alpha^{(t)}\_{t\[i\]}
         + \alpha^{(m)}\_{m\[i\]} + \alpha^{(v)}\_{v\[i\]} \\\\
 \sigma_i &= \beta\_\sigma + X\gamma\_\sigma + \phi^{(f)}\_{f\[i\]},
-\end{align}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbegin%7Balign%7D%0Ay_i%20%26%5Csim%20%5Cmathcal%7BN%7D%28%5Cmu_i%2C%20%5Csigma_i%5E2%29%20%5C%5C%0A%5Cmu_i%20%26%3D%20%5Cbeta_%5Cmu%20%2B%20%5Calpha%5E%7B%28f%29%7D_%7Bf%5Bi%5D%7D%20%2B%20m_%7Bf%5Bi%5D%7D%5Calpha%5E%7B%28t%29%7D_%7Bt%5Bi%5D%7D%0A%20%20%20%20%20%20%20%20%2B%20%5Calpha%5E%7B%28m%29%7D_%7Bm%5Bi%5D%7D%20%2B%20%5Calpha%5E%7B%28v%29%7D_%7Bv%5Bi%5D%7D%20%5C%5C%0A%5Csigma_i%20%26%3D%20%5Cbeta_%5Csigma%20%2B%20X%5Cgamma_%5Csigma%20%2B%20%5Cphi%5E%7B%28f%29%7D_%7Bf%5Bi%5D%7D%2C%0A%5Cend%7Balign%7D "\begin{align}
+\end{align\*}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbegin%7Balign%2A%7D%0Ay_i%20%26%5Csim%20%5Cmathcal%7BN%7D%28%5Cmu_i%2C%20%5Csigma_i%5E2%29%20%5C%5C%0A%5Cmu_i%20%26%3D%20%5Cbeta_%5Cmu%20%2B%20%5Calpha%5E%7B%28f%29%7D_%7Bf%5Bi%5D%7D%20%2B%20m_%7Bf%5Bi%5D%7D%5Calpha%5E%7B%28t%29%7D_%7Bt%5Bi%5D%7D%0A%20%20%20%20%20%20%20%20%2B%20%5Calpha%5E%7B%28m%29%7D_%7Bm%5Bi%5D%7D%20%2B%20%5Calpha%5E%7B%28v%29%7D_%7Bv%5Bi%5D%7D%20%5C%5C%0A%5Csigma_i%20%26%3D%20%5Cbeta_%5Csigma%20%2B%20X%5Cgamma_%5Csigma%20%2B%20%5Cphi%5E%7B%28f%29%7D_%7Bf%5Bi%5D%7D%2C%0A%5Cend%7Balign%2A%7D "\begin{align*}
 y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
 \mu_i &= \beta_\mu + \alpha^{(f)}_{f[i]} + m_{f[i]}\alpha^{(t)}_{t[i]}
         + \alpha^{(m)}_{m[i]} + \alpha^{(v)}_{v[i]} \\
 \sigma_i &= \beta_\sigma + X\gamma_\sigma + \phi^{(f)}_{f[i]},
-\end{align}")
+\end{align*}")
 
 where
 ![i](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;i "i")
@@ -93,7 +102,7 @@ is the year,
 is the methodology,
 ![v\[i\]](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;v%5Bi%5D "v[i]")
 is the survey population,
-![m\_\[f\[i\]\]](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;m_%5Bf%5Bi%5D%5D "m_[f[i]]")
+![m\_{f\[i\]}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;m_%7Bf%5Bi%5D%7D "m_{f[i]}")
 is the herding variable for each firm, and
 ![X](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;X "X")
 is a matrix of poll variance predictors:
@@ -112,16 +121,6 @@ lower herding value, and bias closer to 0 (though this can be adjusted
 for).
 
 **Summary of firm performance:**
-
-    #> 
-    #> Attaching package: 'scales'
-    #> The following object is masked from 'package:purrr':
-    #> 
-    #>     discard
-    #> The following object is masked from 'package:readr':
-    #> 
-    #>     col_factor
-
 <img src="doc/firm_perf-1.svg" width="100%" />
 
 ### National intent model
