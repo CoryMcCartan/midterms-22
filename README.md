@@ -18,6 +18,10 @@ A dynamic Bayesian model to forecast the 2022 U.S. House elections.
 
 ## Model structure and details
 
+**Jump to: [Fundamentals](#fundamentals-model) •
+[Firms](#firm-error-model) • [National intent](#national-intent-model) •
+[Outcomes](#outcomes-model)**
+
 ``` mermaid
 graph TD
     mod_firms[<font size=5>FIRMS]:::model
@@ -31,10 +35,6 @@ graph TD
     classDef model fill:#aa2,stroke:#000,font-size:16pt,font-weight:bold
     classDef data fill:#efeff4,stroke#aaa,line-height:1.5,font-size:9pt
 ```
-
-**Jump to: [Fundamentals](#fundamentals-model) •
-[Firms](#firm-error-model) • [National intent](#national-intent-model) •
-[Outcomes](#outcomes-model)**
 
 ### Fundamentals model
 
@@ -59,7 +59,7 @@ performance in polling the generic ballot and presidential races as a
 prior for firm performance this cycle. We can decompose firm error into
 several components:
 
-- Constant year-to-year bias in all firms in polling these races
+- Constant year-to-year bias in all firms in polling these races.
 - Year-specific bias shared by all firms, to varying extents. We call
   the extent to which a firm is affected by the year-specific shared
   bias the “herding,” which is a slightly idiosyncratic usage.
@@ -109,11 +109,11 @@ is the survey population,
 is the herding variable for each firm, and
 ![X](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;X "X")
 is a matrix of poll variance predictors:
-![\sqrt{N_i}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Csqrt%7BN_i%7D "\sqrt{N_i}"),
-![\log(\text{time to elec.})](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Clog%28%5Ctext%7Btime%20to%20elec.%7D%29 "\log(\text{time to elec.})"),
+![\log(N_i)](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Clog%28N_i%29 "\log(N_i)"),
+![\sqrt{\text{time to elec.}}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Csqrt%7B%5Ctext%7Btime%20to%20elec.%7D%7D "\sqrt{\text{time to elec.}}"),
 and the LV/not indicator. Further details, including the weakly
 informative priors on all the parameters, may be found in the [Stan
-model code](stan/firms.stan).
+model code](stan/firms.stan) and [fitting code](R/build/firms.R).
 
 We can simulate from the model to get *predictive* values of firm bias
 and variance in hypothetical election-day likely voter polls for a

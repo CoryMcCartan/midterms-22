@@ -4,7 +4,8 @@ library(tidybayes)
 library(posterior)
 library(here)
 
-# load data, adjust types, and limit to firms with 10+ polls
+# Load data ----
+# also adjust types, and limit to firms with 10+ polls
 d <- read_csv(here("data-raw/produced/hist_polls_house_pres.csv"),
               show_col_types=FALSE) |>
     mutate(type = case_when(year <= 2008 ~ "phone",
@@ -17,6 +18,7 @@ d <- read_csv(here("data-raw/produced/hist_polls_house_pres.csv"),
     slice_head(n=1000) |> # limit to max 1000 per year to avoid 2016-2020 being too heavy
     ungroup()
 
+# Fit the model ----
 fit_firm_model <- function(pred_year=2022, refit=FALSE, save=FALSE,
                            iter=20e3, eta=0.15) {
     fit_path <- here(str_glue("data-raw/produced/firms_model_{pred_year}.rds"))
@@ -39,7 +41,7 @@ fit_firm_model <- function(pred_year=2022, refit=FALSE, save=FALSE,
                            stanc_options=list("O1"),
                            quiet=FALSE)
 
-        # find MLE
+        # find MLE to use as init to VB
         fit_opt = sm$optimize(stan_data, init=0, threads=4, iter=5e3, refresh=500)
 
         fit = sm$variational(stan_data,
@@ -50,6 +52,7 @@ fit_firm_model <- function(pred_year=2022, refit=FALSE, save=FALSE,
                              refresh=500, eval_elbo=500,
                              algorithm="meanfield", output_samples=2000)
 
+        # evaluate quality of mean-field variational approximation
         lw = fit$lp() - fit$lp_approx()
         lw = lw - max(lw)
         if (FALSE) {
@@ -97,6 +100,8 @@ fit_firm_model <- function(pred_year=2022, refit=FALSE, save=FALSE,
          scale = lapply(draws, sd))
 }
 
+# Fit the model for the past few elections -----
+
 fit_2018 = fit_firm_model(2018)
 fit_2020 = fit_firm_model(2020, eta=0.5, iter=30e3)
 fit_2022 = fit_firm_model(2022, eta=0.25)
@@ -114,7 +119,7 @@ save_fit(fit_2020)
 save_fit(fit_2022)
 
 
-# Predictive scores for pollster ratings
+# Predictive scores for pollster ratings (not used as part of the model) -----
 draws = fit_2022$draws
 pred_sigma = with(draws, exp(
     b_sigma_intercept + log(median(d$n)) * b_sigma[1] +
