@@ -5,7 +5,7 @@
 
 #### Cory McCartan
 
-<img src="doc/cover.jpg" style="width: 100%;">
+<img src="doc/cover.jpg" alt="U.S. Capitol at sunset" style="width: 100%;">
 
 A dynamic Bayesian model to forecast the 2022 U.S. House elections.
 
