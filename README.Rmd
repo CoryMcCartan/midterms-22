@@ -99,7 +99,7 @@ extent to which a firm is affected by the year-specific shared bias the
 - Firm bias.
 - Bias from polling methodology (IVR/online/phone/mixed/unknown).
 - Bias from LV polls. Due to limited data we only code an indicator for if a
-poll is an LV poll, and don't distinguish between RV/A/V polls.
+poll is not an LV poll---we don't distinguish between RV/A/V polls.
 
 Given total firm bias from all these sources, firms also vary in how close their
 results cluster around this bias.
@@ -117,7 +117,7 @@ around 5,100 historical polling results. $$
 \begin{align*}
 y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
 \mu_i &= \beta_\mu + \alpha^{(f)}_{f[i]} + m_{f[i]}\alpha^{(t)}_{t[i]}
-        + \alpha^{(u)}_{u[i]} + \alpha^{(v)}_{v[i]} \\
+        + \alpha^{(u)}_{u[i]} + \alpha^{(v)}_{t[i]}v[i] \\
 \sigma_i &= \exp(\beta_\sigma + x_i^\top\gamma_\sigma + \phi^{(f)}_{f[i]}) \\
 \alpha^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_f), \quad
 \alpha^{(t)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_t), \quad
@@ -127,7 +127,7 @@ y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
 \phi^{(f)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_\phi)
 \end{align*}
 $$
-where $i$ indexes the polls, $f[i]$ is the firm, $t[i]$ is the year, $u[i]$ is the methodology, $v[i]$ is the survey population, $m_{f[i]}$ is the herding variable for each firm, and $x_i$ is a vector of poll variance predictors: $\log(N_i)$, $\sqrt{\text{time to elec.}}$, and the LV/not indicator.
+where $i$ indexes the polls, $f[i]$ is the firm, $t[i]$ is the year, $u[i]$ is the methodology, $v[i]$ is the survey population indicator (1 if not LV), $m_{f[i]}$ is the herding variable for each firm, and $x_i$ is a vector of poll variance predictors: $\log(N_i)$, $\sqrt{\text{time to elec.}}$, and the not-LV indicator.
 Further details, including the weakly informative priors on all the parameters, may be found in the [Stan model code](stan/firms.stan) and [fitting code](R/build/firms.R).
 
 We can simulate from the model to get *predictive* values of firm bias and variance in hypothetical election-day likely voter polls for a future election.
@@ -141,7 +141,7 @@ library(wacolors)
 library(scales)
 
 d_firms <- read_csv(here("data/firms_pred_eval.csv"), show_col_types=FALSE)
-d_contour = crossing(bias=with(d_firms, seq(min(bias)*1.1, max(bias)*1.1, 0.002)),
+d_contour = crossing(bias=with(d_firms, seq(min(0, min(bias)*1.1), max(bias)*1.1, 0.002)),
                      stdev=with(d_firms, seq(min(stdev)*0.95, max(stdev)*1.05, 0.002))) |>
     mutate(rmse = sqrt(bias^2 + stdev^2))
 

@@ -5,23 +5,14 @@ library(posterior)
 library(here)
 
 # Load data ----
-d_act <- read_csv(here("data/fundamentals.csv"), show_col_types=FALSE) |>
-    select(year, act_contest=linc_vote_contest) |>
-    mutate(race = "house") |>
-    drop_na()
-
-# also adjust types, and limit to firms with 10+ polls, and switch house to contested two-way
+# also adjust types, and limit to firms with 10+ polls
 d <- read_csv(here("data-raw/produced/hist_polls_house_pres.csv"),
               show_col_types=FALSE) |>
-    left_join(d_act, by=c("year", "race")) |>
-    mutate(act = coalesce(act_contest, act),
-           err = est - act,
-           type = case_when(year <= 2008 ~ "phone",
+    mutate(type = case_when(year <= 2008 ~ "phone",
                             year <= 2004 & is.na(type) ~ "phone",
                             TRUE ~ type),
            type = coalesce(type, "unknown"),
            firm_id = fct_lump_min(as.factor(firm_id), min=10, other_level="other")) |>
-    select(-act_contest) |>
     group_by(year) |>
     slice_sample(prop=1, replace=FALSE) |>
     slice_head(n=1000) |> # limit to max 1000 per year to avoid 2016-2020 being too heavy
