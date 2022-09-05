@@ -85,13 +85,25 @@ to around 5,100 historical polling results.
 ![\begin{align\*}
 y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\\\
 \mu_i &= \beta\_\mu + \alpha^{(f)}\_{f\[i\]} + m\_{f\[i\]}\alpha^{(t)}\_{t\[i\]}
-        + \alpha^{(m)}\_{m\[i\]} + \alpha^{(v)}\_{v\[i\]} \\\\
-\sigma_i &= \exp(\beta\_\sigma + X\gamma\_\sigma + \phi^{(f)}\_{f\[i\]}),
-\end{align\*}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbegin%7Balign%2A%7D%0Ay_i%20%26%5Csim%20%5Cmathcal%7BN%7D%28%5Cmu_i%2C%20%5Csigma_i%5E2%29%20%5C%5C%0A%5Cmu_i%20%26%3D%20%5Cbeta_%5Cmu%20%2B%20%5Calpha%5E%7B%28f%29%7D_%7Bf%5Bi%5D%7D%20%2B%20m_%7Bf%5Bi%5D%7D%5Calpha%5E%7B%28t%29%7D_%7Bt%5Bi%5D%7D%0A%20%20%20%20%20%20%20%20%2B%20%5Calpha%5E%7B%28m%29%7D_%7Bm%5Bi%5D%7D%20%2B%20%5Calpha%5E%7B%28v%29%7D_%7Bv%5Bi%5D%7D%20%5C%5C%0A%5Csigma_i%20%26%3D%20%5Cexp%28%5Cbeta_%5Csigma%20%2B%20X%5Cgamma_%5Csigma%20%2B%20%5Cphi%5E%7B%28f%29%7D_%7Bf%5Bi%5D%7D%29%2C%0A%5Cend%7Balign%2A%7D "\begin{align*}
+        + \alpha^{(u)}\_{u\[i\]} + \alpha^{(v)}\_{v\[i\]} \\\\
+\sigma_i &= \exp(\beta\_\sigma + x_i^\top\gamma\_\sigma + \phi^{(f)}\_{f\[i\]}) \\\\
+\alpha^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_f), \quad
+\alpha^{(t)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_t), \quad
+\alpha^{(u)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_u), \quad
+\alpha^{(v)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_v)\\\\
+\log(m) &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_m), \quad
+\phi^{(f)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2\_\phi)
+\end{align\*}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbegin%7Balign%2A%7D%0Ay_i%20%26%5Csim%20%5Cmathcal%7BN%7D%28%5Cmu_i%2C%20%5Csigma_i%5E2%29%20%5C%5C%0A%5Cmu_i%20%26%3D%20%5Cbeta_%5Cmu%20%2B%20%5Calpha%5E%7B%28f%29%7D_%7Bf%5Bi%5D%7D%20%2B%20m_%7Bf%5Bi%5D%7D%5Calpha%5E%7B%28t%29%7D_%7Bt%5Bi%5D%7D%0A%20%20%20%20%20%20%20%20%2B%20%5Calpha%5E%7B%28u%29%7D_%7Bu%5Bi%5D%7D%20%2B%20%5Calpha%5E%7B%28v%29%7D_%7Bv%5Bi%5D%7D%20%5C%5C%0A%5Csigma_i%20%26%3D%20%5Cexp%28%5Cbeta_%5Csigma%20%2B%20x_i%5E%5Ctop%5Cgamma_%5Csigma%20%2B%20%5Cphi%5E%7B%28f%29%7D_%7Bf%5Bi%5D%7D%29%20%5C%5C%0A%5Calpha%5E%7B%28f%29%7D%20%26%5Cstackrel%7Biid%7D%7B%5Csim%7D%20%5Cmathcal%7BN%7D%280%2C%20%5Ctau%5E2_f%29%2C%20%5Cquad%0A%5Calpha%5E%7B%28t%29%7D%20%5Cstackrel%7Biid%7D%7B%5Csim%7D%20%5Cmathcal%7BN%7D%280%2C%20%5Ctau%5E2_t%29%2C%20%5Cquad%0A%5Calpha%5E%7B%28u%29%7D%20%5Cstackrel%7Biid%7D%7B%5Csim%7D%20%5Cmathcal%7BN%7D%280%2C%20%5Ctau%5E2_u%29%2C%20%5Cquad%0A%5Calpha%5E%7B%28v%29%7D%20%5Cstackrel%7Biid%7D%7B%5Csim%7D%20%5Cmathcal%7BN%7D%280%2C%20%5Ctau%5E2_v%29%5C%5C%0A%5Clog%28m%29%20%26%5Cstackrel%7Biid%7D%7B%5Csim%7D%20%5Cmathcal%7BN%7D%280%2C%20%5Ctau%5E2_m%29%2C%20%5Cquad%0A%5Cphi%5E%7B%28f%29%7D%20%5Cstackrel%7Biid%7D%7B%5Csim%7D%20%5Cmathcal%7BN%7D%280%2C%20%5Ctau%5E2_%5Cphi%29%0A%5Cend%7Balign%2A%7D "\begin{align*}
 y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
 \mu_i &= \beta_\mu + \alpha^{(f)}_{f[i]} + m_{f[i]}\alpha^{(t)}_{t[i]}
-        + \alpha^{(m)}_{m[i]} + \alpha^{(v)}_{v[i]} \\
-\sigma_i &= \exp(\beta_\sigma + X\gamma_\sigma + \phi^{(f)}_{f[i]}),
+        + \alpha^{(u)}_{u[i]} + \alpha^{(v)}_{v[i]} \\
+\sigma_i &= \exp(\beta_\sigma + x_i^\top\gamma_\sigma + \phi^{(f)}_{f[i]}) \\
+\alpha^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_f), \quad
+\alpha^{(t)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_t), \quad
+\alpha^{(u)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_u), \quad
+\alpha^{(v)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_v)\\
+\log(m) &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_m), \quad
+\phi^{(f)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_\phi)
 \end{align*}")
 
 where
@@ -101,14 +113,14 @@ indexes the polls,
 is the firm,
 ![t\[i\]](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;t%5Bi%5D "t[i]")
 is the year,
-![m\[i\]](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;m%5Bi%5D "m[i]")
+![u\[i\]](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;u%5Bi%5D "u[i]")
 is the methodology,
 ![v\[i\]](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;v%5Bi%5D "v[i]")
 is the survey population,
 ![m\_{f\[i\]}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;m_%7Bf%5Bi%5D%7D "m_{f[i]}")
 is the herding variable for each firm, and
-![X](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;X "X")
-is a matrix of poll variance predictors:
+![x_i](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;x_i "x_i")
+is a vector of poll variance predictors:
 ![\log(N_i)](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Clog%28N_i%29 "\log(N_i)"),
 ![\sqrt{\text{time to elec.}}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Csqrt%7B%5Ctext%7Btime%20to%20elec.%7D%7D "\sqrt{\text{time to elec.}}"),
 and the LV/not indicator. Further details, including the weakly

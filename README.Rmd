@@ -117,11 +117,17 @@ around 5,100 historical polling results. $$
 \begin{align*}
 y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
 \mu_i &= \beta_\mu + \alpha^{(f)}_{f[i]} + m_{f[i]}\alpha^{(t)}_{t[i]}
-        + \alpha^{(m)}_{m[i]} + \alpha^{(v)}_{v[i]} \\
-\sigma_i &= \exp(\beta_\sigma + X\gamma_\sigma + \phi^{(f)}_{f[i]}),
+        + \alpha^{(u)}_{u[i]} + \alpha^{(v)}_{v[i]} \\
+\sigma_i &= \exp(\beta_\sigma + x_i^\top\gamma_\sigma + \phi^{(f)}_{f[i]}) \\
+\alpha^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_f), \quad
+\alpha^{(t)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_t), \quad
+\alpha^{(u)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_u), \quad
+\alpha^{(v)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_v)\\
+\log(m) &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_m), \quad
+\phi^{(f)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_\phi)
 \end{align*}
 $$
-where $i$ indexes the polls, $f[i]$ is the firm, $t[i]$ is the year, $m[i]$ is the methodology, $v[i]$ is the survey population, $m_{f[i]}$ is the herding variable for each firm, and $X$ is a matrix of poll variance predictors: $\log(N_i)$, $\sqrt{\text{time to elec.}}$, and the LV/not indicator.
+where $i$ indexes the polls, $f[i]$ is the firm, $t[i]$ is the year, $u[i]$ is the methodology, $v[i]$ is the survey population, $m_{f[i]}$ is the herding variable for each firm, and $x_i$ is a vector of poll variance predictors: $\log(N_i)$, $\sqrt{\text{time to elec.}}$, and the LV/not indicator.
 Further details, including the weakly informative priors on all the parameters, may be found in the [Stan model code](stan/firms.stan) and [fitting code](R/build/firms.R).
 
 We can simulate from the model to get *predictive* values of firm bias and variance in hypothetical election-day likely voter polls for a future election.
