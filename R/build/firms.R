@@ -5,14 +5,23 @@ library(posterior)
 library(here)
 
 # Load data ----
-# also adjust types, and limit to firms with 10+ polls
+d_act <- read_csv(here("data/fundamentals.csv"), show_col_types=FALSE) |>
+    select(year, act_contest=linc_vote_contest) |>
+    mutate(race = "house") |>
+    drop_na()
+
+# also adjust types, and limit to firms with 10+ polls, and switch house to contested two-way
 d <- read_csv(here("data-raw/produced/hist_polls_house_pres.csv"),
               show_col_types=FALSE) |>
-    mutate(type = case_when(year <= 2008 ~ "phone",
+    left_join(d_act, by=c("year", "race")) |>
+    mutate(act = coalesce(act_contest, act),
+           err = est - act,
+           type = case_when(year <= 2008 ~ "phone",
                             year <= 2004 & is.na(type) ~ "phone",
                             TRUE ~ type),
            type = coalesce(type, "unknown"),
            firm_id = fct_lump_min(as.factor(firm_id), min=10, other_level="other")) |>
+    select(-act_contest) |>
     group_by(year) |>
     slice_sample(prop=1, replace=FALSE) |>
     slice_head(n=1000) |> # limit to max 1000 per year to avoid 2016-2020 being too heavy
@@ -20,17 +29,18 @@ d <- read_csv(here("data-raw/produced/hist_polls_house_pres.csv"),
 
 # Fit the model ----
 fit_firm_model <- function(pred_year=2022, refit=FALSE, save=FALSE,
-                           iter=20e3, eta=0.15) {
+                           iter=25e3, eta=0.25, draws=4000) {
     fit_path <- here(str_glue("data-raw/produced/firms_model_{pred_year}.rds"))
     d_fit <- d |>
         filter(year < pred_year) |>
-        select(years=year, firms=firm_id, types=type, is_lv=is_lv, n, tte, Y=err) |>
-        mutate(years = factor(years),
-               types = factor(types))
+        mutate(years = factor(year),
+               types = factor(type),
+               not_lv = 1 - is_lv) |>
+        select(years, firms=firm_id, types, not_lv, n, tte, Y=err)
 
     if (!file.exists(fit_path) || isTRUE(refit)) {
         stan_data = compose_data(d_fit,
-                                 X_sigma = cbind(log(n), sqrt(tte), is_lv),
+                                 X_sigma = cbind(log(n), sqrt(tte), not_lv),
                                  K_sigma = ncol(X_sigma),
                                  prior_only = 0L,
                                  grainsize = 1L,
@@ -48,9 +58,9 @@ fit_firm_model <- function(pred_year=2022, refit=FALSE, save=FALSE,
                              init=list(lapply(as_draws_rvars(fit_opt), E)), # init at MLE
                              seed=5118, threads=4,
                              eta=eta, adapt_engaged=FALSE, tol_rel_obj=0.0005,
-                             elbo_samples=50, grad_samples=3, iter=iter,
+                             elbo_samples=50, grad_samples=4, iter=iter,
                              refresh=500, eval_elbo=500,
-                             algorithm="meanfield", output_samples=2000)
+                             algorithm="meanfield", output_samples=draws)
 
         # evaluate quality of mean-field variational approximation
         lw = fit$lp() - fit$lp_approx()
@@ -92,6 +102,7 @@ fit_firm_model <- function(pred_year=2022, refit=FALSE, save=FALSE,
     names(draws$m_herding) = names(draws$r_firms)
     names(draws$r_sigma_firms) = names(draws$r_firms)
     names(draws$r_years) = levels(d_fit$years)
+    names(draws$lv_diff) = levels(d_fit$years)
     names(draws$r_types) = levels(d_fit$types)
 
     list(draws = draws,
@@ -102,9 +113,9 @@ fit_firm_model <- function(pred_year=2022, refit=FALSE, save=FALSE,
 
 # Fit the model for the past few elections -----
 
-fit_2018 = fit_firm_model(2018)
-fit_2020 = fit_firm_model(2020, eta=0.5, iter=30e3)
-fit_2022 = fit_firm_model(2022, eta=0.25)
+fit_2018 = fit_firm_model(2018, eta=0.5)
+fit_2020 = fit_firm_model(2020, eta=0.4)
+fit_2022 = fit_firm_model(2022, draws=10e3)
 
 save_fit <- function(fit) {
     name = deparse(substitute(fit))
@@ -126,17 +137,18 @@ pred_sigma = with(draws, exp(
         b_sigma[3] + r_sigma_firms
 ))
 hyp_year_re = rvar_rng(rnorm, 1, 0, 0.1*draws$sd_years)
+hyp_lv_re = rvar_rng(rnorm, 1, 0, 0.1*draws$sd_lv)
 modal_type = count(d, firm_id, type) |>
     group_by(firm_id) |>
     arrange(firm_id, desc(n)) |>
     slice_head(n=1)
-modal_lv = count(d, firm_id, is_lv) |>
+modal_lv = count(d, firm_id, not_lv=1-is_lv) |>
     group_by(firm_id) |>
     arrange(firm_id, desc(n)) |>
     slice_head(n=1)
 pred_mean = with(draws, bias + r_firms + m_herding * hyp_year_re +
-                     r_types[modal_type$type] + modal_lv$is_lv*draws$lv_diff)
-pred_err = rvar_rng(rnorm, stan_data$N_firms, pred_mean, pred_sigma)
+                     r_types[modal_type$type] + modal_lv$not_lv*hyp_lv_re)
+pred_err = rvar_rng(rnorm, length(fit_2022$draws$r_firms), pred_mean, pred_sigma)
 names(pred_err) = names(draws$r_firms)
 poll_counts <- count(d, firm=firm_id) |>
     mutate(firm = fit_2022$firms[firm])

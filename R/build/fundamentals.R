@@ -8,7 +8,8 @@ d_appr <- read_csv(here("data-raw/produced/oct_pres_approval.csv"), show_col_typ
 d_hist <- read_csv(here("data-raw/dfp/001_house_national_voteshare_input.csv"), show_col_types=FALSE) |>
     rename_with(~ str_replace(., "in_power", "inc"), starts_with("in_power")) |>
     rename(year=cycle) |>
-    mutate(linc_vote = qlogis(inc_contested_two_way),
+    mutate(linc_vote_contest = qlogis(inc_contested_two_way),
+           linc_vote = qlogis(inc_two_way),
            lg_retire = qlogis(inc_retire_pct))
 d_control <- read_csv(here("data-raw/manual/party_control.csv"), show_col_types=FALSE) |>
     mutate(inc_house = if_else(dem_pres == 1, dem_house, 1 - dem_house),
@@ -17,14 +18,15 @@ d_control <- read_csv(here("data-raw/manual/party_control.csv"), show_col_types=
     bind_rows(tibble(year=2022, inc_house=1, inc_senate=1))
 
 d <- d_hist |>
-    select(year, linc_vote, lg_retire, inc_special_performance, dem_pres, midterm) |>
+    select(year, linc_vote_contest, linc_vote, lg_retire, inc_special_performance, dem_pres, midterm) |>
     left_join(d_control, by="year") |>
     left_join(d_econ, by="year") |>
     left_join(d_appr, by="year")
 
 # save to public data
 d |>
-    select(year, linc_vote, lg_retire, midterm, inc_house, dem_pres, gdp_chg, lunemp, lg_approval) |>
+    select(year, linc_vote_contest, linc_vote, lg_retire, midterm,
+           inc_house, dem_pres, gdp_chg, lunemp, lg_approval) |>
     filter(year == 2022 | !is.na(linc_vote)) |>
     mutate(across(where(is.numeric), round, 5)) |>
     write_csv(here("data/fundamentals.csv"))
@@ -32,13 +34,13 @@ d |>
 form <- linc_vote ~ lg_retire + midterm*inc_house + dem_pres + gdp_chg + lunemp + lg_approval
 bprior <- prior(R2D2(0.6), class=b)
 
-m <- brm(form, data=drop_na(d, linc_vote), prior=bprior,
+m <- brm(form, data=drop_na(d, linc_vote_contest), prior=bprior,
          backend="cmdstan", cores=4, iter=1200, warmup=1000,
          file=here("stan/fund_m"), file_refit="on_change",
          control=list(adapt_delta=0.9995, refresh=1000))
 
 pred_fund_m <- function(pred_year = 2022) {
-    d_fit <- drop_na(d, linc_vote) |>
+    d_fit <- drop_na(d, linc_vote_contest) |>
         filter(year < pred_year)
 
     m_fit <- update(m, newdata=d_fit, cores=4, iter=1200, warmup=1000,
