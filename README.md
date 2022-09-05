@@ -20,7 +20,7 @@ A dynamic Bayesian model to forecast the 2022 U.S. House elections.
 
 ``` mermaid
 graph TD
-    mod_firms[<font size=5><a href="#firm-error-model">FIRMS</a>]:::model
+    mod_firms[<font size=5><a href='#firm-error-model'>FIRMS</a>]:::model
     mod_firms --> |Prior on firm error| mod_natl[<font size=5>NATIONAL INTENT]:::model
     mod_fund[<font size=5>FUNDAMENTALS]:::model --> |Prior on E-day intent| mod_natl
     d_ret([Historical<br />House returns]):::data -.-> mod_race
@@ -62,13 +62,12 @@ several components:
 - Firm bias.
 - Bias from polling methodology (IVR/online/phone/mixed/unknown).
 - Bias from LV polls. Due to limited data we only code an indicator for
-  if a
+  if a poll is an LV poll, and don’t distinguish between RV/A/V polls.
 
-poll is an LV poll, and don’t distinguish between RV/A/V polls. Given
-total firm bias from all these sources, firms also vary in how close
-their results cluster around this bias. If a firm consistently reports
-numbers 5pp too favorable for Democrats, we can adjust for that. Less
-consistency means less adjustment is possible. Polling variance is
+Given total firm bias from all these sources, firms also vary in how
+close their results cluster around this bias. If a firm consistently
+reports numbers 5pp too favorable for Democrats, we can adjust for that.
+Less consistency means less adjustment is possible. Polling variance is
 affected by several factors:
 
 - Sample size
@@ -83,12 +82,12 @@ to around 5,100 historical polling results.
 y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\\\
 \mu_i &= \beta\_\mu + \alpha^{(f)}\_{f\[i\]} + m\_{f\[i\]}\alpha^{(t)}\_{t\[i\]}
         + \alpha^{(m)}\_{m\[i\]} + \alpha^{(v)}\_{v\[i\]} \\\\
-\sigma_i &= \beta\_\sigma + X\gamma\_\sigma + \phi^{(f)}\_{f\[i\]},
-\end{align\*}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbegin%7Balign%2A%7D%0Ay_i%20%26%5Csim%20%5Cmathcal%7BN%7D%28%5Cmu_i%2C%20%5Csigma_i%5E2%29%20%5C%5C%0A%5Cmu_i%20%26%3D%20%5Cbeta_%5Cmu%20%2B%20%5Calpha%5E%7B%28f%29%7D_%7Bf%5Bi%5D%7D%20%2B%20m_%7Bf%5Bi%5D%7D%5Calpha%5E%7B%28t%29%7D_%7Bt%5Bi%5D%7D%0A%20%20%20%20%20%20%20%20%2B%20%5Calpha%5E%7B%28m%29%7D_%7Bm%5Bi%5D%7D%20%2B%20%5Calpha%5E%7B%28v%29%7D_%7Bv%5Bi%5D%7D%20%5C%5C%0A%5Csigma_i%20%26%3D%20%5Cbeta_%5Csigma%20%2B%20X%5Cgamma_%5Csigma%20%2B%20%5Cphi%5E%7B%28f%29%7D_%7Bf%5Bi%5D%7D%2C%0A%5Cend%7Balign%2A%7D "\begin{align*}
+\sigma_i &= \exp(\beta\_\sigma + X\gamma\_\sigma + \phi^{(f)}\_{f\[i\]}),
+\end{align\*}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbegin%7Balign%2A%7D%0Ay_i%20%26%5Csim%20%5Cmathcal%7BN%7D%28%5Cmu_i%2C%20%5Csigma_i%5E2%29%20%5C%5C%0A%5Cmu_i%20%26%3D%20%5Cbeta_%5Cmu%20%2B%20%5Calpha%5E%7B%28f%29%7D_%7Bf%5Bi%5D%7D%20%2B%20m_%7Bf%5Bi%5D%7D%5Calpha%5E%7B%28t%29%7D_%7Bt%5Bi%5D%7D%0A%20%20%20%20%20%20%20%20%2B%20%5Calpha%5E%7B%28m%29%7D_%7Bm%5Bi%5D%7D%20%2B%20%5Calpha%5E%7B%28v%29%7D_%7Bv%5Bi%5D%7D%20%5C%5C%0A%5Csigma_i%20%26%3D%20%5Cexp%28%5Cbeta_%5Csigma%20%2B%20X%5Cgamma_%5Csigma%20%2B%20%5Cphi%5E%7B%28f%29%7D_%7Bf%5Bi%5D%7D%29%2C%0A%5Cend%7Balign%2A%7D "\begin{align*}
 y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
 \mu_i &= \beta_\mu + \alpha^{(f)}_{f[i]} + m_{f[i]}\alpha^{(t)}_{t[i]}
         + \alpha^{(m)}_{m[i]} + \alpha^{(v)}_{v[i]} \\
-\sigma_i &= \beta_\sigma + X\gamma_\sigma + \phi^{(f)}_{f[i]},
+\sigma_i &= \exp(\beta_\sigma + X\gamma_\sigma + \phi^{(f)}_{f[i]}),
 \end{align*}")
 
 where
