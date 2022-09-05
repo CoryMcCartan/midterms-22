@@ -20,7 +20,7 @@ A dynamic Bayesian model to forecast the 2022 U.S. House elections.
 
 ``` mermaid
 graph TD
-    mod_firms[<font size=5><a href='#firm-error-model'>FIRMS</a>]:::model
+    mod_firms[<font size=5>FIRMS]:::model
     mod_firms --> |Prior on firm error| mod_natl[<font size=5>NATIONAL INTENT]:::model
     mod_fund[<font size=5>FUNDAMENTALS]:::model --> |Prior on E-day intent| mod_natl
     d_ret([Historical<br />House returns]):::data -.-> mod_race
@@ -31,6 +31,10 @@ graph TD
     classDef model fill:#aa2,stroke:#000,font-size:16pt,font-weight:bold
     classDef data fill:#efeff4,stroke#aaa,line-height:1.5,font-size:9pt
 ```
+
+**Jump to: [Fundamentals](#fundamentals-model) •
+[Firms](#firm-error-model) • [National intent](#national-intent-model) •
+[Outcomes](#outcomes-model)**
 
 ### Fundamentals model
 
