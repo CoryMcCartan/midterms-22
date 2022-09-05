@@ -5,6 +5,7 @@ output: github_document
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include = FALSE}
+library(tidyverse)
 library(here)
 knitr::opts_chunk$set(
     echo = FALSE,
@@ -53,11 +54,10 @@ incumbent president's party on logit retirements; midterm, house, and
 presidential control indicators; GDP change over the past year, log unemployment
 rate; and logit presidential approval.
 Coefficients are given an [R2-D2 prior](https://arxiv.org/abs/2111.10718).
-[Data table here](data/fundamentals.csv).
+[Data here](data/fundamentals.csv).
 
 **Parameter estimates:**
 ```{r fund_model_est, fig.height=3}
-library(ggplot2)
 m <- readRDS(here("data-raw/produced/fundamentals_model_2022.rds"))
 brms::mcmc_plot(m) +
     geom_vline(xintercept=0, lty="dashed") +
@@ -79,6 +79,83 @@ ggplot(NULL, aes(plogis(pred), fill=pred > 0)) +
 ```
 
 ### Firm error model
+
+The firm error model goes hand-in-hand with the firm error component of the
+national intent model, below.
+The idea is to use historical firm performance in polling the generic ballot and
+presidential races as a prior for firm performance this cycle.
+We can decompose firm error into several components:
+- Constant year-to-year bias in all firms in polling these races
+- Year-specific bias shared by all firms, to varying extents. We call the
+extent to which a firm is affected by the year-specific shared bias the
+"herding," which is a slightly idiosyncratic usage.
+- Firm bias.
+- Bias from polling methodology (IVR/online/phone/mixed/unknown).
+- Bias from LV polls. Due to limited data we only code an indicator for if a
+poll is an LV poll, and don't distinguish between RV/A/V polls.
+Given total firm bias from all these sources, firms also vary in how close their
+results cluster around this bias.
+If a firm consistently reports numbers 5pp too favorable for Democrats, we can adjust for that.
+Less consistency means less adjustment is possible.
+Polling variance is affected by several factors:
+- Sample size
+- Time to the election
+- LV vs. other polls
+- Firm variance
+
+We operationalize this framework with the following model, which is fit to
+around 5,100 historical polling results. $$
+\begin{align}
+y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
+\mu_i &= \beta_\mu + \alpha^{(f)}_{f[i]} + m_{f[i]}\alpha^{(t)}_{t[i]}
+        + \alpha^{(m)}_{m[i]} + \alpha^{(v)}_{v[i]} \\
+\sigma_i &= \beta_\sigma + X\gamma_\sigma + \phi^{(f)}_{f[i]},
+\end{align}
+$$
+where $i$ indexes the polls, $f[i]$ is the firm, $t[i]$ is the year, $m[i]$ is the methodology, $v[i]$ is the survey population, $m_[f[i]]$ is the herding variable for each firm, and $X$ is a matrix of poll variance predictors: $\sqrt{N_i}$, $\log(\text{time to elec.})$, and the LV/not indicator.
+Further details, including the weakly informative priors on all the parameters, may be found in the [Stan model code](stan/firms.stan).
+
+We can simulate from the model to get *predictive* values of firm bias and variance in hypothetical election-day likely voter polls for a future election.
+These predictive values are the best way to evaluate each firm's overall quality.
+A firm is better---that is, its polls contain more information about the race---if it has lower variance (std. dev.), a lower herding value, and bias closer to 0 (though this can be adjusted for).
+
+**Summary of firm performance:**
+```{r firm_perf, fig.height=6, fig.width=8}
+library(geomtextpath)
+library(wacolors)
+library(scales)
+
+d_firms <- read_csv(here("data/firms_pred_eval.csv"), show_col_types=FALSE)
+d_contour = crossing(bias=with(d_firms, seq(min(bias)*1.1, max(bias)*1.1, 0.002)),
+                     stdev=with(d_firms, seq(min(stdev)*0.95, max(stdev)*1.05, 0.002))) |>
+    mutate(rmse = sqrt(bias^2 + stdev^2))
+
+
+regex_tidy = str_c(" (a|for|The|Surveys?|&|Co\\.?|Company|Corp\\.?|Inc\\.?|Panel|Group|",
+                   "University|College|News|Research|Associates|Partners|Marketing|Strategies) ")
+d_firms |>
+    mutate(lab = str_c(" ", str_remove(firm, "\\(.+\\)"), " "),
+           lab = str_replace_all(lab, "/", " / "),
+           lab = str_replace(lab, regex_tidy, " "),
+           lab = str_replace(lab, regex_tidy, " "),
+           lab = str_replace(lab, regex_tidy, " "),
+           lab = suppressWarnings(abbreviate(lab, 8))) |>
+    arrange(herding) |>
+ggplot(aes(bias, stdev, label=lab, color=herding, size=n)) +
+    geom_vline(xintercept=0, lty="dashed", size=0.3) +
+    geom_textcontour(aes(bias, stdev, z=rmse, label=str_c("RMSE ", after_stat(level))),
+                     data=d_contour, inherit.aes=F,
+                     color="#777777", size=2.5, linewidth=0.2, hjust=0.05) +
+    geom_text(fontface="bold") +
+    scale_y_log10("Std. deviation (lower is better)",
+                  labels=label_number(scale=100, suffix="pp")) +
+    scale_x_continuous("Bias (positive = favors Democrats)",
+                       labels=label_number(scale=100, suffix="pp")) +
+    scale_color_wa_c("puget", name="Herding", midpoint=1, reverse=T) +
+    scale_size(range=c(1.5, 4), guide="none") +
+    coord_cartesian(expand=FALSE) +
+    theme_bw()
+```
 
 ### National intent model
 
