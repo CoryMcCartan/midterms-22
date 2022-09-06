@@ -119,9 +119,9 @@ around 5,100 historical polling results.
 $$
 \begin{align*}
 y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
-\mu_i &= \beta_\mu + \alpha^{(f)}_{f[i]} + m_{f[i]}\alpha^{(t)}_{t[i]}
-        + \alpha^{(u)}_{u[i]} + \alpha^{(v)}_{t[i]}v[i] \\
-\sigma_i &= \exp(\beta_\sigma + x_i^\top\gamma_\sigma + \phi^{(f)}_{f[i]}) \\
+\mu_i &= \beta_\mu + \alpha_{f[i]}^{(f)} + m_{f[i]}\alpha_{t[i]}^{(t)}
+        + \alpha_{u[i]}^{(u)} + \alpha_{t[i]}^{(v)}v[i] \\
+\sigma_i &= \exp(\beta_\sigma + x_i^\top\gamma_\sigma + \phi_{f[i]}^{(f)}) \\
 \alpha^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_f), \quad
 \alpha^{(t)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_t), \quad
 \alpha^{(u)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_u), \quad
