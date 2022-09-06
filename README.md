@@ -137,7 +137,9 @@ x_t &= x_{t-1} + \delta_t,\quad
 \alpha^{(v)} \sim \mathcal{N}(0, \tau^2_v)\\
 \phi^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_\phi),
 \end{align*}
-$$ where $i$ indexes the polls and $t$ indexes the days before the
+$$
+
+where $i$ indexes the polls and $t$ indexes the days before the
 election, $y$ is the poll outcome, $x$ is the latent intent, $f[i]$ is
 the firm, $u[i]$ is the methodology, $v[i]$ is the survey population
 indicator (1 if not LV), and $x_i$ is a vector of poll variance
