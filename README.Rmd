@@ -115,6 +115,7 @@ Polling variance is affected by several factors:
 
 We operationalize this framework with the following model, which is fit to
 around 5,100 historical polling results.
+
 $$
 \begin{align*}
 y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
@@ -129,6 +130,7 @@ y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
 \phi^{(f)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_\phi)
 \end{align*}
 $$
+
 where $i$ indexes the polls, $f[i]$ is the firm, $t[i]$ is the year, $u[i]$ is the methodology, $v[i]$ is the survey population indicator (1 if not LV), $m_{f[i]}$ is the herding variable for each firm, and $x_i$ is a vector of poll variance predictors: $\log(N_i)$, $\sqrt{\text{time to elec.}}$, and the not-LV indicator.
 Further details, including the weakly informative priors on all the parameters, may be found in the [Stan model code](stan/firms.stan) and [fitting code](R/build/firms.R).
 

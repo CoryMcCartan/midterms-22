@@ -80,7 +80,9 @@ affected by several factors:
 - Firm variance
 
 We operationalize this framework with the following model, which is fit
-to around 5,100 historical polling results. $$
+to around 5,100 historical polling results.
+
+$$
 \begin{align*}
 y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
 \mu_i &= \beta_\mu + \alpha^{(f)}_{f[i]} + m_{f[i]}\alpha^{(t)}_{t[i]}
@@ -93,7 +95,9 @@ y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
 \log(m) &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_m), \quad
 \phi^{(f)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_\phi)
 \end{align*}
-$$ where $i$ indexes the polls, $f[i]$ is the firm, $t[i]$ is the year,
+$$
+
+where $i$ indexes the polls, $f[i]$ is the firm, $t[i]$ is the year,
 $u[i]$ is the methodology, $v[i]$ is the survey population indicator (1
 if not LV), $m_{f[i]}$ is the herding variable for each firm, and $x_i$
 is a vector of poll variance predictors: $\log(N_i)$,
