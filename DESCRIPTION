@@ -1,4 +1,11 @@
 Type: project
 Description: 2022 Federal Election Models
 Imports:
-    cli
+    cli,
+    dplyr,
+    stringr,
+    readr,
+    lubridate,
+    MASS,
+    tidybayes,
+    here

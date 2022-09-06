@@ -13,9 +13,9 @@ d <- read_csv(here("data-raw/produced/hist_polls_house_pres.csv"),
                             TRUE ~ type),
            type = coalesce(type, "unknown"),
            firm_id = fct_lump_min(as.factor(firm_id), min=10, other_level="other")) |>
-    group_by(year) |>
+    group_by(year, firm_id) |>
     slice_sample(prop=1, replace=FALSE) |>
-    slice_head(n=1000) |> # limit to max 1000 per year to avoid 2016-2020 being too heavy
+    slice_head(n=100) |> # limit to max 100 per pollster to avoid 2016-2020 being too heavy
     ungroup()
 
 # Fit the model ----

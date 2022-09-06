@@ -119,11 +119,11 @@ around 5,100 historical polling results.
 $$
 \begin{align*}
 y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
-\mu_i &= \beta_\mu + \alpha_{f[i]}^{(f)} + m_{f[i]}\alpha_{t[i]}^{(t)}
-        + \alpha_{u[i]}^{(u)} + \alpha_{t[i]}^{(v)}v[i] \\
+\mu_i &= \beta_\mu + \alpha_{f[i]}^{(f)} + m_{f[i]}\alpha_{c[i]}^{(c)}
+        + \alpha_{u[i]}^{(u)} + \alpha_{c[i]}^{(v)}v[i] \\
 \sigma_i &= \exp(\beta_\sigma + x_i^\top\gamma_\sigma + \phi_{f[i]}^{(f)}) \\
 \alpha^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_f), \quad
-\alpha^{(t)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_t), \quad
+\alpha^{(c)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_c), \quad
 \alpha^{(u)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_u), \quad
 \alpha^{(v)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_v)\\
 \log(m) &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_m), \quad
@@ -131,7 +131,7 @@ y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
 \end{align*}
 $$
 
-where $i$ indexes the polls, $f[i]$ is the firm, $t[i]$ is the year, $u[i]$ is the methodology, $v[i]$ is the survey population indicator (1 if not LV), $m_{f[i]}$ is the herding variable for each firm, and $x_i$ is a vector of poll variance predictors: $\log(N_i)$, $\sqrt{\text{time to elec.}}$, and the not-LV indicator.
+where $i$ indexes the polls, $f[i]$ is the firm, $c[i]$ is the year/cycle, $u[i]$ is the methodology, $v[i]$ is the survey population indicator (1 if not LV), $m_{f[i]}$ is the herding variable for each firm, and $x_i$ is a vector of poll variance predictors: $\log(N_i)$, $\sqrt{\text{time to elec.}}$, and the not-LV indicator.
 Further details, including the weakly informative priors on all the parameters, may be found in the [Stan model code](stan/firms.stan) and [fitting code](R/build/firms.R).
 
 We can simulate from the model to get *predictive* values of firm bias and variance in hypothetical election-day likely voter polls for a future election.
@@ -177,5 +177,43 @@ ggplot(aes(bias, stdev, label=lab, color=herding, size=n)) +
 ```
 
 ### National intent model
+
+The intent model estimates latent national vote intent, which is assumed to
+evolve as a random walk, with and observation model that is closely related to
+the firm error model, above.
+
+$$
+\begin{align*}
+y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
+\mu_i &= x_{t[i]} + \beta_\mu + \alpha_{f[i]}^{(f)} + \alpha^{(c)}
+        + \alpha_{u[i]}^{(u)} + \alpha^{(v)}v[i] \\
+\sigma_i &= \exp(\beta_\sigma + x_i^\top\gamma_\sigma + \phi_{f[i]}^{(f)}) \\
+x_t &= x_{t-1} + \delta_t,\quad
+\delta_t \stackrel{iid}{\sim} \mathrm{t}_5(0, \sigma^2_{\delta}) \\
+\alpha^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_f), \quad
+\alpha^{(c)} \sim \mathcal{N}(0, \tau^2_c), \quad
+\alpha^{(u)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_u), \quad
+\alpha^{(v)} \sim \mathcal{N}(0, \tau^2_v)\\
+\phi^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_\phi),
+\end{align*}
+$$
+where $i$ indexes the polls and $t$ indexes the days before the election, $y$ is the poll outcome, $x$ is the latent intent, $f[i]$ is the firm, $u[i]$ is the methodology, $v[i]$ is the survey population indicator (1 if not LV), and $x_i$ is a vector of poll variance predictors: $\log(N_i)$, $\sqrt{\text{time to elec.}}$, and the not-LV indicator.
+Priors for most variables are taken from the posterior of the firm error model (above), with some adjustments as noted below.
+A relatively strong prior is needed on $\sigma^2_\delta$ to regularize the effect of firms who release panel survey results daily.
+We also cap the number of polls from any one firm at 100 to further avoid biasing effects from imbalance (which is observed in historical back-testing).
+Firms with more than 100 polls have a subset of 100 selected at random for inference.
+Compared to the firm intent model, we drop the herding variables $m$ since these cause identifiability problems.
+Since the random effects $\alpha^{(c)}$ and $\alpha^{(v)}$ are unknown for this particular cycle, they are sampled from their predictive distributions.
+To account for irreducible model uncertainty and shift over time, we manually increase uncertainty for several parameters: the bias $\beta_\mu$, and the firm bias uncertainty $\tau_f^2$ (and the prior uncertainty on the actual levels of the firm random effects).
+We also regress the prior on $\beta_\mu$ by 20% towards zero.
+These adjustments are not fully defensible from a Bayesian perspective; however, they act conservatively on inferences and may be justified by fundamental model uncertainty.
+Further details, including the weakly informative priors on all the parameters, may be found in the [Stan model code](stan/intent.stan), [fitting code](R/model/intent.R), and [diagnostic code](R/build/build_intent.R).
+
+Estimates for the 2018 and 2020 cycle are shown below.
+
+![2018 intent estimates](doc/intent_backtest_2018.svg)
+
+![2020 intent estimates](doc/intent_backtest_2020.svg)
+
 
 ### Outcomes model
