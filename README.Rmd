@@ -189,7 +189,7 @@ y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
         + \alpha_{u[i]}^{(u)} + \alpha^{(v)}v[i] \\
 \sigma_i &= \exp(\beta_\sigma + x_i^\top\gamma_\sigma + \phi_{f[i]}^{(f)}) \\
 x_t &= x_{t-1} + \delta_t,\quad
-\delta_t \stackrel{iid}{\sim} \mathrm{t}_5(0, \sigma^2_{\delta}) \\
+\delta_t \stackrel{iid}{\sim} \mathrm{t}_{5}(0, \sigma_{\delta}^2) \\
 \alpha^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_f), \quad
 \alpha^{(c)} \sim \mathcal{N}(0, \tau^2_c), \quad
 \alpha^{(u)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_u), \quad
