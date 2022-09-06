@@ -114,7 +114,8 @@ Polling variance is affected by several factors:
 - Firm variance
 
 We operationalize this framework with the following model, which is fit to
-around 5,100 historical polling results. $$
+around 5,100 historical polling results.
+$$
 \begin{align*}
 y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
 \mu_i &= \beta_\mu + \alpha^{(f)}_{f[i]} + m_{f[i]}\alpha^{(t)}_{t[i]}
