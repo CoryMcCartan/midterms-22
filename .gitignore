@@ -13,7 +13,7 @@
 
 data-raw/*
 !data-raw/README.md
-!data/*.rds
+!data/*/*.rds
 
 stan/*
 !stan/*.stan

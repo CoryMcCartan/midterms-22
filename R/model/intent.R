@@ -26,8 +26,8 @@ summarize_natl <- function(draws, election_date) {
 }
 
 make_stan_data_intent <- function(d_polls, year, min_date, max_date, election_date) {
-    m_firms <- read_rds(here(str_glue("data/firms_fit_{year}.rds")))
-    pred_fund <- read_rds(here(str_glue("data/fundamentals_pred_{year}.rds")))
+    m_firms <- read_rds(here(str_glue("data/firms_fit/firms_fit_{year}.rds")))
+    pred_fund <- read_rds(here(str_glue("data/fund_pred/fundamentals_pred_{year}.rds")))
 
     min_tte = as.integer(election_date - max_date)
     max_tte = as.integer(election_date - min_date)
@@ -37,6 +37,7 @@ make_stan_data_intent <- function(d_polls, year, min_date, max_date, election_da
     d_fit = filter(d_polls, tte >= min_tte, tte <= max_tte) |>
         mutate(day = as.integer(tte + 1),
                type = if_else(type == "text", "mixed", type),
+               type = if_else(type %in% types, type, types[1]),
                type = factor(type, levels=types),
                firm_id = as.factor(firm_id)) |>
         arrange(tte)
@@ -86,14 +87,14 @@ make_stan_data_intent <- function(d_polls, year, min_date, max_date, election_da
         prior_z_sigma_firms_scale = m_firms$scale$r_sigma_firms[firm_lookup],
         prior_z_types_scale = m_firms$scale$r_types,
 
-        prior_bias_loc = 0.8*m_firms$loc$bias, # regress slightly
+        prior_bias_loc = 0.6*m_firms$loc$bias, # regress slightly
         prior_b_intercept_sigma_loc = m_firms$loc$b_sigma_intercept,
         prior_b_sigma_loc = m_firms$loc$b_sigma,
         prior_bias_scale = m_firms$scale$bias * 2, # be slightly less confident
         prior_b_intercept_sigma_scale = m_firms$scale$b_sigma_intercept,
         prior_b_sigma_scale = m_firms$scale$b_sigma,
 
-        sd_firms = m_firms$loc$sd_firms * sqrt(2), # be slightly less confident,
+        sd_firms = m_firms$loc$sd_firms, # be slightly less confident,
         sd_herding = m_firms$loc$sd_herding,
         sd_sigma_firms = m_firms$loc$sd_sigma_firms,
         sd_types = m_firms$loc$sd_types,

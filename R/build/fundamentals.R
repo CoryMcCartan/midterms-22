@@ -50,14 +50,10 @@ pred_fund_m <- function(pred_year = 2022) {
     pred <- posterior_predict(m_fit, newdata=d_pred)[, 1]
 }
 
-
-pred_2018 <- pred_fund_m(2018)
-pred_2020 <- pred_fund_m(2020)
-pred_2022 <- pred_fund_m(2022)
-
-write_rds(pred_2018, here("data/fundamentals_pred_2018.rds"), compress="gz")
-write_rds(pred_2020, here("data/fundamentals_pred_2020.rds"), compress="gz")
-write_rds(pred_2022, here("data/fundamentals_pred_2022.rds"), compress="gz")
+walk(seq(2010, 2022, by=2), function(yr) {
+    pred_fund_m(yr) |>
+        write_rds(here(str_glue("data/fund_pred/fundamentals_pred_{year}.rds")), compress="gz")
+})
 
 write_rds(m, here("data-raw/produced/fundamentals_model_2022.rds"), compress="xz")
 

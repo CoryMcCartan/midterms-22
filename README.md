@@ -145,7 +145,9 @@ the firm, $u[i]$ is the methodology, $v[i]$ is the survey population
 indicator (1 if not LV), and $x_i$ is a vector of poll variance
 predictors: $\log(N_i)$, $\sqrt{\text{time to elec.}}$, and the not-LV
 indicator. Priors for most variables are taken from the posterior of the
-firm error model (above), with some adjustments as noted below. A
+firm error model (above), with some adjustments as noted below. The
+prior on $x$ for election day is taken from the posterior predictive
+distribution of the fundamentals model, shown above in the histogram. A
 relatively strong prior is needed on $\sigma^2_\delta$ to regularize the
 effect of firms who release panel survey results daily. We also cap the
 number of polls from any one firm at 100 to further avoid biasing
@@ -157,17 +159,25 @@ random effects $\alpha^{(c)}$ and $\alpha^{(v)}$ are unknown for this
 particular cycle, they are sampled from their predictive distributions.
 To account for irreducible model uncertainty and shift over time, we
 manually increase uncertainty for several parameters: the bias
-$\beta_\mu$, and the firm bias uncertainty $\tau_f^2$ (and the prior
-uncertainty on the actual levels of the firm random effects). We also
-regress the prior on $\beta_\mu$ by 20% towards zero. These adjustments
-are not fully defensible from a Bayesian perspective; however, they act
+$\beta_\mu$, and the firm bias uncertainty (i.e., the prior uncertainty
+on the actual levels of the firm random effects). We also regress the
+prior on $\beta_\mu$ by 40% towards zero. These adjustments are not
+fully defensible from a Bayesian perspective; however, they act
 conservatively on inferences and may be justified by fundamental model
 uncertainty. Further details, including the weakly informative priors on
 all the parameters, may be found in the [Stan model
 code](stan/intent.stan), [fitting code](R/model/intent.R), and
 [diagnostic code](R/build/build_intent.R).
 
-Estimates for the 2018 and 2020 cycle are shown below.
+Estimates for the 2010–2020 cycle are shown below.
+
+![2010 intent estimates](doc/intent_backtest_2010.svg)
+
+![2012 intent estimates](doc/intent_backtest_2012.svg)
+
+![2014 intent estimates](doc/intent_backtest_2014.svg)
+
+![2016 intent estimates](doc/intent_backtest_2016.svg)
 
 ![2018 intent estimates](doc/intent_backtest_2018.svg)
 

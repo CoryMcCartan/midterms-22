@@ -104,6 +104,10 @@ fit_firm_model <- function(pred_year=2022, refit=FALSE, save=FALSE,
 
 # Fit the model for the past few elections -----
 
+fit_2010 = fit_firm_model(2018, eta=0.3)
+fit_2012 = fit_firm_model(2018, eta=0.3)
+fit_2014 = fit_firm_model(2018, eta=0.4)
+fit_2016 = fit_firm_model(2018, eta=0.4)
 fit_2018 = fit_firm_model(2018, eta=0.5)
 fit_2020 = fit_firm_model(2020, eta=0.4)
 fit_2022 = fit_firm_model(2022, draws=10e3)
@@ -116,6 +120,10 @@ save_fit <- function(fit) {
     invisible(path)
 }
 
+save_fit(fit_2010)
+save_fit(fit_2012)
+save_fit(fit_2014)
+save_fit(fit_2016)
 save_fit(fit_2018)
 save_fit(fit_2020)
 save_fit(fit_2022)
