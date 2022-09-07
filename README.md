@@ -85,11 +85,12 @@ to around 5,100 historical polling results.
 $$
 \begin{align*}
 y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
-\mu_i &= \beta_\mu + \alpha_{f[i]}^{(f)} + m_{f[i]}\alpha_{c[i]}^{(c)}
+\mu_i &= \beta_\mu + \alpha_{f[i]}^{(f)} + \alpha_{c[i]}^{(c')} + m_{f[i]}\alpha_{c[i]}^{(c)}
         + \alpha_{u[i]}^{(u)} + \alpha_{c[i]}^{(v)}v[i] \\
 \sigma_i &= \exp(\beta_\sigma + x_i^\top\gamma_\sigma + \phi_{f[i]}^{(f)}) \\
 \alpha^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_f), \quad
 \alpha^{(c)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_c), \quad
+\alpha^{(c')} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_{c'}), \quad
 \alpha^{(u)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_u), \quad
 \alpha^{(v)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_v)\\
 \log(m) &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_m), \quad
@@ -126,13 +127,14 @@ related to the firm error model, above.
 $$
 \begin{align*}
 y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
-\mu_i &= x_{t[i]} + \beta_\mu + \alpha_{f[i]}^{(f)} + \alpha^{(c)}
+\mu_i &= x_{t[i]} + \beta_\mu + \alpha_{f[i]}^{(f)} + \alpha^{(c')} + m_{f[i]}\alpha^{(c)}
         + \alpha_{u[i]}^{(u)} + \alpha^{(v)}v[i] \\
 \sigma_i &= \exp(\beta_\sigma + x_i^\top\gamma_\sigma + \phi_{f[i]}^{(f)}) \\
 x_t &= x_{t-1} + \delta_t,\quad
 \delta_t \stackrel{iid}{\sim} \mathrm{t_5}(0, \sigma^2_\delta) \\
 \alpha^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_f), \quad
 \alpha^{(c)} \sim \mathcal{N}(0, \tau^2_c), \quad
+\alpha^{(c')} \sim \mathcal{N}(0, \tau^2_{c'}), \quad
 \alpha^{(u)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_u), \quad
 \alpha^{(v)} \sim \mathcal{N}(0, \tau^2_v)\\
 \phi^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_\phi),
@@ -153,21 +155,18 @@ effect of firms who release panel survey results daily. We also cap the
 number of polls from any one firm at 100 to further avoid biasing
 effects from imbalance (which is observed in historical back-testing).
 Firms with more than 100 polls have a subset of 100 selected at random
-for inference. Compared to the firm intent model, we drop the herding
-variables $m$ since these cause identifiability problems. Since the
-random effects $\alpha^{(c)}$ and $\alpha^{(v)}$ are unknown for this
-particular cycle, they are sampled from their predictive distributions.
-To account for irreducible model uncertainty and shift over time, we
-manually increase uncertainty for several parameters: the bias
-$\beta_\mu$, and the firm bias uncertainty (i.e., the prior uncertainty
-on the actual levels of the firm random effects). We also regress the
-prior on $\beta_\mu$ by 40% towards zero. These adjustments are not
-fully defensible from a Bayesian perspective; however, they act
-conservatively on inferences and may be justified by fundamental model
-uncertainty. Further details, including the weakly informative priors on
-all the parameters, may be found in the [Stan model
-code](stan/intent.stan), [fitting code](R/model/intent.R), and
-[diagnostic code](R/build/build_intent.R).
+for inference. <!--
+Compared to the firm intent model, we drop the herding variables $m$ since these cause identifiability problems.
+--> Since the random effects $\alpha^{(c)}$ and $\alpha^{(v)}$ are
+unknown for this particular cycle, they are sampled from their
+predictive distributions. <!--
+To account for irreducible model uncertainty and shift over time, we manually increase uncertainty for several parameters: the bias $\beta_\mu$, and the firm bias uncertainty (i.e., the prior uncertainty on the actual levels of the firm random effects).
+We also regress the prior on $\beta_\mu$ by 40% towards zero.
+These adjustments are not fully defensible from a Bayesian perspective; however, they act conservatively on inferences and may be justified by fundamental model uncertainty.
+--> Further details, including the weakly informative priors on all the
+parameters, may be found in the [Stan model code](stan/intent.stan),
+[fitting code](R/model/intent.R), and [diagnostic
+code](R/build/build_intent.R).
 
 Estimates for the 2010–2020 cycle are shown below.
 

@@ -20,7 +20,7 @@ d <- read_csv(here("data-raw/produced/hist_polls_house_pres.csv"),
 
 # Fit the model ----
 fit_firm_model <- function(pred_year=2022, refit=FALSE, save=FALSE,
-                           iter=25e3, eta=0.25, draws=4000) {
+                           iter=25e3, eta=0.3, draws=4000) {
     fit_path <- here(str_glue("data-raw/produced/firms_model_{pred_year}.rds"))
     d_fit <- d |>
         filter(year < pred_year) |>
@@ -90,9 +90,10 @@ fit_firm_model <- function(pred_year=2022, refit=FALSE, save=FALSE,
     draws = as_draws_rvars(fit)
     draws[which(str_starts(names(draws), "z_"))] = NULL
     names(draws$r_firms) = firm_lookup[levels(d$firm_id)]
-    names(draws$m_herding) = names(draws$r_firms)
     names(draws$r_sigma_firms) = names(draws$r_firms)
+    names(draws$m_herding) = names(draws$r_firms)
     names(draws$r_years) = levels(d_fit$years)
+    names(draws$r_years_shared) = levels(d_fit$years)
     names(draws$lv_diff) = levels(d_fit$years)
     names(draws$r_types) = levels(d_fit$types)
 
@@ -104,18 +105,18 @@ fit_firm_model <- function(pred_year=2022, refit=FALSE, save=FALSE,
 
 # Fit the model for the past few elections -----
 
-fit_2010 = fit_firm_model(2018, eta=0.3)
-fit_2012 = fit_firm_model(2018, eta=0.3)
-fit_2014 = fit_firm_model(2018, eta=0.4)
-fit_2016 = fit_firm_model(2018, eta=0.4)
-fit_2018 = fit_firm_model(2018, eta=0.5)
-fit_2020 = fit_firm_model(2020, eta=0.4)
+fit_2010 = fit_firm_model(2010, eta=0.4)
+fit_2012 = fit_firm_model(2012, eta=0.4)
+fit_2014 = fit_firm_model(2014, eta=0.4)
+fit_2016 = fit_firm_model(2016, eta=0.3)
+fit_2018 = fit_firm_model(2018)
+fit_2020 = fit_firm_model(2020)
 fit_2022 = fit_firm_model(2022, draws=10e3)
 
 save_fit <- function(fit) {
     name = deparse(substitute(fit))
     fit$draws = NULL
-    path = here(str_c("data/firms_", name, ".rds"))
+    path = here(str_c("data/firms_fit/firms_", name, ".rds"))
     write_rds(fit, path, compress="xz")
     invisible(path)
 }
@@ -136,6 +137,7 @@ pred_sigma = with(draws, exp(
         b_sigma[3] + r_sigma_firms
 ))
 hyp_year_re = rvar_rng(rnorm, 1, 0, 0.1*draws$sd_years)
+hyp_year_shared_re = rvar_rng(rnorm, 1, 0, 0.1*draws$sd_years_shared)
 hyp_lv_re = rvar_rng(rnorm, 1, 0, 0.1*draws$sd_lv)
 modal_type = count(d, firm_id, type) |>
     group_by(firm_id) |>
@@ -145,7 +147,7 @@ modal_lv = count(d, firm_id, not_lv=1-is_lv) |>
     group_by(firm_id) |>
     arrange(firm_id, desc(n)) |>
     slice_head(n=1)
-pred_mean = with(draws, bias + r_firms + m_herding * hyp_year_re +
+pred_mean = with(draws, bias + r_firms + m_herding*hyp_year_re + hyp_year_shared_re +
                      r_types[modal_type$type] + modal_lv$not_lv*hyp_lv_re)
 pred_err = rvar_rng(rnorm, length(fit_2022$draws$r_firms), pred_mean, pred_sigma)
 names(pred_err) = names(draws$r_firms)

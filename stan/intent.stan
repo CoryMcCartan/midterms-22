@@ -51,7 +51,10 @@ data {
     real<lower=0> sd_sigma_firms;
     real<lower=0> sd_types;
     real<lower=0> sd_years;
+    real<lower=0> sd_years_shared;
     real<lower=0> sd_lv;
+    vector<lower=-1, upper=1>[2] chol_years; // cholesky decomp of how year & year_shared ranefs are correlated
+
 }
 
 
@@ -61,12 +64,13 @@ parameters {
 
     // Parameters copied from firm error model -----
     vector[N_firms] z_firms;
-    // vector[N_firms] z_herding; // how much each firm is affected by the year ranef.
+    vector[N_firms] z_herding; // how much each firm is affected by the year ranef.
     vector[N_firms] z_sigma_firms;
     vector[N_types] z_types;
 
     real bias; // global intercept
-    real r_year;
+    real z_year;
+    real z_year_shared;
     real lv_diff;
     real b_intercept_sigma;
     vector[K_sigma] b_sigma; // population-level effects
@@ -78,14 +82,17 @@ transformed parameters {
     mu[1] = delta[1];
     mu[2:N_days] = mu[1] + 0.001 * sd_delta * cumulative_sum(delta[2:N_days]);
 
+    real r_year = 0.1*sd_years * z_year;
+    real r_year_shared = 0.1*sd_years_shared * (z_year*chol_years[1] + z_year_shared*chol_years[2]);
+
     vector[N_firms] r_firms = prior_z_firms_loc + prior_z_firms_scale .* z_firms;
-    // vector[N_firms] m_herding = exp(prior_z_herding_loc + prior_z_herding_scale .* z_herding);
+    vector[N_firms] m_herding = prior_z_herding_loc + prior_z_herding_scale .* z_herding;
     vector[N_firms] r_sigma_firms = prior_z_sigma_firms_loc + prior_z_sigma_firms_scale .* z_sigma_firms;
     vector[N_types] r_types = prior_z_types_loc + prior_z_types_scale .* z_types;
 
-    vector[N] poll_loc = mu[day] + bias + r_firms[firms] +
-        // m_herding[firms] * r_year + r_types[types] + lv_diff * not_lv;
-        r_year + r_types[types] + lv_diff * not_lv;
+    vector[N] poll_loc = mu[day] + bias + r_firms[firms] + r_year_shared +
+        m_herding[firms] * r_year + r_types[types] + lv_diff * not_lv;
+        // r_year + r_types[types] + lv_diff * not_lv;
     vector[N] poll_scale = exp(
             b_intercept_sigma + X_sigma * b_sigma +
             r_sigma_firms[firms]
@@ -104,15 +111,16 @@ model {
 
     // firm error model
     bias ~ normal(prior_bias_loc, prior_bias_scale);
-    r_year ~ normal(0, 0.1*sd_years);
     lv_diff ~ normal(0, 0.1*sd_lv);
     b_intercept_sigma ~ normal(prior_b_intercept_sigma_loc, prior_b_intercept_sigma_scale);
     b_sigma ~ normal(prior_b_sigma_loc, prior_b_sigma_scale);
 
     z_firms ~ std_normal();
-    // z_herding ~ std_normal();
+    z_herding ~ std_normal();
     z_sigma_firms ~ std_normal();
     z_types ~ std_normal();
+    z_year ~ std_normal();
+    z_year_shared ~ std_normal();
 }
 
 generated quantities {

@@ -61,6 +61,7 @@ make_stan_data_intent <- function(d_polls, year, min_date, max_date, election_da
         nu_delta = 5.0,
         prior_sd_delta_shape = 4.0,
         prior_sd_delta_loc = 3.0,
+        chol_years = chol(cor(cbind(m_firms$loc$r_years, m_firms$loc$r_years_shared)))[,2],
 
         prior_eday_loc = pred_fit$estimate["m"] * flip_pred,
         prior_eday_scale = pred_fit$estimate["s"],
@@ -77,28 +78,28 @@ make_stan_data_intent <- function(d_polls, year, min_date, max_date, election_da
         X_sigma = with(d_fit, cbind(log(n), sqrt(tte), not_lv)),
 
         prior_z_firms_loc = m_firms$loc$r_firms[firm_lookup],
-        prior_z_herding_loc = 0.0 * log(m_firms$loc$m_herding[firm_lookup]), # regress these significantly
         prior_z_sigma_firms_loc = m_firms$loc$r_sigma_firms[firm_lookup],
+        prior_z_herding_loc = m_firms$loc$m_herding[firm_lookup],
         prior_z_types_loc = m_firms$loc$r_types,
 
-        prior_z_firms_scale = m_firms$scale$r_firms[firm_lookup] * sqrt(2), # be slightly less confident
-        # smaller to regularize multimodality
-        prior_z_herding_scale = 0.0 * (m_firms$scale$m_herding / m_firms$loc$m_herding)[firm_lookup],
+        prior_z_firms_scale = m_firms$scale$r_firms[firm_lookup],
         prior_z_sigma_firms_scale = m_firms$scale$r_sigma_firms[firm_lookup],
+        prior_z_herding_scale = m_firms$scale$m_herding[firm_lookup] * 1.1, # be slightly less confident
         prior_z_types_scale = m_firms$scale$r_types,
 
-        prior_bias_loc = 0.6*m_firms$loc$bias, # regress slightly
+        prior_bias_loc = m_firms$loc$bias,
         prior_b_intercept_sigma_loc = m_firms$loc$b_sigma_intercept,
         prior_b_sigma_loc = m_firms$loc$b_sigma,
-        prior_bias_scale = m_firms$scale$bias * 2, # be slightly less confident
+        prior_bias_scale = m_firms$scale$bias,
         prior_b_intercept_sigma_scale = m_firms$scale$b_sigma_intercept,
         prior_b_sigma_scale = m_firms$scale$b_sigma,
 
-        sd_firms = m_firms$loc$sd_firms, # be slightly less confident,
-        sd_herding = m_firms$loc$sd_herding,
+        sd_firms = m_firms$loc$sd_firms,
         sd_sigma_firms = m_firms$loc$sd_sigma_firms,
+        sd_herding = m_firms$loc$sd_herding,
         sd_types = m_firms$loc$sd_types,
         sd_years = m_firms$loc$sd_years,
+        sd_years_shared = m_firms$loc$sd_years_shared,
         sd_lv = m_firms$loc$sd_lv
     )
 }

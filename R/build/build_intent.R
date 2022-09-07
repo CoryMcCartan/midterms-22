@@ -18,7 +18,7 @@ e_days = list(
     `2022` = as.Date("2022-11-08")
 )
 
-year = 2012
+year = 2014
 for (year in seq(2010, 2022, by=2)) {
     min_date = as.Date(str_glue("{year}-03-01"))
     max_date = e_days[[as.character(year)]]
@@ -37,7 +37,9 @@ for (year in seq(2010, 2022, by=2)) {
                     adapt_delta=0.97, max_treedepth=11, refresh=400) |>
         suppressMessages()
 
-    draws <- as_draws_rvars(fit$draws())
+    keep_vars <- c("mu", "natl_dem", "bias", "lv_diff", "r_year", "r_year_shared",
+                   "r_firms", "m_herding", "sd_delta")
+    draws <- as_draws_rvars(fit$draws(keep_vars))
 
     d_natl <- summarize_natl(draws, election_date)
     plot_time(d_natl, natl_dem, election_date,
@@ -54,10 +56,10 @@ if (FALSE) {
 
     bayesplot::mcmc_trace(fit$draws("mu[1]"))
     bayesplot::mcmc_trace(fit$draws("r_year"))
-    bayesplot::mcmc_hist(fit$draws("r_year"), binwidth=0.002)
-    as_draws_rvars(fit$draws("r_year"))$r_year
+    bayesplot::mcmc_trace(fit$draws("r_year_shared"))
+    bayesplot::mcmc_pairs(fit$draws(c("r_year", "r_year_shared")))
     bayesplot::mcmc_trace(fit$draws("sd_delta"))
-    # bayesplot::mcmc_trace(fit$draws("m_herding[10]"))
+    bayesplot::mcmc_trace(fit$draws("bias"))
     bayesplot::mcmc_pairs(fit$draws(c("sd_delta", "delta[1]")))
     bayesplot::mcmc_pairs(fit$draws(c("delta[1]", "delta[2]")))
     bayesplot::mcmc_pairs(fit$draws(c("delta[1]", "r_year")))

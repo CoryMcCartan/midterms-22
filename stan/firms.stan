@@ -18,12 +18,13 @@ functions {
                               real intercept_sigma, vector b_sigma,
                               data array[] int firms, vector r_firms,
                               vector m_herding, vector r_sigma_firms,
-                              data array[] int years, vector r_years,
+                              data array[] int years, vector r_years, vector r_years_shared,
                               data array[] int types, vector r_types,
                               data vector not_lv, vector lv_diff) {
         int N = end - start + 1;
 
         vector[N] mu = bias + r_firms[firms[start:end]] +
+            r_years_shared[years[start:end]] +
             m_herding[firms[start:end]] .* r_years[years[start:end]] +
             r_types[types[start:end]] + lv_diff[years[start:end]] .* not_lv[start:end];
         vector[N] sigma = exp(
@@ -70,6 +71,7 @@ parameters {
     vector[N_firms] z_herding; // how much each firm is affected by the year ranef.
     vector[N_firms] z_sigma_firms;
     vector[N_years] z_years;
+    vector[N_years] z_years_shared;
     vector[N_types] z_types;
     vector[N_years] z_lv;
     // corresponding standard errors
@@ -77,6 +79,7 @@ parameters {
     real<lower=0> sd_herding;
     real<lower=0> sd_sigma_firms;
     real<lower=0> sd_years;
+    real<lower=0> sd_years_shared;
     real<lower=0> sd_types;
     real<lower=0> sd_lv;
 
@@ -87,9 +90,10 @@ parameters {
 
 transformed parameters {
     vector[N_firms] r_firms = 0.1*sd_firms * z_firms;
-    vector[N_firms] m_herding = exp(0.25*sd_herding * z_herding);
+    vector[N_firms] m_herding = 1 + 0.1*sd_herding * z_herding;
     vector[N_firms] r_sigma_firms = 0.1*sd_sigma_firms * z_sigma_firms;
     vector[N_years] r_years = 0.1*sd_years * z_years;
+    vector[N_years] r_years_shared = 0.1*sd_years_shared * z_years_shared;
     vector[N_types] r_types = 0.1*sd_types * z_types;
     vector[N_years] lv_diff = 0.1*sd_lv * z_lv;
 }
@@ -99,16 +103,18 @@ model {
         target += reduce_sum(partial_log_lik_lpmf, seq, grainsize,
                              Y, bias, Xc_sigma, intercept_sigma, b_sigma,
                              firms, r_firms, m_herding, r_sigma_firms,
-                             years, r_years, types, r_types, not_lv, lv_diff);
+                             years, r_years, r_years_shared,
+                             types, r_types, not_lv, lv_diff);
     }
 
     bias ~ student_t(3, 0, 0.05);
     intercept_sigma ~ student_t(3, 0, 1);
 
     sd_firms ~ student_t(3, 0, 1.0);
-    sd_herding ~ student_t(3, 0.0, 1.0);
+    sd_herding ~ gamma(5, 5/0.5);
     sd_sigma_firms ~ student_t(3, 0, 1.0);
     sd_years ~ student_t(3, 0, 1.0);
+    sd_years_shared ~ student_t(3, 0, 1.0);
     sd_types ~ student_t(3, 0, 1.0);
     sd_lv ~ student_t(3, 0, 1.0);
 
@@ -117,6 +123,7 @@ model {
     z_herding ~ std_normal();
     z_sigma_firms ~ std_normal();
     z_years ~ std_normal();
+    z_years_shared ~ std_normal();
     z_types ~ std_normal();
 }
 
