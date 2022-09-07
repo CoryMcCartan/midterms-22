@@ -61,8 +61,6 @@ make_stan_data_intent <- function(d_polls, year, min_date, max_date, election_da
         nu_delta = 5.0,
         prior_sd_delta_shape = 4.0,
         prior_sd_delta_loc = 3.0,
-        year_bound_low = -0.10,
-        year_bound_high = 1.00,
 
         prior_eday_loc = pred_fit$estimate["m"] * flip_pred,
         prior_eday_scale = pred_fit$estimate["s"],
@@ -79,14 +77,13 @@ make_stan_data_intent <- function(d_polls, year, min_date, max_date, election_da
         X_sigma = with(d_fit, cbind(log(n), sqrt(tte), not_lv)),
 
         prior_z_firms_loc = m_firms$loc$r_firms[firm_lookup],
-        prior_z_herding_loc = 1.00 * (m_firms$loc$m_herding[firm_lookup]), # regress these significantly
+        prior_z_herding_loc = 0.0 * log(m_firms$loc$m_herding[firm_lookup]), # regress these significantly
         prior_z_sigma_firms_loc = m_firms$loc$r_sigma_firms[firm_lookup],
         prior_z_types_loc = m_firms$loc$r_types,
 
         prior_z_firms_scale = m_firms$scale$r_firms[firm_lookup] * sqrt(2), # be slightly less confident
         # smaller to regularize multimodality
-        # prior_z_herding_scale = 1.0 * (m_firms$scale$m_herding / m_firms$loc$m_herding)[firm_lookup],
-        prior_z_herding_scale = 1.0 * m_firms$scale$m_herding[firm_lookup],
+        prior_z_herding_scale = 0.0 * (m_firms$scale$m_herding / m_firms$loc$m_herding)[firm_lookup],
         prior_z_sigma_firms_scale = m_firms$scale$r_sigma_firms[firm_lookup],
         prior_z_types_scale = m_firms$scale$r_types,
 
@@ -97,7 +94,7 @@ make_stan_data_intent <- function(d_polls, year, min_date, max_date, election_da
         prior_b_intercept_sigma_scale = m_firms$scale$b_sigma_intercept,
         prior_b_sigma_scale = m_firms$scale$b_sigma,
 
-        sd_firms = m_firms$loc$sd_firms,
+        sd_firms = m_firms$loc$sd_firms, # be slightly less confident,
         sd_herding = m_firms$loc$sd_herding,
         sd_sigma_firms = m_firms$loc$sd_sigma_firms,
         sd_types = m_firms$loc$sd_types,
