@@ -18,7 +18,7 @@ e_days = list(
     `2022` = as.Date("2022-11-08")
 )
 
-year = 2012
+year = 2020
 for (year in seq(2010, 2022, by=2)) {
     min_date = as.Date(str_glue("{year}-03-01"))
     max_date = e_days[[as.character(year)]]
@@ -31,7 +31,7 @@ for (year in seq(2010, 2022, by=2)) {
 
     stan_d = make_stan_data_intent(d_polls, year, min_date, max_date, election_date)
 
-    fit = sm$sample(stan_d, init=1, seed=5118,
+    fit = sm$sample(stan_d, init=0.1, seed=5118,
                     chains=4, parallel_chains=4,
                     iter_warmup=800, iter_sampling=1200,
                     adapt_delta=0.97, max_treedepth=11, refresh=400) |>
@@ -44,7 +44,7 @@ for (year in seq(2010, 2022, by=2)) {
               ylab="Democratic two-party national vote share",
               thin=if (year >= 2018) 4 else 7)
 
-    ggsave(here(str_glue("doc/intent_backtest_{year}.svg")), width=8, height=3)
+    ggsave(here(str_glue("doc/intent_backtest_{year}_herd.svg")), width=8, height=3)
 }
 
 # Diagnose ------

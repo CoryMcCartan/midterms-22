@@ -90,7 +90,7 @@ fit_firm_model <- function(pred_year=2022, refit=FALSE, save=FALSE,
     draws = as_draws_rvars(fit)
     draws[which(str_starts(names(draws), "z_"))] = NULL
     names(draws$r_firms) = firm_lookup[levels(d$firm_id)]
-    names(draws$m_herding) = names(draws$r_firms)
+    names(draws$m_herd) = names(draws$r_firms)
     names(draws$r_sigma_firms) = names(draws$r_firms)
     names(draws$r_years) = levels(d_fit$years)
     names(draws$lv_diff) = levels(d_fit$years)
@@ -108,14 +108,14 @@ fit_2010 = fit_firm_model(2018, eta=0.3)
 fit_2012 = fit_firm_model(2018, eta=0.3)
 fit_2014 = fit_firm_model(2018, eta=0.4)
 fit_2016 = fit_firm_model(2018, eta=0.4)
-fit_2018 = fit_firm_model(2018, eta=0.5)
+fit_2018 = fit_firm_model(2018, eta=0.4)
 fit_2020 = fit_firm_model(2020, eta=0.4)
 fit_2022 = fit_firm_model(2022, draws=10e3)
 
 save_fit <- function(fit) {
     name = deparse(substitute(fit))
     fit$draws = NULL
-    path = here(str_c("data/firms_", name, ".rds"))
+    path = here(str_c("data/firms_fit/firms_", name, ".rds"))
     write_rds(fit, path, compress="xz")
     invisible(path)
 }
@@ -137,6 +137,7 @@ pred_sigma = with(draws, exp(
 ))
 hyp_year_re = rvar_rng(rnorm, 1, 0, 0.1*draws$sd_years)
 hyp_lv_re = rvar_rng(rnorm, 1, 0, 0.1*draws$sd_lv)
+hyp_herd_re = rvar_rng(rnorm, length(draws$m_herd), draws$m_herd, 0.1*draws$sd_herd_yr)
 modal_type = count(d, firm_id, type) |>
     group_by(firm_id) |>
     arrange(firm_id, desc(n)) |>
@@ -145,9 +146,9 @@ modal_lv = count(d, firm_id, not_lv=1-is_lv) |>
     group_by(firm_id) |>
     arrange(firm_id, desc(n)) |>
     slice_head(n=1)
-pred_mean = with(draws, bias + r_firms + m_herding * hyp_year_re +
+pred_mean = with(draws, bias + r_firms + m_herd * hyp_year_re +
                      r_types[modal_type$type] + modal_lv$not_lv*hyp_lv_re)
-pred_err = rvar_rng(rnorm, length(fit_2022$draws$r_firms), pred_mean, pred_sigma)
+pred_err = rvar_rng(rnorm, length(draws$r_firms), pred_mean, pred_sigma)
 names(pred_err) = names(draws$r_firms)
 poll_counts <- count(d, firm=firm_id) |>
     mutate(firm = fit_2022$firms[firm])
@@ -158,7 +159,7 @@ d_firms = tibble(firm = names(draws$r_firms),
                  stdev = sd(pred_err) / 4,
                  sigma = median(pred_sigma) / 4,
                  rmse = sqrt(E(pred_err^2 / 16)),
-                 herding = E(draws$m_herding)) |>
+                 herd = E(draws$m_herd)) |>
     left_join(poll_counts, by="firm") |>
     arrange(rmse)
 

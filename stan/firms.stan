@@ -17,14 +17,19 @@ functions {
                               data vector Y, real bias, data matrix Xc_sigma,
                               real intercept_sigma, vector b_sigma,
                               data array[] int firms, vector r_firms,
-                              vector m_herding, vector r_sigma_firms,
+                              array[] vector m_herd_yr, vector r_sigma_firms,
                               data array[] int years, vector r_years,
                               data array[] int types, vector r_types,
                               data vector not_lv, vector lv_diff) {
         int N = end - start + 1;
 
+        vector[N] herd;
+        for (i in start:end) {
+            herd[i - start + 1] = 1 + m_herd_yr[years[i]][firms[i]];
+        }
+
         vector[N] mu = bias + r_firms[firms[start:end]] +
-            m_herding[firms[start:end]] .* r_years[years[start:end]] +
+            herd .* r_years[years[start:end]] +
             r_types[types[start:end]] + lv_diff[years[start:end]] .* not_lv[start:end];
         vector[N] sigma = exp(
             intercept_sigma + Xc_sigma[start:end] * b_sigma +
@@ -67,14 +72,18 @@ transformed data {
 
 parameters {
     vector[N_firms] z_firms;
-    vector[N_firms] z_herding; // how much each firm is affected by the year ranef.
     vector[N_firms] z_sigma_firms;
     vector[N_years] z_years;
     vector[N_types] z_types;
     vector[N_years] z_lv;
+    // how much each firm is affected by the year ranef.
+    vector[N_firms] z_herd; // average for firm
+    array[N_years] vector[N_firms] z_herd_yr; // by firm-year
+    real<lower=0> sd_herd; // scale for z_herd
+    vector<lower=0>[N_firms] sd_herd_yr; // variance by firm
+    real<lower=0> tau_herd_yr; // scale for sd_herd_yr
     // corresponding standard errors
     real<lower=0> sd_firms;
-    real<lower=0> sd_herding;
     real<lower=0> sd_sigma_firms;
     real<lower=0> sd_years;
     real<lower=0> sd_types;
@@ -87,18 +96,22 @@ parameters {
 
 transformed parameters {
     vector[N_firms] r_firms = 0.1*sd_firms * z_firms;
-    vector[N_firms] m_herding = exp(0.25*sd_herding * z_herding);
+    vector[N_firms] m_herd = 0.1 * sd_herd * z_herd;
+    array[N_years] vector[N_firms] m_herd_yr;
     vector[N_firms] r_sigma_firms = 0.1*sd_sigma_firms * z_sigma_firms;
     vector[N_years] r_years = 0.1*sd_years * z_years;
     vector[N_types] r_types = 0.1*sd_types * z_types;
     vector[N_years] lv_diff = 0.1*sd_lv * z_lv;
+    for (c in 1:N_years) {
+        m_herd_yr[c] = m_herd + 0.1*sd_herd_yr .* z_herd_yr[c];
+    }
 }
 
 model {
     if (!prior_only) {
         target += reduce_sum(partial_log_lik_lpmf, seq, grainsize,
                              Y, bias, Xc_sigma, intercept_sigma, b_sigma,
-                             firms, r_firms, m_herding, r_sigma_firms,
+                             firms, r_firms, m_herd_yr, r_sigma_firms,
                              years, r_years, types, r_types, not_lv, lv_diff);
     }
 
@@ -106,15 +119,21 @@ model {
     intercept_sigma ~ student_t(3, 0, 1);
 
     sd_firms ~ student_t(3, 0, 1.0);
-    sd_herding ~ student_t(3, 0.0, 1.0);
     sd_sigma_firms ~ student_t(3, 0, 1.0);
     sd_years ~ student_t(3, 0, 1.0);
     sd_types ~ student_t(3, 0, 1.0);
     sd_lv ~ student_t(3, 0, 1.0);
 
+    sd_herd ~ gamma(50, 50/2.0); // deviation of avg m across firms
+    sd_herd_yr ~ gamma(10, 10/tau_herd_yr); // deviation of m within firm across year
+    tau_herd_yr ~ gamma(50, 50/0.5); // average scale of within-firm deviations
+
     z_lv ~ std_normal();
     z_firms ~ std_normal();
-    z_herding ~ std_normal();
+    z_herd ~ std_normal();
+    for (c in 1:N_years) {
+        z_herd_yr[c] ~ std_normal();
+    }
     z_sigma_firms ~ std_normal();
     z_years ~ std_normal();
     z_types ~ std_normal();
