@@ -84,7 +84,7 @@ make_stan_data_intent <- function(d_polls, year, min_date, max_date, election_da
 
         prior_z_firms_scale = m_firms$scale$r_firms[firm_lookup],
         prior_z_sigma_firms_scale = m_firms$scale$r_sigma_firms[firm_lookup],
-        prior_z_herding_scale = m_firms$scale$m_herding[firm_lookup] * 1.1, # be slightly less confident
+        prior_z_herding_scale = m_firms$scale$m_herding[firm_lookup], # be slightly less confident
         prior_z_types_scale = m_firms$scale$r_types,
 
         prior_bias_loc = m_firms$loc$bias,

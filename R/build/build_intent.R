@@ -18,8 +18,9 @@ e_days = list(
     `2022` = as.Date("2022-11-08")
 )
 
-year = 2022
+year = 2018
 for (year in seq(2010, 2022, by=2)) {
+    if (year == 2018) next
     min_date = as.Date(str_glue("{year}-03-01"))
     max_date = e_days[[as.character(year)]]
     election_date = e_days[[as.character(year)]]
