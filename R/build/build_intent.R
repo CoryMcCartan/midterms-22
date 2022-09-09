@@ -18,7 +18,7 @@ e_days = list(
     `2022` = as.Date("2022-11-08")
 )
 
-year = 2014
+year = 2022
 for (year in seq(2010, 2022, by=2)) {
     min_date = as.Date(str_glue("{year}-03-01"))
     max_date = e_days[[as.character(year)]]

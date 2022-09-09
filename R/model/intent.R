@@ -60,7 +60,7 @@ make_stan_data_intent <- function(d_polls, year, min_date, max_date, election_da
 
         nu_delta = 5.0,
         prior_sd_delta_shape = 4.0,
-        prior_sd_delta_loc = 3.0,
+        prior_sd_delta_loc = 1.0,
         chol_years = chol(cor(cbind(m_firms$loc$r_years, m_firms$loc$r_years_shared)))[,2],
 
         prior_eday_loc = pred_fit$estimate["m"] * flip_pred,
