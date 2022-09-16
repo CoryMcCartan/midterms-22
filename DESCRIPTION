@@ -9,3 +9,25 @@ Imports:
     MASS,
     tidybayes,
     here
+suggests:
+    ggplot2,
+    patchwork,
+    wacolors,
+    geomtextpath,
+    ggrepel,
+    janitor,
+    MASS,
+    brms,
+    cmdstanr,
+    bayesplot,
+    yardstick,
+    sf,
+    rmarkdown,
+    readxl,
+    googlesheets4,
+    fredr,
+    curl,
+    censable,
+    alarmdata
+    
+    

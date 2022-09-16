@@ -74,9 +74,9 @@ if (FALSE) {
     # change formula
     p1 <- mcmc_plot(m1) + labs(title="Full data + midterm/dem_pres interaction")
     # subset
-    form2 <- linc_vote ~ lg_retire + inc_house + dem_pres + gdp_chg + lunemp + lg_approval
+    form2 <-  linc_vote ~ lg_retire + inc_house + dem_pres + gdp_chg + lunemp + lg_approval
     m2 <- drop_na(d, linc_vote_contest) |>
-        filter(midterm == 1) |>
+        filter(midterm == 0) |>
         brm(form2, data=_, prior=bprior,
             backend="cmdstan", cores=4, iter=2000, warmup=1000,
             control=list(adapt_delta=0.9995, refresh=1000))
@@ -124,14 +124,17 @@ if (FALSE) {
     plot_k + plot_k_fake +
         plot_annotation(title="One of these is the real data, one is simulated from the model")
 
-    m0 <- brm(form, data=drop_na(d, linc_vote_contest),
+    bprior2 <- prior(normal(0, 1), class=b)
+    m0 <- brm(form, data=drop_na(d, linc_vote_contest), prior=bprior2,
               backend="cmdstan", cores=4, iter=2000, warmup=1000,
               save_pars = save_pars(all=TRUE),
               control=list(adapt_delta=0.9995, refresh=1000))
 
 
     mcmc_plot(m, variable=c("b_gdp_chg", "b_lg_approval"), type="scatter")$data[, 1:2] |> cor()
-    mcmc_plot(m1, variable=c("b_gdp_chg", "b_lg_approval"), type="scatter")$data[, 1:2] |> cor()
+    mcmc_plot(m0, variable=c("b_gdp_chg", "b_lg_approval"), type="scatter")$data[, 1:2] |> cor()
+
+    loo_compare(loo(m, reloo=TRUE), loo(m0, reloo=TRUE))
 
     # sensitivity / leave-one-out
     d_pred = filter(d, year == 2022)
@@ -153,11 +156,49 @@ if (FALSE) {
 
     tibble(
         pred_full = posterior_predict(m, newdata=d_pred, ndraws=4000)[, 1],
-        pred_mid = posterior_predict(m3, newdata=d_pred, ndraws=4000)[, 1]
+        pred_mid = posterior_predict(m0, newdata=d_pred, ndraws=4000)[, 1]
     ) |>
     ggplot() +
         geom_vline(xintercept=0.5, lty="dashed") +
         geom_density(aes(plogis(pred_full)), adjust=1.3, fill="black", alpha=0.2) +
         geom_density(aes(plogis(pred_mid)), adjust=1.3, fill="blue", alpha=0.2) +
-        scale_x_continuous(labels=scales::percent)
+        geom_vline(aes(xintercept=plogis(linc_vote), color=as.factor(midterm)),
+                   alpha=0.5, data=d) +
+        scale_color_manual(values=c("blue", "black")) +
+        scale_x_continuous(labels=scales::percent) +
+        coord_cartesian(xlim=c(0.4, 0.6))
+
+
+    loo(log_lik(m)[, m$data$midterm==0], r_eff=looo$diagnostics$n_eff[m$data$midterm==0]/4000)$estimates
+    loo(log_lik(m)[, m$data$midterm==0], r_eff=looo$diagnostics$n_eff[m$data$midterm==0]/4000)$estimates
+    tibble(year = seq(2018, 1978, -4),
+           lpd_full = colMeans(log_lik(m)[, m$data$midterm==0]),
+           lpd_midonly = colMeans(log_lik(m2))) |>
+        write.csv(row.names=F,quote=F)
+
+    library(tidybayes)
+    gather_draws(m, `b_.+`, regex=T) |>
+    ggplot(aes(0.04 / .value, .variable)) +
+        geom_vline(xintercept=0) +
+        geom_vline(xintercept=1, lty='dashed') +
+        geom_vline(xintercept=-1, lty='dashed') +
+        stat_pointintervalh(color="#113377", .width=c(0.5, 0.8))
+
+    raw <- read_csv(here("data-raw/dfp/clean_us_house_district_results.csv.gz"), show_col_types=FALSE)
+
+    d_inc = raw |>
+        group_by(year) |>
+        summarize(inc_dem = sum(house_incumbent_party == "DEM", na.rm=TRUE) / n(),
+                  inc_rep = sum(house_incumbent_party == "GOP", na.rm=TRUE) / n())
+    d2 = left_join(d, d_inc, by="year") |>
+        mutate(inc_inc = if_else(dem_pres == 1, inc_dem, inc_rep),
+               inc_noinc = if_else(dem_pres == 0, inc_dem, inc_rep))
+
+
+    form4 <- linc_vote ~ lg_retire + midterm*(inc_house + dem_pres) + inc_inc + inc_noinc + gdp_chg + lunemp + lg_approval
+    m4 <- brm(form4, data=drop_na(d2, linc_vote_contest), prior=bprior,
+             backend="cmdstan", cores=4, iter=2000, warmup=1000,
+             save_pars = save_pars(all=TRUE),
+             control=list(adapt_delta=0.9995, refresh=1000))
+    mcmc_plot(m4)
 }

@@ -11,10 +11,10 @@ raw_generic = read_csv("https://projects.fivethirtyeight.com/polls/data/generic_
                         show_col_types=FALSE)
 raw_pres20 = read_csv("https://projects.fivethirtyeight.com/polls/data/president_polls_historical.csv",
                       show_col_types=FALSE)
-raw_pres16 = read_csv(here("data-raw/538/president_general_polls_2016.csv"),
+raw_pres16 = read_csv(here("data-raw/538/president_general_polls_2016.csv.gz"),
                       show_col_types=FALSE) |>
     suppressWarnings()
-raw_dfp = read_csv(here("data-raw/dfp/clean_us_house_electoral_generic_ballot_polling.csv"),
+raw_dfp = read_csv(here("data-raw/dfp/clean_us_house_electoral_generic_ballot_polling.csv.gz"),
                    show_col_types=FALSE) |>
     suppressWarnings()
 
