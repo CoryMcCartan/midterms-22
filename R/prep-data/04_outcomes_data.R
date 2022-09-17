@@ -112,7 +112,7 @@ d_pres <- read_csv(here("data-raw/medsl/1976-2020-president.csv"), show_col_type
                        ldem_pres_natl=log(29173222) - log(47168710)),
                 by="year")
 
-d_fund <- read_csv(here("data/fundamentals.csv"), show_col_types=FALSE) |>
+d_fund <- read_csv(here("data-raw/produced/fundamentals_basic.csv"), show_col_types=FALSE) |>
     transmute(year = year,
               ldem_gen = if_else(dem_pres == 1, linc_vote, -linc_vote))
 
@@ -183,34 +183,4 @@ d <- left_join(d, select(censable::stata, state=abb, region, division), by="stat
 
 
 write_csv(d, here("data-raw/produced/hist_house_races.csv.gz"))
-
-
-# not used currently
-if (!file.exists(path_areas <- here("data-raw/produced/district_areas.csv"))) {
-    get_distr_area <- function(year) {
-        cat(year, "\n")
-        cong_num = 1 + (year + 1 - 1789) / 2
-        url = str_glue("https://cdmaps.polisci.ucla.edu/shp/districts{str_pad(cong_num, 3, pad='0')}.zip")
-        path <- here(str_glue("data-raw/hist-boundaries/{basename(url)}"))
-        curl::curl_download(url, path)
-        unz_path <- here(dirname(path), cong_num)
-        unzip(path, exdir=unz_path)
-        shp <- read_sf(here(unz_path, "districtShapes"))
-        out <- tibble(
-            year = year,
-            state = map_chr(shp$STATENAME, censable::match_abb),
-            district = as.integer(shp$DISTRICT),
-            distr_area = as.numeric(st_area(st_transform(shp, 5070))) / 1609.34^2
-        )
-        unlink(path)
-        unlink(unz_path, recursive=TRUE)
-        out
-    }
-
-    distr_areas <- map_dfr(unique(d_hist$year), get_distr_area)
-    write_csv(distr_areas, path_areas)
-} else {
-    distr_areas <- read_csv(path_areas, show_col_types=FALSE)
-}
-
 

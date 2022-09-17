@@ -21,7 +21,7 @@ form = ldem_seat ~ inc_seat + inc_pres + ldem_pres_adj + polar + ldem_pred + lde
 pred_vars = attr(terms(form), "term.labels")
 
 d_imp <- d |>
-    filter(year >= 2008, year < 2022, unopp == 1) |>
+    filter(year < 2022, unopp == 1) |>
     mutate(ldem_pres_adj = ldem_pres - ldem_pres_natl,
            ldem_pred = ldem_pres_adj + ldem_gen,
            midterm = 1*(year %% 4 == 2),
@@ -31,11 +31,9 @@ d_imp <- d |>
 
 
 m_bart = bart2(form, data=d_fit, test=d_imp,
-               n.thin=10L, power=1.8, n.trees=300L, n.samples=2000L, keepTrees=TRUE)
+               n.thin=10L, n.trees=400L, n.samples=2000L, keepTrees=TRUE)
 
-res_bart = resid(m_bart)
-fit_bart = fitted(m_bart)
-yardstick::rsq_vec(fit_bart, d_fit$ldem_seat)
+cor(fitted(m_bart), d_fit$ldem_seat)^2 # R^2
 
 draws_pred = plogis(m_bart$yhat.test)
 dim(draws_pred) = c(prod(dim(draws_pred)[1:2]), nrow(d_imp))
@@ -55,11 +53,65 @@ d_uncont_skinny = d_imp |>
     mutate(winner = if_else(ldem_seat > 0, "dem", "gop")) |>
     select(i, year, state, district, inc_seat, winner)
 
+
+# rebuild generic ballot estimates and export
+
+d_fund <- read_csv(here("data-raw/produced/fundamentals_basic.csv"), show_col_types=FALSE)
+
+d_wgt_cont = d |>
+    group_by(year) |>
+    summarize(wgt_contest = (n() - sum(unopp)) / n())
+
+# uncontested seats by winning party and year
+d |>
+    filter(unopp == 1) |>
+    mutate(winner = if_else(ldem_seat > 0, "dem", "gop")) |>
+    group_by(year, winner) |>
+    summarize(value = n(), .groups="drop") |>
+    pivot_wider(names_from=winner) |>
+    select(year:gop) |>
+    print(n=25)
+
+d_uncont = left_join(d_uncont_skinny, d_pred, by="i") |>
+    group_by(year) |>
+    summarize(dem_uncont = mean(plogis(dem_seat.pred)))
+
+
+d_fund2 = d_fund |>
+    left_join(d_wgt_cont, by="year") |>
+    left_join(d_uncont, by="year") |>
+    left_join(distinct(d, year, polar), by="year") |>
+    mutate(dem_vote_contest = plogis((2*dem_pres - 1)*linc_vote_contest),
+           dem_vote_imp = wgt_contest*dem_vote_contest + (1-wgt_contest)*dem_uncont,
+           linc_vote_imp = (2*dem_pres - 1) * qlogis(dem_vote_imp))
+
+ggplot(d_fund2, aes(linc_vote, linc_vote_imp, label=year)) +
+    geom_abline(slope=1, color="red") +
+    geom_text(size=3)
+
+d_fund2 |>
+    select(year, linc_vote_imp, linc_vote, nomidterm=midterm,
+           inc_house, dem_pres, polar, gdp_chg:lg_approval, lg_retire) |>
+    mutate(across(where(is.numeric), round, 5)) |>
+    write_csv(here("data/fundamentals.csv"))
+
+d_ldem_gen = transmute(d_fund2, year=year, ldem_gen=qlogis(d_fund2$dem_vote_imp))
+
+d |>
+    select(-ldem_gen) |>
+    left_join(d_ldem_gen, by="year") |>
+    relocate(ldem_gen, .before=polar) |>
+    write_csv(here("data-raw/produced/hist_house_races.csv.gz"))
+
+# export for DFP
+
 left_join(d_uncont_skinny, d_pred, by="i") |>
+    filter(year >= 2008) |>
     select(-i) |>
 write_csv(here("data-raw/produced/hist_house_uncontested_impute_sum.csv"))
 
 left_join(d_uncont_skinny, d_mi, by="i") |>
+    filter(year >= 2008) |>
     select(-i) |>
     arrange(.imputation) |>
 write_csv(here("data-raw/produced/hist_house_uncontested_impute_multiple.csv.gz"))

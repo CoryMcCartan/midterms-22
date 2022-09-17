@@ -2,7 +2,7 @@ library(tidyverse)
 library(lubridate)
 library(here)
 
-d <- read_csv(here("data-raw/clean_potus_approval_1941_2022.csv"), show_col_types=FALSE) |>
+d <- read_csv(here("data-raw/dfp/clean_potus_approval_1941_2022.csv"), show_col_types=FALSE) |>
     drop_na()
 
 # get October data or latest available
@@ -18,4 +18,4 @@ d_elec <- d |>
     summarize(lg_approval = qlogis(mean(approval)),
               .groups="drop")
 
-write_csv(d_elec, here("data-raw/oct_pres_approval.csv"))
+write_csv(d_elec, here("data-raw/produced/oct_pres_approval.csv"))
