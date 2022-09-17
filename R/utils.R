@@ -13,7 +13,7 @@ plot_time <- function(d, qty, election_date, ylab=NULL, thin=1) {
         {if (yr != "2022" && deparse(substitute(qty)) == "natl_dem") {
             tmp <- read_csv(here("data/fundamentals.csv"), progress=FALSE, show_col_types=FALSE)
             idx = which(as.character(tmp$year) == yr)
-            y = plogis(tmp$linc_vote[idx] * (2*tmp$dem_pres[idx] - 1))
+            y = plogis(tmp$linc_vote_imp[idx] * (2*tmp$dem_pres[idx] - 1))
             geom_texthline(yintercept=y, label="Actual", linewidth=0.5,
                            hjust=0.8, vjust=-0.3, size=3, fontface="bold")
         }}  +

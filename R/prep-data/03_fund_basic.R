@@ -25,7 +25,7 @@ d <- d_hist |>
 
 d |>
     select(year, linc_vote_contest, linc_vote, lg_retire, midterm,
-           inc_house, dem_pres, gdp_chg, lunemp, lg_approval) |>
+           inc_house, dem_pres, gdp_chg, lunemp, cpi_chg, lg_approval) |>
     filter(year == 2022 | !is.na(linc_vote)) |>
     mutate(across(where(is.numeric), round, 5)) |>
     write_csv(here("data-raw/produced/fundamentals_basic.csv"))

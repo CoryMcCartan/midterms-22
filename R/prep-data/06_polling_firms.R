@@ -113,6 +113,8 @@ d_dfp = raw_dfp |>
               pop = factor(case_when(
                   poll_population == "U" ~ NA_character_,
                   poll_population == "A" ~ "a",
+                  poll_population == "R" ~ "rv",
+                  poll_population == "V" ~ "v",
                   TRUE ~ "lv"
               ), levels=c("lv", "v", "rv", "a")),
               n = coalesce(sample_size, 600),
@@ -123,6 +125,7 @@ if (interactive()) {
     match_dfp <- match_manual(d_dfp$firm, guess_types$firm)
     match_dfp["Public Opinion Strategies (POS)"] = "POS"
     match_dfp["Rasmussen Reports"] = "Rasmussen (Pulse Opinion Research)"
+    match_dfp["GQR"] = "Greenberg Quinlan Rosner"
     d_dfp$firm = match_dfp[d_dfp$firm]
 } else {
     m_dist = adist(d_dfp$firm, guess_types$firm)
@@ -149,7 +152,13 @@ filler_firm_ids = bind_rows(d_generic, d_pres20, d_pres16, d_dfp, d_hist_all) |>
     mutate(firm_id = coalesce(firm_id, 1:n()))
 
 
-act_results = distinct(d_hist_all, year, race, act)
+act_results = distinct(d_hist_all, year, race, act) |>
+    filter(race == "pres")
+
+d_fund = read_csv(here("data/fundamentals.csv"), show_col_types=FALSE) |>
+    transmute(year=year, race="house", act=linc_vote_imp*(2*dem_pres - 1)) |>
+    drop_na()
+act_results = bind_rows(act_results, d_fund)
 
 d = bind_rows(d_generic, d_pres20, d_pres16, d_dfp) |>
     inner_join(act_results, by=c("year", "race")) |>

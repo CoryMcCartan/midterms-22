@@ -38,12 +38,23 @@ graph TD
 
 ### Fundamentals model
 
-Bayesian linear regression of national two-way contested vote share for
-the incumbent president’s party on logit retirements; midterm, house,
-and presidential control indicators; GDP change over the past year, log
-unemployment rate; and logit presidential approval. Coefficients are
-given an [R2-D2 prior](https://arxiv.org/abs/2111.10718). [Data
-here](data/fundamentals.csv).
+The fundamentals model is Bayesian linear regression of national two-way
+vote share for the incumbent president’s party on logit retirements;
+house control (1 if incumbent president’s party controls the House), and
+presidential control (1 for a Dem. president); an economic indicator;
+logit presidential approval; and several interactions with polarization,
+measured as the correlation between House and presidential results in
+the previous election. The model is fit separately to presidential and
+midterm years. The economic indicator is the first principal component
+of three economic indicators: GDP change over the past year, log
+unemployment rate; and urban CPI change over the past year (inflation).
+The principal components are calculated only on data from 1948–2006 to
+allow the weights to be used in predictive models after 2008. To build
+national two-way vote share, we impute vote share for uncontested House
+races using a BART model fit on contested House elections from 1976 to
+2020. Coefficients are given an [R2-D2
+prior](https://arxiv.org/abs/2111.10718). The data are available
+[here](data/fundamentals.csv).
 
 **Parameter estimates:**
 <img src="doc/fund_model_est-1.svg" width="100%" />
@@ -85,16 +96,14 @@ to around 5,100 historical polling results.
 $$
 \begin{align*}
 y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
-\mu_i &= \beta_\mu + \alpha_{f[i]}^{(f)} + \alpha_{c[i]}^{(c')} + m_{f[i]}\alpha_{c[i]}^{(c)}
+\mu_i &= \beta_\mu + \alpha_{f[i]}^{(f)} + \alpha_{c[i]}^{(c)} +
         + \alpha_{u[i]}^{(u)} + \alpha_{c[i]}^{(v)}v[i] \\
 \sigma_i &= \exp(\beta_\sigma + x_i^\top\gamma_\sigma + \phi_{f[i]}^{(f)}) \\
 \alpha^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_f), \quad
-\alpha^{(c)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_c), \quad
-\alpha^{(c')} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_{c'}), \quad
+\alpha_{c}^{(c)} \stackrel{iid}{\sim} \mathcal{N}(\alpha_{c-1}^{(c)}, \tau^2_c), \quad
 \alpha^{(u)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_u), \quad
 \alpha^{(v)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_v)\\
-\log(m) &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_m), \quad
-\phi^{(f)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_\phi)
+\phi^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_\phi)
 \end{align*}
 $$
 
@@ -108,12 +117,12 @@ may be found in the [Stan model code](stan/firms.stan) and [fitting
 code](R/build/firms.R).
 
 We can simulate from the model to get *predictive* values of firm bias
-and variance in hypothetical election-day likely voter polls for a
-future election. These predictive values are the best way to evaluate
-each firm’s overall quality. A firm is better—that is, its polls contain
-more information about the race—if it has lower variance (std. dev.), a
-lower herding value, and bias closer to 0 (though this can be adjusted
-for).
+and variance in hypothetical election-day likely voter polls for the
+2022 election. These predictive values are the best way to evaluate each
+firm’s overall quality for this election. A firm is better—that is, its
+polls contain more information about the race—if it has lower variance
+(std. dev.), a lower herding value, and bias closer to 0 (though this
+will be adjusted for).
 
 **Summary of firm performance:**
 <img src="doc/firm_perf-1.svg" width="100%" />
@@ -127,14 +136,13 @@ related to the firm error model, above.
 $$
 \begin{align*}
 y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
-\mu_i &= x_{t[i]} + \beta_\mu + \alpha_{f[i]}^{(f)} + \alpha^{(c')} + m_{f[i]}\alpha^{(c)}
+\mu_i &= x_{t[i]} + \beta_\mu + \alpha_{f[i]}^{(f)} + \alpha^{(c)}
         + \alpha_{u[i]}^{(u)} + \alpha^{(v)}v[i] \\
 \sigma_i &= \exp(\beta_\sigma + x_i^\top\gamma_\sigma + \phi_{f[i]}^{(f)}) \\
 x_t &= x_{t-1} + \delta_t,\quad
 \delta_t \stackrel{iid}{\sim} \mathrm{t_5}(0, \sigma^2_\delta) \\
 \alpha^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_f), \quad
-\alpha^{(c)} \sim \mathcal{N}(0, \tau^2_c), \quad
-\alpha^{(c')} \sim \mathcal{N}(0, \tau^2_{c'}), \quad
+\alpha^{(c)} \sim \mathcal{N}(\alpha_{c_{old}}^{(c)}, \tau^2_c), \quad
 \alpha^{(u)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_u), \quad
 \alpha^{(v)} \sim \mathcal{N}(0, \tau^2_v)\\
 \phi^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_\phi),
@@ -155,20 +163,15 @@ effect of firms who release panel survey results daily. We also cap the
 number of polls from any one firm at 100 to further avoid biasing
 effects from imbalance (which is observed in historical back-testing).
 Firms with more than 100 polls have a subset of 100 selected at random
-for inference. <!--
-Compared to the firm intent model, we drop the herding variables $m$ since these cause identifiability problems.
---> Since the random effects $\alpha^{(c)}$ and $\alpha^{(v)}$ are
-unknown for this particular cycle, they are sampled from their
-predictive distributions. <!--
-To account for irreducible model uncertainty and shift over time, we manually increase uncertainty for several parameters: the bias $\beta_\mu$, and the firm bias uncertainty (i.e., the prior uncertainty on the actual levels of the firm random effects).
-We also regress the prior on $\beta_\mu$ by 40% towards zero.
-These adjustments are not fully defensible from a Bayesian perspective; however, they act conservatively on inferences and may be justified by fundamental model uncertainty.
---> Further details, including the weakly informative priors on all the
-parameters, may be found in the [Stan model code](stan/intent.stan),
-[fitting code](R/model/intent.R), and [diagnostic
-code](R/build/build_intent.R).
+for inference. Since the random effects $\alpha^{(c)}$ and
+$\alpha^{(v)}$ are unknown for this particular cycle, they are sampled
+from their predictive distributions. Further details, including the
+weakly informative priors on all the parameters, may be found in the
+[Stan model code](stan/intent.stan), [fitting code](R/model/intent.R),
+and [diagnostic code](R/build/build_intent.R).
 
-Estimates for the 2010–2020 cycle are shown below.
+Estimates for the 2010–2020 cycles, based only on previous years, are
+shown below.
 
 ![2010 intent estimates](doc/intent_backtest_2010.svg)
 

@@ -58,6 +58,7 @@ d_uncont_skinny = d_imp |>
 
 d_fund <- read_csv(here("data-raw/produced/fundamentals_basic.csv"), show_col_types=FALSE)
 
+
 d_wgt_cont = d |>
     group_by(year) |>
     summarize(wgt_contest = (n() - sum(unopp)) / n())

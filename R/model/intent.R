@@ -48,7 +48,8 @@ make_stan_data_intent <- function(d_polls, year, min_date, max_date, election_da
     firm_lookup[is.na(firm_lookup)] = length(known_firm_ids) + 1 # match to 'other'
 
     pred_fit = suppressWarnings(MASS::fitdistr(pred_fund, "t"))
-    inc_pres = list(`2018`="rep", `2020`="rep", `2022`="dem")[as.character(year)]
+    inc_pres = list(`2010`="dem", `2012`="dem", `2014`="dem", `2016`="dem",
+                    `2018`="rep", `2020`="rep", `2022`="dem")[as.character(year)]
     flip_pred = if (inc_pres == "dem") 1 else -1
 
     list(
@@ -61,7 +62,6 @@ make_stan_data_intent <- function(d_polls, year, min_date, max_date, election_da
         nu_delta = 5.0,
         prior_sd_delta_shape = 4.0,
         prior_sd_delta_loc = 1.0,
-        chol_years = chol(cor(cbind(m_firms$loc$r_years, m_firms$loc$r_years_shared)))[,2],
 
         prior_eday_loc = pred_fit$estimate["m"] * flip_pred,
         prior_eday_scale = pred_fit$estimate["s"],
@@ -79,27 +79,23 @@ make_stan_data_intent <- function(d_polls, year, min_date, max_date, election_da
 
         prior_z_firms_loc = m_firms$loc$r_firms[firm_lookup],
         prior_z_sigma_firms_loc = m_firms$loc$r_sigma_firms[firm_lookup],
-        prior_z_herding_loc = m_firms$loc$m_herding[firm_lookup],
         prior_z_types_loc = m_firms$loc$r_types,
 
         prior_z_firms_scale = m_firms$scale$r_firms[firm_lookup],
         prior_z_sigma_firms_scale = m_firms$scale$r_sigma_firms[firm_lookup],
-        prior_z_herding_scale = m_firms$scale$m_herding[firm_lookup], # be slightly less confident
         prior_z_types_scale = m_firms$scale$r_types,
 
-        prior_bias_loc = m_firms$loc$bias,
+        prior_bias_loc = m_firms$loc$bias + tail(m_firms$loc$r_years, 1), # add cuml year effect
         prior_b_intercept_sigma_loc = m_firms$loc$b_sigma_intercept,
         prior_b_sigma_loc = m_firms$loc$b_sigma,
-        prior_bias_scale = m_firms$scale$bias,
+        prior_bias_scale = sqrt(m_firms$scale$bias^2 + tail(m_firms$scale$r_years, 1)^2),
         prior_b_intercept_sigma_scale = m_firms$scale$b_sigma_intercept,
         prior_b_sigma_scale = m_firms$scale$b_sigma,
 
         sd_firms = m_firms$loc$sd_firms,
         sd_sigma_firms = m_firms$loc$sd_sigma_firms,
-        sd_herding = m_firms$loc$sd_herding,
         sd_types = m_firms$loc$sd_types,
-        sd_years = m_firms$loc$sd_years,
-        sd_years_shared = m_firms$loc$sd_years_shared,
+        sd_years = max(0.5, m_firms$loc$sd_years),
         sd_lv = m_firms$loc$sd_lv
     )
 }

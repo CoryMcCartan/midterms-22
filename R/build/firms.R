@@ -8,8 +8,7 @@ library(here)
 # also adjust types, and limit to firms with 10+ polls
 d <- read_csv(here("data-raw/produced/hist_polls_house_pres.csv"),
               show_col_types=FALSE) |>
-    mutate(type = case_when(year <= 2008 ~ "phone",
-                            year <= 2004 & is.na(type) ~ "phone",
+    mutate(type = case_when(year <= 2004 & is.na(type) ~ "phone",
                             TRUE ~ type),
            type = coalesce(type, "unknown"),
            firm_id = fct_lump_min(as.factor(firm_id), min=10, other_level="other")) |>
@@ -17,6 +16,7 @@ d <- read_csv(here("data-raw/produced/hist_polls_house_pres.csv"),
     slice_sample(prop=1, replace=FALSE) |>
     slice_head(n=100) |> # limit to max 100 per pollster to avoid 2016-2020 being too heavy
     ungroup()
+
 
 # Fit the model ----
 fit_firm_model <- function(pred_year=2022, refit=FALSE, save=FALSE,
@@ -91,9 +91,7 @@ fit_firm_model <- function(pred_year=2022, refit=FALSE, save=FALSE,
     draws[which(str_starts(names(draws), "z_"))] = NULL
     names(draws$r_firms) = firm_lookup[levels(d$firm_id)]
     names(draws$r_sigma_firms) = names(draws$r_firms)
-    names(draws$m_herding) = names(draws$r_firms)
     names(draws$r_years) = levels(d_fit$years)
-    names(draws$r_years_shared) = levels(d_fit$years)
     names(draws$lv_diff) = levels(d_fit$years)
     names(draws$r_types) = levels(d_fit$types)
 
@@ -137,7 +135,6 @@ pred_sigma = with(draws, exp(
         b_sigma[3] + r_sigma_firms
 ))
 hyp_year_re = rvar_rng(rnorm, 1, 0, 0.1*draws$sd_years)
-hyp_year_shared_re = rvar_rng(rnorm, 1, 0, 0.1*draws$sd_years_shared)
 hyp_lv_re = rvar_rng(rnorm, 1, 0, 0.1*draws$sd_lv)
 modal_type = count(d, firm_id, type) |>
     group_by(firm_id) |>
@@ -147,7 +144,7 @@ modal_lv = count(d, firm_id, not_lv=1-is_lv) |>
     group_by(firm_id) |>
     arrange(firm_id, desc(n)) |>
     slice_head(n=1)
-pred_mean = with(draws, bias + r_firms + m_herding*hyp_year_re + hyp_year_shared_re +
+pred_mean = with(draws, bias + r_firms + draws$r_years["2020"] +hyp_year_re +
                      r_types[modal_type$type] + modal_lv$not_lv*hyp_lv_re)
 pred_err = rvar_rng(rnorm, length(fit_2022$draws$r_firms), pred_mean, pred_sigma)
 names(pred_err) = names(draws$r_firms)
@@ -159,8 +156,7 @@ d_firms = tibble(firm = names(draws$r_firms),
                  bias = E(pred_err) / 4,
                  stdev = sd(pred_err) / 4,
                  sigma = median(pred_sigma) / 4,
-                 rmse = sqrt(E(pred_err^2 / 16)),
-                 herding = E(draws$m_herding)) |>
+                 rmse = sqrt(E(pred_err^2 / 16))) |>
     left_join(poll_counts, by="firm") |>
     arrange(rmse)
 
