@@ -79,6 +79,7 @@ parameters {
     real<lower=0> sd_lv;
 
     real bias; // global intercept
+    real<lower=0> rho; // AR1 strength
     real intercept_sigma;
     vector[K_sigma] b_sigma; // population-level effects
 }
@@ -86,9 +87,14 @@ parameters {
 transformed parameters {
     vector[N_firms] r_firms = 0.1*sd_firms * z_firms;
     vector[N_firms] r_sigma_firms = 0.1*sd_sigma_firms * z_sigma_firms;
-    vector[N_years] r_years = 0.1*sd_years * cumulative_sum(z_years);
     vector[N_types] r_types = 0.1*sd_types * z_types;
+    vector[N_years] r_years;
     vector[N_years] lv_diff = 0.1*sd_lv * z_lv;
+
+    r_years[1] = 0.1 * sd_years * z_years[1];
+    for (i in 2:N_years) {
+        r_years[i] = rho*r_years[i-1] + 0.1 * sd_years * z_years[i];
+    }
 }
 
 model {

@@ -100,10 +100,10 @@ y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
         + \alpha_{u[i]}^{(u)} + \alpha_{c[i]}^{(v)}v[i] \\
 \sigma_i &= \exp(\beta_\sigma + x_i^\top\gamma_\sigma + \phi_{f[i]}^{(f)}) \\
 \alpha^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_f), \quad
-\alpha_{c}^{(c)} \stackrel{iid}{\sim} \mathcal{N}(\alpha_{c-1}^{(c)}, \tau^2_c), \quad
 \alpha^{(u)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_u), \quad
 \alpha^{(v)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_v)\\
-\phi^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_\phi)
+\alpha_{c}^{(c)}& \sim \mathrm{AR1}(\rho), \quad
+\phi^{(f)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_\phi)
 \end{align*}
 $$
 
@@ -142,7 +142,7 @@ y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
 x_t &= x_{t-1} + \delta_t,\quad
 \delta_t \stackrel{iid}{\sim} \mathrm{t_5}(0, \sigma^2_\delta) \\
 \alpha^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_f), \quad
-\alpha^{(c)} \sim \mathcal{N}(\alpha_{c_{old}}^{(c)}, \tau^2_c), \quad
+\alpha^{(c)} \sim \mathcal{N}(\rho\alpha_{c_{old}}^{(c)}, \tau^2_c), \quad
 \alpha^{(u)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_u), \quad
 \alpha^{(v)} \sim \mathcal{N}(0, \tau^2_v)\\
 \phi^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_\phi),

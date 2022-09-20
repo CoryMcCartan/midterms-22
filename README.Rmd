@@ -132,10 +132,10 @@ y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
         + \alpha_{u[i]}^{(u)} + \alpha_{c[i]}^{(v)}v[i] \\
 \sigma_i &= \exp(\beta_\sigma + x_i^\top\gamma_\sigma + \phi_{f[i]}^{(f)}) \\
 \alpha^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_f), \quad
-\alpha_{c}^{(c)} \stackrel{iid}{\sim} \mathcal{N}(\alpha_{c-1}^{(c)}, \tau^2_c), \quad
 \alpha^{(u)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_u), \quad
 \alpha^{(v)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_v)\\
-\phi^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_\phi)
+\alpha_{c}^{(c)}& \sim \mathrm{AR1}(\rho), \quad
+\phi^{(f)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_\phi)
 \end{align*}
 $$
 
@@ -167,7 +167,6 @@ d_firms |>
            lab = str_replace(lab, regex_tidy, " "),
            lab = str_replace(lab, regex_tidy, " "),
            lab = suppressWarnings(abbreviate(lab, 8))) |>
-    # arrange(herding) |>
 ggplot(aes(bias, stdev, label=lab, size=n)) +
     geom_vline(xintercept=0, lty="dashed", size=0.3) +
     geom_textcontour(aes(bias, stdev, z=rmse, label=str_c("RMSE ", after_stat(level))),
@@ -178,7 +177,6 @@ ggplot(aes(bias, stdev, label=lab, size=n)) +
                   labels=label_number(scale=100, suffix="pp")) +
     scale_x_continuous("Bias (positive = favors Democrats)",
                        labels=label_number(scale=100, suffix="pp")) +
-    # scale_color_wa_c("puget", name="Herding", midpoint=1, reverse=T) +
     scale_size(range=c(1.5, 4), guide="none") +
     coord_cartesian(expand=FALSE) +
     theme_bw()
@@ -199,7 +197,7 @@ y_i &\sim \mathcal{N}(\mu_i, \sigma_i^2) \\
 x_t &= x_{t-1} + \delta_t,\quad
 \delta_t \stackrel{iid}{\sim} \mathrm{t_5}(0, \sigma^2_\delta) \\
 \alpha^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_f), \quad
-\alpha^{(c)} \sim \mathcal{N}(\alpha_{c_{old}}^{(c)}, \tau^2_c), \quad
+\alpha^{(c)} \sim \mathcal{N}(\rho\alpha_{c_{old}}^{(c)}, \tau^2_c), \quad
 \alpha^{(u)} \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_u), \quad
 \alpha^{(v)} \sim \mathcal{N}(0, \tau^2_v)\\
 \phi^{(f)} &\stackrel{iid}{\sim} \mathcal{N}(0, \tau^2_\phi),

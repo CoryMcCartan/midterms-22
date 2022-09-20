@@ -106,7 +106,7 @@ fit_firm_model <- function(pred_year=2022, refit=FALSE, save=FALSE,
 fit_2010 = fit_firm_model(2010, eta=0.4)
 fit_2012 = fit_firm_model(2012, eta=0.4)
 fit_2014 = fit_firm_model(2014, eta=0.4)
-fit_2016 = fit_firm_model(2016, eta=0.3)
+fit_2016 = fit_firm_model(2016, eta=0.4)
 fit_2018 = fit_firm_model(2018)
 fit_2020 = fit_firm_model(2020)
 fit_2022 = fit_firm_model(2022, draws=10e3)
@@ -144,7 +144,7 @@ modal_lv = count(d, firm_id, not_lv=1-is_lv) |>
     group_by(firm_id) |>
     arrange(firm_id, desc(n)) |>
     slice_head(n=1)
-pred_mean = with(draws, bias + r_firms + draws$r_years["2020"] +hyp_year_re +
+pred_mean = with(draws, bias + r_firms + draws$r_years["2020"]*draws$rho + hyp_year_re +
                      r_types[modal_type$type] + modal_lv$not_lv*hyp_lv_re)
 pred_err = rvar_rng(rnorm, length(fit_2022$draws$r_firms), pred_mean, pred_sigma)
 names(pred_err) = names(draws$r_firms)

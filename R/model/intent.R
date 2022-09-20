@@ -85,10 +85,10 @@ make_stan_data_intent <- function(d_polls, year, min_date, max_date, election_da
         prior_z_sigma_firms_scale = m_firms$scale$r_sigma_firms[firm_lookup],
         prior_z_types_scale = m_firms$scale$r_types,
 
-        prior_bias_loc = m_firms$loc$bias + tail(m_firms$loc$r_years, 1), # add cuml year effect
+        prior_bias_loc = m_firms$loc$bias + tail(m_firms$loc$r_years, 1)*m_firms$loc$rho, # add cuml year effect
         prior_b_intercept_sigma_loc = m_firms$loc$b_sigma_intercept,
         prior_b_sigma_loc = m_firms$loc$b_sigma,
-        prior_bias_scale = sqrt(m_firms$scale$bias^2 + tail(m_firms$scale$r_years, 1)^2),
+        prior_bias_scale = sqrt(m_firms$scale$bias^2 + (tail(m_firms$scale$r_years, 1)*m_firms$loc$rho)^2),
         prior_b_intercept_sigma_scale = m_firms$scale$b_sigma_intercept,
         prior_b_sigma_scale = m_firms$scale$b_sigma,
 
