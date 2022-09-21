@@ -2,7 +2,8 @@
 
 plot_time <- function(d, qty, election_date, ylab=NULL, thin=1) {
     yr <- strftime(election_date, "%Y")
-    ggplot(filter(d, day %% thin == 1), aes(date, {{ qty }})) +
+    ck = if (thin == 1) 0 else 1
+    ggplot(filter(d, day %% thin == ck), aes(date, {{ qty }})) +
         geom_hline(yintercept=0.5, lty="dashed") +
         geom_ribbon(aes(ymin=pmin(.lower, 0.5), ymax=pmin(.upper, 0.5),
                         group=.width), fill="#a020103a") +

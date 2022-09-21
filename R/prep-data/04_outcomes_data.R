@@ -33,7 +33,7 @@ d_22 <- read_csv(here("data-raw/dfp/house_candidates_2010_2022.csv"), show_col_t
               state = state_code,
               district = as.integer(str_sub(district, 4)),
               inc_seat = factor(if_else(dem_inc == 1, "dem",
-                                        if_else(gop_inc == 2, "rep", "open")),
+                                        if_else(gop_inc == 1, "gop", "open")),
                                 levels=c("dem", "open", "gop")),
               unopp = is.na(dem_candidate) | is.na(gop_candidate),
               ldem_seat = NA_real_)

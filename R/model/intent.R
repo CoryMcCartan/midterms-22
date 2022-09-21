@@ -17,10 +17,10 @@ build_stan_model <- function(recompile=FALSE, quiet=TRUE, optim=TRUE) {
     sm
 }
 
-summarize_natl <- function(draws, election_date) {
+summarize_natl <- function(draws, election_date, widths=c(0.6666, 0.9, 0.99)) {
     spread_draws(draws, natl_dem[day]) |>
         suppressWarnings() |>
-        point_interval(.width=c(0.6666, 0.9, 0.99)) |>
+        point_interval(.width=widths) |>
         select(-.point, -.interval) |>
         mutate(date = election_date + 1 - day)
 }
