@@ -34,6 +34,7 @@ A dynamic Bayesian model to forecast the 2022 U.S. House elections.
 each subdirectory contain more information.
 - Tracked, processed data are in [`data/`](data/); untracked and raw data are in
 [`data-raw/`](data-raw/).
+- Model outputs are in [`out/`](out/); files for this documentation page are in [`doc/`](doc/).
 
 ## Model structure and details
 
@@ -240,6 +241,8 @@ ldem_seat ~ inc_pres*midterm + (inc_seat + ldem_pres_adj + ldem_gen)^2 +
     
 sigma ~ polar + I(ldem_pres_adj^2)
 ```
+
+Here, `inc_pres` is the party of the incumbent president; `inc_seat` is the party of the seat's icumbent, or "open" if the seat is open; `ldem_pres_adj` is the logit last presidential result in the district, shifted back to a neutral national environment (i.e., subtracting off the national presidential result); `ldem_gen` is the logit generic ballot; `polar` meaures polarization as the lagged correlation between House and presidential results; `ldem_exp` is the logit share of campaign expenditures by the Democrat; and `exp_mis` codes whether expenditure data are missing for the race (as they unfortunately often are).
 
 The standard deviation of the year random effects is estimated around 0.05 (on the logit scale);
 the standard deviation of the division-year random effects is estimated around 0.04.
