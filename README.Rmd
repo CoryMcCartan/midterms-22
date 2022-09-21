@@ -235,9 +235,9 @@ The outcomes model maps district partisanship, the national environment, and oth
 We use a multilevel model with a student-t response, as described by the following (`brms`) model syntax:
 
 ```r
-ldem_seat ~ inc_pres*midterm + (inc_seat + ldem_pres_adj + ldem_gen)^2 +
-    polar * (ldem_pres_adj + region + ldem_exp + exp_mis) +
-    (1 | year) + (1 | division:year)
+ldem_seat ~ inc_pres*midterm + (polar + ldem_pres_adj + ldem_gen)^2 +
+    polar * (inc_seat + region + ldem_exp + exp_mis) - polar:ldem_gen - polar +
+    (1 + edu_o15 + suburban | year) + (1 | division:year)
     
 sigma ~ polar + I(ldem_pres_adj^2)
 ```
@@ -246,7 +246,7 @@ Here, `inc_pres` is the party of the incumbent president; `inc_seat` is the part
 
 The standard deviation of the year random effects is estimated around 0.05 (on the logit scale);
 the standard deviation of the division-year random effects is estimated around 0.04.
-The model is fit to all 3,075 contested House elections from 2008 to 2020.
+The model is fit to all 3,075 contested House elections from 2006 to 2020.
 Posterior summaries for all coefficients are shown below.
 The overall model $R^2$ is around 0.93.
 

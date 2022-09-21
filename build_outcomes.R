@@ -22,19 +22,20 @@ d_fit <- d |>
 
 # BRMS ------
 
-form = ldem_seat ~ inc_pres*midterm + (inc_seat + ldem_pres_adj + ldem_gen)^2 +
-    polar * (ldem_pres_adj + region + ldem_exp + exp_mis) +
-    (1 | year) + (1 | division:year)
-    # (0 + (age_u35 + edu_o15 + pov + suburban):ldem_pres_adj || year) +
+form = ldem_seat ~ inc_pres*midterm + (polar + ldem_pres_adj + ldem_gen)^2 +
+    polar * (inc_seat + region + ldem_exp + exp_mis) - polar:ldem_gen - polar +
+    (1 + edu_o15 + suburban | year) +
+    (1 | division:year)
 bprior = c(
-    prior(student_t(4, 0, 2), class=b),
-    prior(gamma(2, 2/0.04), class=sd, group="year"),
-    prior(gamma(1.5, 1.5/0.08), class=sd, group="division:year")
+    prior(student_t(5, 0, 1), class=b),
+    prior(gamma(2, 2/0.04), class=sd, group="division:year"),
+    prior(gamma(2, 2/0.08), class=sd, coef="Intercept", group="year"),
+    prior(gamma(5, 5/0.03), class=sd, group="year")
 )
 
 m = brm(bf(form, sigma ~ polar + I(ldem_pres_adj^2), decomp="QR"),
         data=d_fit, family=student(), prior=bprior,
-        threads=4, chains=2, backend="cmdstanr", normalize=FALSE,
+        threads=2, chains=4, backend="cmdstanr", normalize=FALSE,
         iter=1500, warmup=500, control=list(adapt_delta=0.99, step_size=0.05),
         file=here("stan/outcomes_m.rds"), file_refit="on_change",
         stan_model_args=list(stanc_options=list("O1")))
@@ -56,10 +57,6 @@ pp_check(m, "dens_overlay_grouped", group="year", ndraws=8, adjust=0.5, n_dens=2
 pp_check(m, "ecdf_overlay_grouped", group="year", ndraws=8, adjust=0.5, n_dens=256)
 pp_check(m, "loo_pit_qq", ndraws=50, size=0.2)
 pp_check(m, "stat_2d", stat=c(\(x) quantile(x, 0.75), \(x) quantile(x, 0.025)))
-mcmc_plot(m, type="pairs",
-          variable=c("b_polar", "b_ldem_pres_adj", "b_ldem_gen",
-                     "b_polar:ldem_pres_adj", "b_polar:ldem_gen", "Intercept"),
-          off_diag_args = list(size=0.5))
 # pp_check(m, "loo_intervals", ndraws=200)
 # pp_check(m, "error_scatter_avg_grouped", group="year", size=0.2)
 marg_plot = function(eff, pal="puget", which=1:15) {
@@ -73,7 +70,7 @@ marg_plot = function(eff, pal="puget", which=1:15) {
               legend.title=element_text(face="bold"))
 }
 marg_plot("ldem_pres_adj:polar") +
-    marg_plot("ldem_gen:polar") +
+    marg_plot("ldem_gen:ldem_pres_adj") +
     marg_plot("ldem_gen:inc_seat", "rainier", c(1, 3, 2)) +
     marg_plot("polar:inc_pres", "rainier", c(1, 3)) +
     marg_plot("polar:inc_seat", "rainier", c(1, 3, 2)) +

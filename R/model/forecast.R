@@ -22,6 +22,8 @@ option_list = list(
     make_option("--iter", type="integer", default=400,
                 help="Number of MCMC iterations for voter intent estimation per chain,
                     not including warmup iterations."),
+    make_option("--n_mix", type="integer", default=40,
+                help="Number of national intent draws to mix into the outcome model."),
     make_option("--chains", type="integer", default=4,
                 help="Number of MCMC chains for voter intent estimation."),
     make_option("--recompile", action="store_true", default=F,
@@ -98,7 +100,6 @@ cli_alert_success("Draws extracted.")
 # Predict outcomes -----
 cli_h1("Forecasting seat outcomes")
 
-m_outcomes = read_rds(here("stan/outcomes_m.rds"))
 d_house_22 = read_csv(here("data-raw/produced/hist_house_races.csv.gz"), show_col_types=FALSE) |>
     filter(year == 2022) |>
     mutate(ldem_pres_adj = ldem_pres - ldem_pres_natl,
@@ -117,10 +118,11 @@ d_house_unopp = d_house_22 |>
     mutate(pr_dem = if_else(inc_seat == "dem", 1, 1*(ldem_pres > ldem_pres_natl)))
 
 # mix the national intent and outcome draws
-N_mix_natl = 40 # how many draws from the national intent to use
+N_mix_natl = opt$n_mix # how many draws from the national intent to use
 pr_mix_natl = seq(0.5/N_mix_natl, 1, 1/N_mix_natl)
 mix_natl = quantile(draws_of(pred_natl)[, 1], probs=pr_mix_natl, names=FALSE) # evenly space natl draws (reduce var)
 
+m_outcomes = read_rds(here("stan/outcomes_m.rds"))
 N_outcomes = sum(m_outcomes$fit@sim$n_save)
 N_per_chunk = N_outcomes %/% N_mix_natl
 iter_grp = lapply(seq_len(N_mix_natl), \(i) (i-1)*N_per_chunk + seq_len(N_per_chunk))
@@ -158,11 +160,11 @@ d_pred_22 = bind_rows(
 
 out = list(
     s_prob = mean(pred_seats >= 218),
-    s_med = median(pred_seats),
-    s_q10 = quantile(pred_seats, 0.1),
-    s_q25 = quantile(pred_seats, 0.25),
-    s_q75 = quantile(pred_seats, 0.75),
-    s_q90 = quantile(pred_seats, 0.9),
+    s_med = round(median(pred_seats)),
+    s_q10 = round(quantile(pred_seats, 0.1)),
+    s_q25 = round(quantile(pred_seats, 0.25)),
+    s_q75 = round(quantile(pred_seats, 0.75)),
+    s_q90 = round(quantile(pred_seats, 0.9)),
     i_prob = E(pred_natl > 0),
     i_med = plogis(median(pred_natl)),
     i_q10 = plogis(quantile(pred_natl, 0.1)),
@@ -172,7 +174,7 @@ out = list(
 )
 
 tt_elec = round(elec_date - from_date)
-with(out, cat(str_glue("
+with(out, cat(str_glue("\n
  ===========================================
   2022 U.S. House Forecast
   {as.character(Sys.Date(), format='%B %d, %Y')}
@@ -190,26 +192,53 @@ with(out, cat(str_glue("
 \n\n")))
 system("osascript -e 'display notification \"Model run complete.\" with title \"House Model\"'")
 
-if (isTRUE(opts$dry)) quit(save="no", status=0)
+if (isTRUE(opt$dry)) quit(save="no", status=0)
 
-write_json(out, here("out/summary.json"), auto_unbox=TRUE, digits=5)
+# history
+if (file.exists(hist_path <- here("out/history.csv"))) {
+    d_hist = read_csv(hist_path, show_col_types=FALSE)
+} else {
+    d_hist = tibble()
+}
 
-d_pred_22 |>
-    mutate(across(where(is.numeric), round, digits=4)) |>
-write_csv(here("out/districts.csv"))
+d_hist = bind_rows(
+    d_hist,
+    mutate(as_tibble(out),
+           from_date = from_date,
+           timestamp = Sys.time(),
+           tte = as.integer(tt_elec),
+           version = hash_version(),
+           .before=everything())
+) |>
+    group_by(from_date) |>
+    arrange(desc(timestamp)) |>
+    slice_head(n=1) |>
+    arrange(from_date) |>
+    mutate(across(where(is.numeric), round, digits=5))
+write_csv(d_hist, hist_path)
 
-d_intent = summarize_natl(m_gcb$draws("natl_dem"), elec_date, c(0.5, 0.8)) |>
-    pivot_wider(names_from=.width, values_from=c(.lower, .upper)) |>
-    rename(q10 = .lower_0.8,
-           q25 = .lower_0.5,
-           q75 = .upper_0.5,
-           q90 = .upper_0.8) |>
-    mutate(across(where(is.numeric), round, digits=4))
-write_csv(d_intent, here("out/natl_intent.csv"))
+# other outputs
+if (from_date == Sys.Date()) {
+    write_json(out, here("out/summary.json"), auto_unbox=TRUE, digits=5)
 
-d_hist = tibble(dem_seats = 1:400,
-                pr = tabulate(pred_seats, nbins=400) / length(pred_seats)) |>
-    mutate(cdf = cumsum(pr))
-write_csv(d_hist, here("out/seats_hist.csv"))
+    d_pred_22 |>
+        mutate(across(where(is.numeric), round, digits=4)) |>
+    write_csv(here("out/districts.csv"))
+
+    d_intent = summarize_natl(m_gcb$draws("natl_dem"), elec_date, c(0.5, 0.8)) |>
+        pivot_wider(names_from=.width, values_from=c(.lower, .upper)) |>
+        rename(q10 = .lower_0.8,
+               q25 = .lower_0.5,
+               q75 = .upper_0.5,
+               q90 = .upper_0.8) |>
+        mutate(across(where(is.numeric), round, digits=4))
+    write_csv(d_intent, here("out/natl_intent.csv"))
+
+    tibble(dem_seats = 1:400,
+                    pr = 100*tabulate(pred_seats, nbins=400) / length(pred_seats)) |>
+        mutate(cdf = cumsum(pr/100),
+               across(where(is.numeric), round, digits=4)) |>
+        write_csv(here("out/seats_hist.csv"))
+}
 
 cli_alert_success("Forecast saved.")

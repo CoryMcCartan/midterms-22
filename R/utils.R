@@ -1,5 +1,14 @@
 # UTILITY FUNCTIONS
 
+hash_version <- function() {
+    files = c(
+        Sys.glob(here("R/model/*.R")),
+        Sys.glob(here("stan/*"))
+    )
+    hashes = lapply(files, rlang::hash_file)
+    str_sub(rlang::hash(hashes), 1, 8)
+}
+
 plot_time <- function(d, qty, election_date, ylab=NULL, thin=1) {
     yr <- strftime(election_date, "%Y")
     ck = if (thin == 1) 0 else 1
