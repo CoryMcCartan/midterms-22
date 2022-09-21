@@ -20,17 +20,6 @@ d_fit <- d |>
     # filter(unopp == 0, !is.infinite(ldem_seat), midterm == 1)
     filter(unopp == 0, !is.infinite(ldem_seat), year >= 2006)
 
-ggplot(d_fit, aes(ldem_pred, ldem_seat, color=year)) +
-    geom_point(size=0.4)
-
-ggplot(d_fit, aes(year, ldem_seat - ldem_pred, group=year)) +
-    geom_boxplot()
-
-filter(d, year==2022) |>
-    summarize(low = sum(ldem_pres - ldem_pres_natl + qlogis(0.46) > 0),
-              mid = sum(ldem_pres - ldem_pres_natl + qlogis(0.49)  > 0),
-              high = sum(ldem_pres - ldem_pres_natl + qlogis(0.52)  > 0))
-
 # BRMS ------
 
 form = ldem_seat ~ inc_pres*midterm + (inc_seat + ldem_pres_adj + ldem_gen)^2 +
@@ -50,15 +39,14 @@ m = brm(bf(form, sigma ~ polar + I(ldem_pres_adj^2), decomp="QR"),
         file=here("stan/outcomes_m.rds"), file_refit="on_change",
         stan_model_args=list(stanc_options=list("O1")))
 
-m0 = brm(bf(ldem_seat ~ polar * (inc_seat + inc_pres + ldem_pres_adj + ldem_gen),
-            sigma ~ polar*I(ldem_pres_adj^2), decomp="QR"),
-        data=d_fit, family=student(), prior=bprior,
-        threads=4, chains=2, backend="cmdstanr", normalize=FALSE,
-        iter=1500, warmup=700, control=list(adapt_delta=0.99, step_size=0.05),
-        file=here("stan/outcomes_m0.rds"), file_refit="on_change",
-        stan_model_args=list(stanc_options=list("O1")))
 
 summary(m)
+
+p = mcmc_plot(m, variable="b_[^s]", regex=TRUE) +
+    geom_vline(xintercept=0, lty="dashed") +
+    theme_bw() +
+    theme(axis.text.y=element_text(face="bold"))
+ggsave(here("doc/outcomes_model_ests.svg"), width=5, height=5)
 
 
 
@@ -105,3 +93,14 @@ qplot(ldem_pres, res, color=as.factor(year), data=d_fit, size=I(0.3)) +
     scale_color_wa_d("sound_sunset") +
     coord_cartesian(ylim=c(-1, 1))
 
+
+ggplot(d_fit, aes(ldem_pred, ldem_seat, color=year)) +
+    geom_point(size=0.4)
+
+ggplot(d_fit, aes(year, ldem_seat - ldem_pred, group=year)) +
+    geom_boxplot()
+
+filter(d, year==2022) |>
+    summarize(low = sum(ldem_pres - ldem_pres_natl + qlogis(0.46) > 0),
+              mid = sum(ldem_pres - ldem_pres_natl + qlogis(0.49)  > 0),
+              high = sum(ldem_pres - ldem_pres_natl + qlogis(0.52)  > 0))

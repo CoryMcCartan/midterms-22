@@ -186,3 +186,24 @@ shown below.
 ![2020 intent estimates](doc/intent_backtest_2020.svg)
 
 ### Outcomes model
+
+The outcomes model maps district partisanship, the national environment,
+and other district and national factors onto vote shares in each
+district. We use a multilevel model with a student-t response, as
+described by the following (`brms`) model syntax:
+
+``` r
+ldem_seat ~ inc_pres*midterm + (inc_seat + ldem_pres_adj + ldem_gen)^2 +
+    polar * (ldem_pres_adj + region + ldem_exp + exp_mis) +
+    (1 | year) + (1 | division:year)
+    
+sigma ~ polar + I(ldem_pres_adj^2)
+```
+
+The standard deviation of the year random effects is estimated around
+0.05 (on the logit scale); the standard deviation of the division-year
+random effects is estimated around 0.04. The model is fit to all 3,075
+contested House elections from 2008 to 2020. Posterior summaries for all
+coefficients are shown below. The overall model $R^2$ is around 0.93.
+
+![Outcome model summary](doc/outcomes_model_ests.svg)
