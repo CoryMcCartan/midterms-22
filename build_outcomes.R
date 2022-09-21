@@ -3,7 +3,6 @@ library(here)
 library(brms)
 library(patchwork)
 library(wacolors)
-# library(lme4)
 
 # Load data --------
 
@@ -13,30 +12,57 @@ d_fit <- d |>
     drop_na(ldem_gen) |>
     mutate(ldem_pres_adj = ldem_pres - ldem_pres_natl,
            ldem_pred = ldem_pres_adj + ldem_gen,
+           ldem_exp = log(dem_exp) - log(rep_exp),
+           exp_mis = 1*(is.na(ldem_exp) | is.infinite(ldem_exp)),
+           ldem_exp = if_else(exp_mis == 1, 0, ldem_exp),
            midterm = 1*(year %% 4 == 2),
            div_yr = str_c(division, "_", year)) |>
-    filter(unopp == 0, !is.infinite(ldem_seat), midterm == 1)
-    # filter(unopp == 0, !is.infinite(ldem_seat))
+    # filter(unopp == 0, !is.infinite(ldem_seat), midterm == 1)
+    filter(unopp == 0, !is.infinite(ldem_seat), year >= 2006)
 
 ggplot(d_fit, aes(ldem_pred, ldem_seat, color=year)) +
     geom_point(size=0.4)
 
+ggplot(d_fit, aes(year, ldem_seat - ldem_pred, group=year)) +
+    geom_boxplot()
+
+filter(d, year==2022) |>
+    summarize(low = sum(ldem_pres - ldem_pres_natl + qlogis(0.46) > 0),
+              mid = sum(ldem_pres - ldem_pres_natl + qlogis(0.49)  > 0),
+              high = sum(ldem_pres - ldem_pres_natl + qlogis(0.52)  > 0))
+
 # BRMS ------
 
-form = ldem_seat ~ (inc_seat + inc_pres + polar + ldem_pres_adj + ldem_gen)^3 +
-    region * (polar + ldem_pres_adj + ldem_gen) +
-    (0 + (age_u35 + edu_o15 + pov + suburban):ldem_pres_adj || year) +
-    (1 | division:year)
-bprior = prior(student_t(3, 0, 2), class=b)
+form = ldem_seat ~ inc_pres*midterm + (inc_seat + ldem_pres_adj + ldem_gen)^2 +
+    polar * (ldem_pres_adj + region + ldem_exp + exp_mis) +
+    (1 | year) + (1 | division:year)
+    # (0 + (age_u35 + edu_o15 + pov + suburban):ldem_pres_adj || year) +
+bprior = c(
+    prior(student_t(4, 0, 2), class=b),
+    prior(gamma(2, 2/0.04), class=sd, group="year"),
+    prior(gamma(1.5, 1.5/0.08), class=sd, group="division:year")
+)
 
-m = brm(bf(form, sigma ~ polar*I(ldem_pres_adj^2), nu ~ polar, decomp="QR"),
+m = brm(bf(form, sigma ~ polar + I(ldem_pres_adj^2), decomp="QR"),
         data=d_fit, family=student(), prior=bprior,
         threads=4, chains=2, backend="cmdstanr", normalize=FALSE,
-        iter=1500, warmup=700, control=list(adapt_delta=0.99, step_size=0.05),
+        iter=1500, warmup=500, control=list(adapt_delta=0.99, step_size=0.05),
         file=here("stan/outcomes_m.rds"), file_refit="on_change",
         stan_model_args=list(stanc_options=list("O1")))
 
+m0 = brm(bf(ldem_seat ~ polar * (inc_seat + inc_pres + ldem_pres_adj + ldem_gen),
+            sigma ~ polar*I(ldem_pres_adj^2), decomp="QR"),
+        data=d_fit, family=student(), prior=bprior,
+        threads=4, chains=2, backend="cmdstanr", normalize=FALSE,
+        iter=1500, warmup=700, control=list(adapt_delta=0.99, step_size=0.05),
+        file=here("stan/outcomes_m0.rds"), file_refit="on_change",
+        stan_model_args=list(stanc_options=list("O1")))
+
 summary(m)
+
+
+
+## CHECKS ------
 
 pp_check(m, "dens_overlay_grouped", group="year", ndraws=8, adjust=0.5, n_dens=256)
 pp_check(m, "ecdf_overlay_grouped", group="year", ndraws=8, adjust=0.5, n_dens=256)
@@ -64,7 +90,6 @@ marg_plot("ldem_pres_adj:polar") +
     marg_plot("polar:inc_pres", "rainier", c(1, 3)) +
     marg_plot("polar:inc_seat", "rainier", c(1, 3, 2)) +
     marg_plot("polar:region", "palouse") +
-    # marg_plot("ldem_gen:region") +
     plot_layout(guides="collect")
 
 pairs(cbind(
@@ -73,75 +98,10 @@ pairs(cbind(
 ), cex=0.4)
 ranef(m)$`division:year`
 
-looo = loo(m)
-
 res = resid(m)[,1]
-fit = loo_predict(m, psis_object=looo$psis_object)
 fit = fitted(m)[,1]
 qplot(ldem_pres, res, color=as.factor(year), data=d_fit, size=I(0.3)) +
     geom_smooth(method=lm, se=FALSE) +
     scale_color_wa_d("sound_sunset") +
     coord_cartesian(ylim=c(-1, 1))
 
-# BART --------
-
-library(dbarts)
-
-m_bart = rbart_vi(ldem_seat ~ inc_seat + inc_pres + ldem_pres_adj + polar + ldem_pred  +
-                      age_u35 + white + black + edu_o15 + pov + suburban + rural + division,
-                  group.by=div_yr, data=d_fit, n.thin=10L, n.samples=2000L, keepTrees=TRUE)
-
-res_bart = resid(m_bart)
-fit_bart = fitted(m_bart)
-
-yardstick::rsq_vec(fit, d_fit$ldem_seat)
-# yardstick::rsq_vec(fit1, d_fit$ldem_seat)
-yardstick::rsq_vec(fit_bart, d_fit$ldem_seat)
-
-plot(fit, d_fit$ldem_seat, cex=0.1); abline(a=0, b=1, col='red')
-# plot(fit1, d_fit$ldem_seat, cex=0.1); abline(a=0, b=1, col='red')
-plot(fit_bart, d_fit$ldem_seat, cex=0.1); abline(a=0, b=1, col='red')
-plot(loo_predict(m), d_fit$ldem_seat, cex=0.1); abline(a=0, b=1, col='red')
-
-
-# BART + ranef --------
-
-library(stan4bart)
-
-m_s4b = stan4bart(ldem_seat ~ polar*(ldem_pres_adj + ldem_gen) +
-                      bart(inc_seat + inc_pres + polar + ldem_pres_adj +
-                               ldem_pred + age_u35 + white + black +
-                               edu_o15 + pov + suburban) + (1 | division:year),
-                  data=d_fit)
-
-fit_s4b = fitted(m_s4b)
-res_s4b = d_fit$ldem_seat - fit_s4b
-
-sd(res)
-sd(res_bart)
-sd(res_s4b)
-yardstick::rsq_vec(fit_s4b, d_fit$ldem_seat)
-
-plot(fit_s4b, d_fit$ldem_seat, cex=0.1)
-qqnorm(res_s4b)
-
-# LMER --------
-library(lme4)
-
-form0 = ldem_seat ~ (inc_seat + inc_pres + polar + ldem_pres_adj + ldem_gen)^3 +
-    region * (polar + ldem_pres_adj + ldem_gen) +
-    (0 + (edu_o15 + pov + suburban):ldem_pres_adj || year) + (1 | division:year)
-
-m0 = lmer(form0, data=d_fit, control=lmerControl())
-yardstick::rsq_vec(fitted(m0), d_fit$ldem_seat)
-summary(m0)
-plot(fitted(m0), d_fit$ldem_seat, cex=0.1)
-qplot(fitted(m0), fit_bart, color = abs(res_s4b) - abs(resid(m0)), size=I(0.5)) +
-    scale_color_wa_c("vantage", midpoint=0)
-
-
-# VI
-m0 = brm(form, data=d_fit, family=student(), prior=bprior,
-         threads=4, chains=2, backend="cmdstanr", normalize=FALSE,
-         algorithm="meanfield", iter=30e3, tol_rel_obj=0.001, eta=0.1, adapt_engaged=FALSE,
-         stan_model_args=list(stanc_options=list("O1")))

@@ -79,7 +79,7 @@ parameters {
     real<lower=0> sd_lv;
 
     real bias; // global intercept
-    real<lower=0> rho; // AR1 strength
+    real<lower=0, upper=1> rho; // AR1 strength
     real intercept_sigma;
     vector[K_sigma] b_sigma; // population-level effects
 }

@@ -25,9 +25,11 @@ summarize_natl <- function(draws, election_date) {
         mutate(date = election_date + 1 - day)
 }
 
-make_stan_data_intent <- function(d_polls, year, min_date, max_date, election_date) {
+make_stan_data_intent <- function(d_polls, year, min_date, max_date, election_date, pred_fund=NULL) {
     m_firms <- read_rds(here(str_glue("data/firms_fit/firms_fit_{year}.rds")))
-    pred_fund <- read_rds(here(str_glue("data/fund_pred/fundamentals_pred_{year}.rds")))
+    if (is.null(pred_fund)) {
+        pred_fund <- read_rds(here(str_glue("data/fund_pred/fundamentals_pred_{year}.rds")))
+    }
 
     min_tte = as.integer(election_date - max_date)
     max_tte = as.integer(election_date - min_date)

@@ -7,9 +7,9 @@ suppressMessages({
     source(here("R/utils.R"))
 })
 
-load_polls <- function(year=2022, limit_per_firm=100) {
+load_polls <- function(year=2022, limit_per_firm=100, from_date=Sys.Date(), force=FALSE) {
     if (year >= 2018) {
-        out <- download_polls(year) |>
+        out <- download_polls(year, from_date) |>
             transmute(year = as.integer(cycle),
                       race = "house",
                       firm = pollster,
@@ -45,14 +45,48 @@ load_polls <- function(year=2022, limit_per_firm=100) {
         ungroup()
 }
 
-download_polls <- function(year=2022) {
-    current_year <- ceiling(year(Sys.Date()) / 2) * 2
-    if (year == current_year) {
-        url <- "https://projects.fivethirtyeight.com/polls/data/generic_ballot_polls.csv"
+download_polls <- function(year=2022, from_date=Sys.Date(), force=FALSE) {
+    path <- here("data-raw/raw_gcb_polls_cache.csv")
+
+    if (file.exists(path) && file.mtime(path) >= from_date && isFALSE(force)) {
+        read_csv(path, show_col_types=FALSE)
     } else {
-        url <- "https://projects.fivethirtyeight.com/polls/data/generic_ballot_polls_historical.csv"
+        current_year <- ceiling(year(Sys.Date()) / 2) * 2
+        if (year == current_year) {
+            url <- "https://projects.fivethirtyeight.com/polls/data/generic_ballot_polls.csv"
+        } else {
+            url <- "https://projects.fivethirtyeight.com/polls/data/generic_ballot_polls_historical.csv"
+        }
+
+        out = read_csv(url, show_col_types=FALSE) |>
+            filter(cycle == year)
+        write_csv(out, path)
+        out
+    }
+}
+
+get_latest_approval <- function(from_date=Sys.Date(), limit_per_firm=10, force=FALSE) {
+    path <- here("data-raw/raw_appr_polls_cache.csv")
+
+    if (file.exists(path) && file.mtime(path) >= from_date && isFALSE(force)) {
+        raw <- read_csv(path, show_col_types=FALSE)
+    } else {
+        url <- "https://projects.fivethirtyeight.com/biden-approval-data/approval_polllist.csv"
+        raw <- read_csv(url, show_col_types=FALSE) |>
+            filter(subgroup == "All polls")
+        write_csv(raw, path)
     }
 
-    read_csv(url, show_col_types=FALSE) |>
-        filter(cycle == year)
+    raw |>
+        mutate(startdate = mdy(startdate),
+               enddate = mdy(enddate),
+               approve = approve / 100,
+               date = startdate + 0.5*(enddate-startdate)) |>
+        filter(date >= from_date - 30) |>
+        group_by(date, pollster) |>
+        slice_sample(n=1) |>
+        group_by(pollster) |>
+        slice_head(n=limit_per_firm) |>
+        pull(approve) |>
+        mean()
 }

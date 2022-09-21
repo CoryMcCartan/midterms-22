@@ -229,3 +229,19 @@ Estimates for the 2010--2020 cycles, based only on previous years, are shown bel
 
 
 ### Outcomes model
+
+The outcomes model maps district partisanship, the national environment, and other district and national factors onto vote shares in each district.
+We use a multilevel model with a student-t response, as described by the following (`brms`) model syntax:
+
+```r
+ldem_seat ~ (inc_seat + inc_pres + polar + ldem_pres_adj + ldem_gen)^3 +
+    region * (polar + ldem_pres_adj + ldem_gen) +
+    (0 + (age_u35 + edu_o15 + pov + suburban):ldem_pres_adj || year) +
+    (1 | division:year)
+    
+sigma ~ polar*I(ldem_pres_adj^2)
+
+nu ~ polar
+```
+
+The 
