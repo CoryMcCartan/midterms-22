@@ -46,7 +46,7 @@ p = mcmc_plot(m, variable="b_[^s]", regex=TRUE) +
     geom_vline(xintercept=0, lty="dashed") +
     theme_bw() +
     theme(axis.text.y=element_text(face="bold"))
-ggsave(here("doc/outcomes_model_ests.svg"), width=5, height=5)
+ggsave(here("doc/outcomes_model_ests.svg"), width=7, height=6)
 
 
 
