@@ -197,7 +197,7 @@ described by the following (`brms`) model syntax:
 ``` r
 ldem_seat ~ inc_pres*midterm + (polar + ldem_pres_adj + ldem_gen)^2 +
     polar * (inc_seat + region + ldem_exp + exp_mis) - polar:ldem_gen - polar +
-    (1 + edu_o15 + suburban | year) + (1 | division:year)
+    (1 + edu_o15 + suburban | year) + (1 | division:year) + (1 | dem_cand) + (1 | rep_cand)
     
 sigma ~ polar + I(ldem_pres_adj^2)
 ```
@@ -209,9 +209,10 @@ shifted back to a neutral national environment (i.e., subtracting off
 the national presidential result); `ldem_gen` is the logit generic
 ballot; `polar` meaures polarization as the lagged correlation between
 House and presidential results; `ldem_exp` is the logit share of
-campaign expenditures by the Democrat; and `exp_mis` codes whether
+campaign expenditures by the Democrat; `exp_mis` codes whether
 expenditure data are missing for the race (as they unfortunately often
-are).
+are); and `dem_cand` and `rep_cand` are the Democratic and Republican
+candidates, respectively.
 
 The standard deviation of the year random effects is estimated around
 0.05 (on the logit scale); the standard deviation of the division-year

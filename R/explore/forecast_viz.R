@@ -1,8 +1,6 @@
 library(tidyverse)
 library(sf)
-library(jsonlite)
 library(ggredist)
-library(ggiraph)
 library(scales)
 library(here)
 
@@ -21,4 +19,4 @@ ggplot(aes(fill=pr_dem)) +
     guides(fill="none") +
     theme_void()
 
-ggsave("~/Desktop/seat_map_09-21.pdf", width=11, height=8)
+ggsave("~/Desktop/seat_map_09-22.pdf", width=11, height=8)

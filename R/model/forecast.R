@@ -102,7 +102,9 @@ cli_h1("Forecasting seat outcomes")
 
 d_house_22 = read_csv(here("data-raw/produced/hist_house_races.csv.gz"), show_col_types=FALSE) |>
     filter(year == 2022) |>
-    mutate(ldem_pres_adj = ldem_pres - ldem_pres_natl,
+    mutate(dem_cand = coalesce(str_c(state, ": ", dem_cand), "<other>"),
+           rep_cand = coalesce(str_c(state, ": ", rep_cand), "<other>"),
+           ldem_pres_adj = ldem_pres - ldem_pres_natl,
            inc_seat = coalesce(inc_seat, "open"),
            unopp = coalesce(unopp, 0)) |>
     rows_update(tibble(state="AK", district=1, inc_seat="dem"), by=c("state", "district"))
@@ -128,6 +130,7 @@ N_per_chunk = N_outcomes %/% N_mix_natl
 iter_grp = lapply(seq_len(N_mix_natl), \(i) (i-1)*N_per_chunk + seq_len(N_per_chunk))
 
 pb = cli_progress_along(1:N_mix_natl, name="Combining draws")
+set.seed(5118)
 m_pred = do.call(rbind, map(pb, function(i) {
     d_tmp = d_house_pred |>
         mutate(ldem_gen = mix_natl[i],

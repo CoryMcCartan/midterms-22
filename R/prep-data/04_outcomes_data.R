@@ -26,8 +26,7 @@ d_hist <- raw |>
 
 ## 2022 -----
 
-# currently missing AK, CO (1), LA (4), MA (1)
-d_22 <- read_csv(here("data-raw/dfp/house_candidates_2010_2022.csv"), show_col_types=FALSE) |>
+d_22 <- d_cand_raw |>
     filter(year == 2022) |>
     transmute(year = 2022L,
               state = state_code,
@@ -130,6 +129,62 @@ d_polar = d_hist |>
 d_hist <- d_hist |>
     left_join(d_polar, by="year")
 
+# Candidate names ------
+
+proc_name = function(x) {
+    x = x |>
+        str_replace_all("-", " ") |>
+        str_replace_all("(^|\\s+)[A-Z]($|\\s+)", " ") |>
+        str_remove_all(" (SR\\.?|JR\\.?|II|III|IV)") |>
+        str_squish()
+    fname = word(x, 1, 1)
+    lname = word(x, -1)
+    if_else(lname %in% c("SANCHEZ", "HERNANDEZ", "DAVIS", "ANDERSON"),
+        str_c(fname, " ", lname),
+        str_c(str_sub(fname, 1, 1), ". ", lname)
+    )
+}
+
+d_cand_raw <- read_csv(here("data-raw/dfp/house_candidates_2010_2022.csv"), show_col_types=FALSE)
+d_medsl_raw <- read_csv(here("data-raw/medsl/1976-2020-house.csv"), show_col_types=FALSE)
+
+d_medsl_names <- d_medsl_raw |>
+    group_by(year, state, district, party) |>
+    arrange(desc(candidatevotes)) |>
+    slice_head(n=1) |>
+    ungroup() |>
+    filter(str_starts(party, "(DEMOCRAT|REPUBLICAN)")) |>
+    transmute(year = year,
+              state = state_po,
+              district = as.integer(district),
+              district = if_else(district == 0, 1L, district),
+              party = str_to_lower(str_sub(party, 1, 3)),
+              candidate = proc_name(candidate)) |>
+    pivot_wider(names_from=party, values_from=candidate, names_glue="{party}_{.value}")
+
+d_cand_names <- d_cand_raw |>
+    separate(district, c(NA, "district"), sep="-") |>
+    transmute(year = year,
+              state = state_code,
+              district = as.integer(district),
+              dem_candidate = proc_name(dem_candidate),
+              rep_candidate = proc_name(gop_candidate))
+
+d_names = full_join(d_cand_names, d_medsl_names,
+                    by=c("state", "year", "district"), suffix=c("_dfp", "_medsl")) |>
+    mutate(dem_dist = coalesce(mapply(adist, dem_candidate_dfp, dem_candidate_medsl), 0),
+           rep_dist = coalesce(mapply(adist, rep_candidate_dfp, rep_candidate_medsl), 0),
+           dem_cand = case_when(dem_dist == 0 ~ coalesce(dem_candidate_dfp, dem_candidate_medsl),
+                                rep_dist == 0 & dem_dist < 5 ~ coalesce(dem_candidate_dfp, dem_candidate_medsl),
+                                TRUE ~ NA_character_),
+           rep_cand = case_when(rep_dist == 0 ~ coalesce(rep_candidate_dfp, rep_candidate_medsl),
+                                dem_dist == 0 & rep_dist < 5 ~ coalesce(rep_candidate_dfp, rep_candidate_medsl),
+                                TRUE ~ NA_character_)) |>
+    arrange(year) |>
+    select(year, state, district, dem_cand, rep_cand) |>
+    filter(!(is.na(dem_cand) & is.na(rep_cand)))
+
+
 # Historical demographics ---------
 raw <- read_csv(here("data-raw/ipums/nhgis0001_ts_nominal_state.csv"),
                 show_col_types=FALSE, comment="GIS Join Match Code")
@@ -178,8 +233,9 @@ d_demg <- left_join(d_demg, yr_lookup, by=c("year_start", "year_end")) |>
 
 d <- d_hist |>
     inner_join(d_demg, by=c("year", "state")) |>
-    filter(year >= 1976, state != "DC")
-d <- left_join(d, select(censable::stata, state=abb, region, division), by="state")
+    filter(year >= 1976, state != "DC") |>
+    left_join(d_names, by=c("year", "state", "district")) |>
+    left_join(select(censable::stata, state=abb, region, division), by="state")
 
 
 write_csv(d, here("data-raw/produced/hist_house_races.csv.gz"))

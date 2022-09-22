@@ -6,7 +6,13 @@ library(wacolors)
 
 # Load data --------
 
-d <- read_csv(here("data-raw/produced/hist_house_races.csv.gz"), show_col_types=FALSE)
+d <- read_csv(here("data-raw/produced/hist_house_races.csv.gz"), show_col_types=FALSE) |>
+    mutate(dem_cand = str_c(state, ": ", dem_cand),
+           dem_cand = coalesce(dem_cand, "<other>"),
+           dem_cand = fct_lump_min(dem_cand, min=2),
+           rep_cand = str_c(state, ": ", rep_cand),
+           rep_cand = coalesce(rep_cand, "<other>"),
+           rep_cand = fct_lump_min(rep_cand, min=2))
 
 d_fit <- d |>
     drop_na(ldem_gen) |>
@@ -17,20 +23,23 @@ d_fit <- d |>
            ldem_exp = if_else(exp_mis == 1, 0, ldem_exp),
            midterm = 1*(year %% 4 == 2),
            div_yr = str_c(division, "_", year)) |>
-    # filter(unopp == 0, !is.infinite(ldem_seat), midterm == 1)
-    filter(unopp == 0, !is.infinite(ldem_seat), year >= 2006)
+    filter(unopp == 0, !is.infinite(ldem_seat), year >= 2006) |>
+    mutate(dem_cand = fct_drop(dem_cand),
+           rep_cand = fct_drop(rep_cand))
 
 # BRMS ------
 
 form = ldem_seat ~ inc_pres*midterm + (polar + ldem_pres_adj + ldem_gen)^2 +
     polar * (inc_seat + region + ldem_exp + exp_mis) - polar:ldem_gen - polar +
     (1 + edu_o15 + suburban | year) +
-    (1 | division:year)
+    (1 | division:year) + (1 | dem_cand) + (1 | rep_cand)
 bprior = c(
     prior(student_t(5, 0, 1), class=b),
     prior(gamma(2, 2/0.04), class=sd, group="division:year"),
     prior(gamma(2, 2/0.08), class=sd, coef="Intercept", group="year"),
-    prior(gamma(5, 5/0.03), class=sd, group="year")
+    prior(gamma(5, 5/0.03), class=sd, group="year"),
+    prior(gamma(2, 2/0.05), class=sd, group="dem_cand"),
+    prior(gamma(2, 2/0.05), class=sd, group="rep_cand")
 )
 
 m = brm(bf(form, sigma ~ polar + I(ldem_pres_adj^2), decomp="QR"),
