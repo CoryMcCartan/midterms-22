@@ -1,0 +1,33 @@
+/*-- scss:variables --*/
+
+/*-- scss:rules --*/
+
+.dem {
+    color: #3D77BB;
+}
+.rep {
+    color: #B25D4C;
+}
+
+.banner {
+    background: $gray-300;
+    padding: 1.5rem 0.2rem 0.8rem;
+
+    p {
+        font-size: 1.6rem;
+        line-height: 1.1em;
+
+        margin: 0.2em 0 0.6em;
+    }
+
+    .updated {
+        color: $gray-600;
+        font-size: 0.7rem;
+        margin-top: 0;
+    }
+}
+
+#plot-hist {
+    overflow: visible;
+}
+

@@ -1,0 +1,165 @@
+---
+title: "2022 House Forecast"
+author: "Cory McCartan"
+format:
+    html:
+        minimal: true
+        theme:
+            - journal
+            - styles.scss
+output-file: index.html
+execute: 
+    echo: false
+    warning: false
+---
+
+```{ojs setup}
+//| include: false
+import { fmt_pct } from "./utils.js"
+d3 = require("d3")
+
+d_sum = FileAttachment("summary.json").json()
+geom_hex = FileAttachment("hex.json").json()
+d_history = FileAttachment("history.csv").csv({typed: true})
+d_hist = FileAttachment("seats_hist.csv").csv({typed: true})
+d_distr = FileAttachment("districts.csv").csv({typed: true})
+
+DARK_BLUE = "#0063B1"
+DARK_RED = "#A0442C"
+BLUE = "#3D77BB"
+RED = "#B25D4C"
+
+window.d3 = d3;
+window.d_sum = d_sum;
+```
+
+```{ojs}
+//| label: plot-hist
+//| column: screen
+{
+let exag_fac = 1 - Math.sqrt(width)/80;
+let last_elec = 222;
+let xmin = Math.max(Math.min(d_sum.s_q10*exag_fac, 218 - 10), 0)
+let xmax = Math.min(Math.max(d_sum.s_q90/exag_fac, 218 + 10), 435)
+let s_gain = "+" + Math.abs(222 - Math.round(d_sum.s_med));
+
+let text_shadow = function(text, opt) {
+    let opt2 = {...opt}
+    opt2.dx = opt2.dx + 3
+    opt2.dy = opt2.dy + 3
+    opt2.fill = "#0007"
+    return [Plot.text([text], opt2), Plot.text([text], opt)]
+}
+
+return Plot.plot({
+    x: {
+        domain: [xmin, xmax],
+        clamp: true,
+        inset: 10,
+        tickSize: 8,
+        reverse: true,
+    },
+    y: {
+        legend: false,
+        axis: null,
+        insetTop: 4,
+    },
+    color: {
+        legend: false,
+    },
+    marks: [
+        Plot.rectY(d_hist, {
+                x1: d => d.dem_seats - 0.56,
+                x2: d => d.dem_seats + 0.56,
+                y: "pr",
+                fill: d => d.dem_seats >= 218 ? BLUE : RED,
+            }),
+        Plot.ruleY([0]),
+        Plot.ruleY([0], {
+            dy: 2,
+            strokeWidth: 5,
+            x1: d_sum.s_q10,
+            x2: d_sum.s_q90,
+            color: "red",
+            }),
+        Plot.ruleX([222, d_sum.s_med]),
+        text_shadow(s_gain, { 
+            x: d_sum.s_med, dy: -48, dx: 3,
+            frameAnchor: "bottom", textAnchor: "start", lineAnchor: "bottom",
+            fill: "white", fontSize: 40, fontWeight: "bold",
+            }),
+        text_shadow("GAIN", { 
+            x: d_sum.s_med, dy: -42, dx: 5,
+            frameAnchor: "bottom", textAnchor: "start", lineAnchor: "top",
+            fill: "white", fontSize: 14, fontWeight: "bold",
+            }),
+        Plot.text(["← DEM. MAJORITY"], { 
+            x: 218, dy: -4, dx: -3,
+            frameAnchor: "bottom", textAnchor: "end",
+            fontWeight: "bold", fill: "#111",
+            }),
+        Plot.text(["REP. MAJORITY →"], { 
+            x: 218, dy: -4, dx: 3,
+            frameAnchor: "bottom", textAnchor: "start",
+            fontWeight: "bold", fill: "#111",
+            }),
+         Plot.text([last_elec + " LAST ELECTION"], { 
+            x: last_elec, dy: -4,
+            frameAnchor: "top", textAnchor: "middle", lineAnchor: "bottom",
+            fontWeight: "bold",
+            }),
+         Plot.text(["← DEM. SEATS"], { 
+            x: xmax, dy: -4 - (width < 600 ? 10 : 0), dx: 4,
+            frameAnchor: "bottom", textAnchor: "start",
+            fontWeight: "bold",
+            }),
+    ],
+    
+    width: width,
+    height: 240,
+    marginBottom: 0,
+    marginLeft: 0,
+    marginRight: 0,
+    
+    style: {
+        fontSize: 9,
+        color: "#444",
+        overflow: "visible",
+    }
+})
+}
+```
+
+::: {.banner}
+
+```{ojs}
+//| label: summary
+//| column: screen
+
+dem_lead = d_sum.s_prob > 0.5
+{
+    let win_party = dem_lead ? "Democrats" : "Republicans"
+    let win_class = dem_lead ? "dem" : "rep"
+    let min_seats = dem_lead ? d_sum.s_q10 : 435 - d_sum.s_q90
+    let max_seats = dem_lead ? d_sum.s_q90 : 435 - d_sum.s_q10
+    let phrase = dem_lead ? "maintaining" : "flipping"
+    let prob = dem_lead ? d_sum.s_prob : 1 - d_sum.s_prob
+    let timestamp = d_history[d_history.length-1].timestamp;
+    let date_fmt = timestamp.toLocaleString("en-US", { 
+            weekday: "long", 
+            month: "long", 
+            day: "numeric", 
+            hour: "numeric", 
+            minute: "numeric" })       
+
+    return md`
+The <b class="${win_class}">${win_party}</b> are expected to win
+**between ${min_seats} and ${max_seats} seats**.
+
+They have a **${fmt_pct(prob)} chance** of ${phrase} the House.
+
+<p class="updated">Last updated ${date_fmt}.</p>`;
+}
+```
+
+:::
