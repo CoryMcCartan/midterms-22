@@ -10,6 +10,8 @@ hash_version <- function() {
 }
 
 plot_time <- function(d, qty, election_date, ylab=NULL, thin=1) {
+    library(geomtextpath)
+
     yr <- strftime(election_date, "%Y")
     ck = if (thin == 1) 0 else 1
     ggplot(filter(d, day %% thin == ck), aes(date, {{ qty }})) +

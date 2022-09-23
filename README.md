@@ -15,8 +15,8 @@ A dynamic Bayesian model to forecast the 2022 U.S. House elections.
   files in each subdirectory contain more information.
 - Tracked, processed data are in [`data/`](data/); untracked and raw
   data are in [`data-raw/`](data-raw/).
-- Model outputs are in [`out/`](out/); files for this documentation page
-  are in [`doc/`](doc/).
+- Model outputs are in
+  [`docs`/`](docs/); files for this documentation page are in [`readme-`doc/`](readme-doc/).
 
 ## Model structure and details
 
@@ -59,10 +59,10 @@ prior](https://arxiv.org/abs/2111.10718). The data are available
 [here](data/fundamentals.csv).
 
 **Parameter estimates:**
-<img src="doc/fund_model_est-1.svg" width="100%" />
+<img src="readme-doc/fund_model_est-1.svg" width="100%" />
 
 **Fundamentals-only prediction for 2022:**
-<img src="doc/fund_model_pred-1.svg" width="100%" />
+<img src="readme-doc/fund_model_pred-1.svg" width="100%" />
 
 ### Firm error model
 
@@ -127,7 +127,7 @@ polls contain more information about the race—if it has lower variance
 will be adjusted for).
 
 **Summary of firm performance:**
-<img src="doc/firm_perf-1.svg" width="100%" />
+<img src="readme-doc/firm_perf-1.svg" width="100%" />
 
 ### National intent model
 
