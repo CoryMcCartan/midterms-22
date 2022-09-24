@@ -15,8 +15,8 @@ A dynamic Bayesian model to forecast the 2022 U.S. House elections.
   files in each subdirectory contain more information.
 - Tracked, processed data are in [`data/`](data/); untracked and raw
   data are in [`data-raw/`](data-raw/).
-- Model outputs are in
-  [`docs`/`](docs/); files for this documentation page are in [`readme-`doc/`](readme-doc/).
+- Model outputs are in [`docs`/](docs/); files for this documentation
+  page are in [`readme-doc/`](readme-doc/).
 
 ## Model structure and details
 
