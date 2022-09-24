@@ -26,6 +26,8 @@ d_hist <- raw |>
 
 ## 2022 -----
 
+d_cand_raw <- read_csv(here("data-raw/dfp/house_candidates_2010_2022.csv"), show_col_types=FALSE)
+
 d_22 <- d_cand_raw |>
     filter(year == 2022) |>
     transmute(year = 2022L,
@@ -45,6 +47,16 @@ d_pres_20 = map_dfr(state.abb, function(abbr) {
                       ldem_pres = log(150471) - log(261043)))
     }
     st_map = alarmdata::alarm_50state_map(abbr)
+
+    if (abbr == "GA") {
+        perm = c(5L, 11L, 4L, 7L, 6L, 9L, 10L, 2L, 3L, 1L, 8L, 12L, 14L, 13L)
+        st_map$cd_2020 = perm[st_map$cd_2020]
+    }
+    if (abbr == "IN") {
+        perm = c(1L, 2L, 3L, 5L, 4L, 7L, 6L, 9L, 8L)
+        st_map$cd_2020 = perm[st_map$cd_2020]
+    }
+
     if (!"pre_20_dem_bid" %in% colnames(st_map)) {
         st_map = select(st_map, GEOID, cd_2020, geometry) |>
             left_join(alarmdata::alarm_census_vest(abbr, geometry=FALSE),

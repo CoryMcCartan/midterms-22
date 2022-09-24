@@ -15,20 +15,36 @@ execute:
 
 ```{ojs setup}
 //| include: false
-import { fmt_pct } from "./utils.js"
+import { fmt_pct, rate, fmt_surname, AP } from "./utils.js"
 d3 = require("d3")
 
 d_sum = FileAttachment("summary.json").json()
 geom_hex = FileAttachment("hex.json").json()
 d_history = FileAttachment("history.csv").csv({typed: true})
+d_gcb = FileAttachment("natl_intent.csv").csv({typed: true})
 d_hist = FileAttachment("seats_hist.csv").csv({typed: true})
-d_distr_list = FileAttachment("districts.csv").csv({typed: true})
+d_distr_list = {
+    let raw = await FileAttachment("districts.csv").csv({typed: true});
+    return raw.map(d => {
+        d.name = AP[d.state] + " " + d.district;
+        d.interval = [d.dem_mean, d.dem_q10, d.dem_q25, d.dem_q75, d.dem_q90];
+        d.rating = rate(d.pr_dem);
+        d.dem_cand = fmt_surname(d.dem_cand);
+        d.rep_cand = fmt_surname(d.rep_cand);
+        d.search = {dem: "incumbent dem. ", open: "open seat ", gop: "incumbent rep. incumbent gop. "}[d.inc_seat] 
+                + ["contested ", "unopposed uncontested "][d.unopp];
+        return d;
+    })
+}
 d_distr = d3.index(d_distr_list, d => d.state, d => d.district)
 
 DARK_BLUE = "#0063B1"
 DARK_RED = "#A0442C"
 BLUE = "#3D77BB"
 RED = "#B25D4C"
+w_BODY = 796;
+SMALL = width < 600;
+elec_date = new Date("2022-11-08")
 
 color = {
     let midpt = "#fafffa";
@@ -41,18 +57,9 @@ color = {
     return x => x <= 0.5 ? color_gop(x) : color_dem(x);
 }
 
-window.AP = {AK: "Alaska", AL: "Ala.", AR: "Ark.", AZ: "Ariz.", CA: "Calif.", 
-    CO: "Colo.", CT: "Conn.", DC: "D.C.", DE: "Del.", FL: "Fla.", GA: "Ga.", 
-    HI: "Hawaii", IA: "Iowa", ID: "Idaho", IL: "Ill.", IN: "Ind.", KS: "Kan.", 
-    KY: "Ky.", LA: "La.", MA: "Mass.", MD: "Md.", ME: "Me.", MI: "Mich.", 
-    MN: "Minn.", MO: "Mo.", MS: "Miss.", MT: "Mont.", NC: "N.C.", ND: "N.D.", 
-    NE: "Neb.", NH: "N.H.", NJ: "N.J.", NM: "N.M.", NV: "Nev.", NY: "N.Y.", 
-    OH: "Ohio", OK: "Okla.", OR: "Ore.", PA: "Pa.", RI: "R.I.", SC: "S.C.", 
-    SD: "S.D.", TN: "Tenn.", TX: "Tex.", UT: "Utah", VA: "Va.", VT: "Vt.", 
-    WA: "Wash.", WI: "Wis.", WV: "W.Va.", WY: "Wyo."};
-
+window.Plot = Plot;
 window.d3 = d3;
-window.d_distr = d_distr;
+window.d_distr_list = d_distr_list;
 ```
 
 ```{ojs}
@@ -132,7 +139,7 @@ window.plot = Plot.plot({
             fontWeight: "bold",
             }),
          Plot.text(["← DEM. SEATS"], { 
-            x: xmax, dy: -4 - (width < 600 ? 10 : 0), dx: 4,
+            x: xmax, dy: -4 - (SMALL ? 10 : 0), dx: 4,
             frameAnchor: "bottom", textAnchor: "start",
             fontWeight: "bold",
             }),
@@ -193,16 +200,23 @@ They have a **${fmt_pct(prob)} chance** of ${phrase} the House.
 </div>
 -->
 
-# The House map {#map}
+## The House map {#map}
 
 :::{.column-screen}
 ```{ojs}
 //| label: plot-map
 {
-let distrs = topojson.feature(geom_hex, geom_hex.objects.foo).features
+let distrs = topojson.feature(geom_hex, geom_hex.objects.foo).features.map(d => {
+    d.match = d_distr.get(d.properties.state).get(d.properties.district);
+    d.flip = ((d.match.pr_dem > 0.5 && d.match.inc_seat == "gop") 
+                || (d.match.pr_dem < 0.5 && d.match.inc_seat == "dem"))
+            && (Math.abs(d.match.pr_dem - 0.5) > 0.1);
+    return d;
+})
     
 const w = 960;
 const h = w * 0.72;
+const GOLD = "#bc1";
 
 const svg = d3
     .create("svg")
@@ -221,10 +235,7 @@ let geom_distrs = svg
     .selectAll("path")
     .data(distrs)
     .enter().append("path")
-    .attr("fill", d => {
-      let match = d_distr.get(d.properties.state).get(d.properties.district);
-      return color(+match.pr_dem);
-    })
+    .attr("fill", d => color(d.match.pr_dem))
     .attr("stroke", "#111")
     .attr("stroke-width", 0.5)
     .attr("d", path);
@@ -235,8 +246,8 @@ let geom_distrs_hover = svg
     .selectAll("path")
     .data(distrs)
     .enter().append("path")
-    .attr("fill", "none")
-    .attr("stroke", "black")
+    .attr("fill", d => d.flip ? "url(#diagonalHatch)" : "none")
+    .attr("stroke", "#000")
     .attr("stroke-width", 0.0)
     .attr("d", path);    
 
@@ -249,29 +260,31 @@ let mmv = function(e, d) {
     if (mx < 60) mx = 60;
     if (mx > w - 160) mx = w - 160;
     
-    let state = d.properties.state;
-    let district = d.properties.district;
-    let match = d_distr.get(state).get(district);
-    let prob = match.pr_dem;
-    let party = prob > 0.5 ? "Democrat" : "Republican";
+    let prob = d.match.pr_dem;
+    let cand;
+    if (prob > 0.5) {
+        cand = d.match.dem_cand == "NA" ? "The Democrat" : d.match.dem_cand;
+    } else {
+        cand = d.match.rep_cand == "NA" ? "The Republican" : d.match.rep_cand;
+    }
     let inc = {
         dem: `<b style='color: ${DARK_BLUE}'>Dem.</b> incumbent`,
         gop: `<b style='color: ${DARK_RED}'>Rep.</b> incumbent`,
         open: "<b>Open</b> seat",
-    }[match.inc_seat]
+    }[d.match.inc_seat]
     let prob_text;
     let prob_color = prob > 0.5 ? DARK_BLUE : DARK_RED;
-    if (match.unopp == 1) {
-        prob_text = `The <b style="color: ${prob_color}">${party}</b>
+    if (d.match.unopp == 1) {
+        prob_text = `<b style="color: ${prob_color}">${cand}</b>
             is running unopposed and will win the seat.`
     } else {
-        prob_text = `The <b style="color: ${prob_color}">${party}</b> 
+        prob_text = `<b style="color: ${prob_color}">${cand}</b> 
             has a <b>${fmt_pct(prob > 0.5 ? prob : 1 - prob)}</b> chance of winning.`
     }
     
-    d3.select(this).style("stroke-width", 2.4);
+    d3.select(this).attr("stroke-width", 2.4);
     
-    let txt = `<h3>${window.AP[state]} ${district}</h3>
+    let txt = `<h3>${d.match.name}</h3>
         <p>${inc}</p>
         <div style="width: 100%; height: 1rem; margin: 4px 0; display: flex;">
         <div style="background: ${BLUE}; flex-basis: ${100*prob}%"></div>
@@ -288,7 +301,7 @@ let mmv = function(e, d) {
       .style("bottom", (h - my + 25)*svg_dim.height/h + "px");
 }
 let mout = function(d) {
-    geom_distrs_hover.style("stroke-width", "0");
+    geom_distrs_hover.attr("stroke-width", 0.0);
     tt.style("visibility", "hidden");
 }
 
@@ -302,9 +315,358 @@ return svg.node();
 ```
 :::
 
-# Public opinion over time {#gcb}
+## Public opinion over time {#gcb}
 
-# How the odds have changed {#history}
+```{ojs}
+//| label: plot-gcb
+plot_gcb = {
+    const ci_w = d_sum.i_q90 - d_sum.i_q10
+    const ymin = Math.max(Math.min(d_sum.i_med - 1*ci_w, 0.45), 0)
+    const ymax = Math.min(Math.max(d_sum.i_med + 1*ci_w, 0.52), 1)
+    const today = Math.min(elec_date, Date.now());
+    const days_til = (elec_date - today) / (24 * 3600 * 1000);
+    
+    return Plot.plot({
+        y: {
+            label: null,
+            domain: [ymin, ymax],
+            grid: true,
+            tickFormat: "%",
+            axis: "right",
+            ticks: 5,
+        },
+        x: {label: null},
+        
+        marks: [
+            Plot.areaY(d_gcb, {
+                    x: "date",
+                    y1: d => Math.max(d.q10, 0.5),
+                    y2: d => Math.max(d.q90, 0.5),
+                    fill: BLUE, opacity: 0.4,
+                }),
+            Plot.areaY(d_gcb, {
+                    x: "date",
+                    y1: d => Math.max(d.q25, 0.5),
+                    y2: d => Math.max(d.q75, 0.5),
+                    fill: BLUE, opacity: 0.4,
+                }),
+            Plot.areaY(d_gcb, {
+                    x: "date",
+                    y1: d => Math.min(d.q10, 0.5),
+                    y2: d => Math.min(d.q90, 0.5),
+                    fill: RED, opacity: 0.4,
+                }),
+            Plot.areaY(d_gcb, {
+                    x: "date",
+                    y1: d => Math.min(d.q25, 0.5),
+                    y2: d => Math.min(d.q75, 0.5),
+                    fill: RED, opacity: 0.4,
+                }),
+            Plot.line(d_gcb.filter(d => d.date <= today), 
+                    {x: "date", y: "natl_dem", strokeWidth: 3}),
+            Plot.line(d_gcb.filter(d => d.date >= today), 
+                    {x: "date", y: "natl_dem", strokeWidth: 3, 
+                    strokeDasharray: "4,3", strokeLinecap: "butt" }),
+            
+            Plot.ruleY([0.5], {stroke: "#0007"}),
+            Plot.rect([0], {
+                    x1: today, x2: elec_date, y1: ymin, y2: ymax,
+                    fill: "#fff7",
+                }),
+            Plot.ruleX([elec_date, today]),
+            
+            Plot.text([SMALL ? "Estimated Dem. vote" : "Estimated Democratic two-party vote"], { 
+                    x: d3.min(d_gcb, d => d.date), dy: -4,
+                    frameAnchor: "top", textAnchor: "start", lineAnchor: "bottom",
+                    fontWeight: "bold", fontSize: 15,
+                }),
+            Plot.text(["TODAY"], { 
+                    x: today, dy: -4,
+                    frameAnchor: "top", textAnchor: "middle", lineAnchor: "bottom",
+                    fontWeight: "bold",
+                }),
+            Plot.text([days_til > 20 + SMALL*30 ? "ELECTION DAY" : ""], { 
+                    x: elec_date, dy: -4,
+                    frameAnchor: "top", textAnchor: "middle", lineAnchor: "bottom",
+                    fontWeight: "bold",
+                }),
+            Plot.text([fmt_pct(d_sum.i_med, 1)], { 
+                    x: elec_date, y: d_sum.i_med, dy: -6, dx: -4,
+                    frameAnchor: "top", textAnchor: "end", lineAnchor: "bottom",
+                    fontWeight: "bold", fontSize: 15, fill: "#223",
+                }),
+        ],
+        
+        width: Math.min(w_BODY, width),
+        height: 300,
+        marginRight: 40,
+        
+        style: {
+        }
+    })
+}
+```
+
+
+## The 435 House races {#table}
+
+```{ojs}
+viewof search = Inputs.search(d_distr_list, {
+    label: "Districts:",
+    columns: ["name", "state", "inc_seat", "search", "rating", "dem_cand", "rep_cand"],
+    autocomplete: false,
+    width: Math.min(width, w_BODY),
+})
+```
+
+<p class="text-muted">
+You can search by district state, number, candidate, incumbency, rating, or contestedness.
+Try searching for "Pelosi", "WA 7," "open," "safe," "contested," "lean rep.," or "tossup" seats.
+</p>
+
+```{ojs}
+//| label: distr-tab
+tab_distr = {
+    window.search = search;
+    let fmt_inc = function(x) {
+        return html`<span style="color: ${{dem: DARK_BLUE, gop: DARK_RED, open: "black"}[x]}">
+            ${{dem: "Dem.", gop: "Rep.", open: "Open"}[x]}
+            </span>`
+    }
+    let fmt_part = function(x) {
+        if (x == "NA") {
+            return html`<span style="color: #777">&ndash;</span>`
+        } else {
+            let color = x > 0.5 ? DARK_BLUE : DARK_RED;
+            return html`<span style="color: ${color}">${fmt_pct(x, 1)}</span>`
+        }
+    }
+    let fmt_prob = function(x) {
+        let tcolor = Math.abs(x - 0.5) > 0.3 ? "#fffc" : "black";
+        return html`<div class="chip" style="background: ${color(x)}; color: ${tcolor}">
+            ${fmt_pct(x)}</div>`
+    }
+    
+    let xmin = d3.min(d_distr_list, d => d.dem_q10)
+    let xmax = d3.max(d_distr_list, d => d.dem_q90)
+    let avg = 50*(xmin + xmax);
+    let x = d3.scaleLinear().domain([xmax, xmin]).range([0, 100]);
+    let x_dem = d3.scaleLinear().domain([xmax, 0.5]).range([0, avg]).clamp(true);
+    let x_rep = d3.scaleLinear().domain([0.5, xmin]).range([avg, 100]).clamp(true);
+    let ici_d = BLUE + "bb";
+    let oci_d = BLUE + "77";
+    let ici_r = RED + "cc";
+    let oci_r = RED + "88";
+    let fmt_vs = function(int) {
+        if (int[0] == "NA") {
+            return html`<div style="text-align: center; color: #777">(Unopposed)</div>`
+        } else {
+            let gr = `linear-gradient(90deg, transparent 0%,
+               transparent ${x_dem(int[4])}%, ${oci_d} ${x_dem(int[4])}%, 
+               ${oci_d} ${x_dem(int[3])}%, ${ici_d} ${x_dem(int[3])}%,
+               ${ici_d} ${x_dem(int[2])}%, ${oci_d} ${x_dem(int[2])}%,
+               ${oci_d} ${x_dem(int[1])}%, transparent ${x_dem(int[1])}%,
+               transparent ${x_rep(int[4])}%,  ${oci_r} ${x_rep(int[4])}%, 
+               ${oci_r} ${x_rep(int[3])}%, ${ici_r} ${x_rep(int[3])}%,
+               ${ici_r} ${x_rep(int[2])}%, ${oci_r} ${x_rep(int[2])}%,
+               ${oci_r} ${x_rep(int[1])}%, transparent ${x_rep(int[1])}%,
+               transparent 100%)`;
+            return html`
+                <div class="est" style="background: ${gr}; 
+                    padding-left: calc(${x(int[0])}% - 6px);">
+                &#x25cf;&nbsp;${fmt_pct(int[0])}</div>
+                `;
+        }
+    }
+    let fmt_vs_tiny = function(int) {
+        if (int[0] == "NA") {
+            return html`<span style="color: #777">(Unopp.)</span>`
+        } else {
+            let color = int[0] > 0.5 ? DARK_BLUE : DARK_RED;
+            return html`<span style="color: ${color};">${fmt_pct(int[0], 1)}</span>`;
+        }
+    }
+    
+    let cols = ["name", "inc_seat", "pr_dem", "interval", "part_base", ];
+    let cols_small = ["name", "inc_seat", "pr_dem", "interval", ];
+    const tiny = width < 460;
+    
+    return Inputs.table(search, {
+        columns: SMALL ? cols_small : cols,
+        
+        header: {
+            name: "District",
+            inc_seat: tiny ? "Inc." : "Incumbent",
+            pr_dem: "Win prob.",
+            interval: tiny ? "Est. vote" : "Vote forecast",
+            part_base: "2020 pres.",
+        },
+        
+        format: {
+            inc_seat: fmt_inc,
+            pr_dem: fmt_prob,
+            interval: tiny ? fmt_vs_tiny : fmt_vs,
+            part_base: fmt_part,
+        },
+        
+        width: {
+            interval: 400,
+        },
+        maxWidth: w_BODY,
+        
+        rows: 30,
+        layout: "fixed",
+    })
+}
+```
+
+## How the odds have changed {#history}
+
+```{ojs}
+//| label: plot-prob
+plot_prob = {
+    const today = d3.max(d_history, d => d.from_date);
+    const days_til = (elec_date - today) / (24 * 3600 * 1000);
+    
+    return Plot.plot({
+        y: {
+            label: null,
+            domain: [0, 1],
+            grid: true,
+            tickFormat: "%",
+            axis: "right",
+            ticks: [0, 0.25, 0.5, 0.75, 1],
+            insetTop: 4,
+        },
+        x: {label: null},
+        
+        marks: [
+            Plot.line(d_history, {x: "from_date", y: "s_prob", strokeWidth: 3, stroke: BLUE}),
+            Plot.line(d_history, {x: "from_date", y: d => 1 - d.s_prob, strokeWidth: 3, stroke: RED}),
+            
+            Plot.ruleY([0.5], {stroke: "#0007"}),
+            Plot.ruleX([elec_date, today]),
+            
+            Plot.text([SMALL ? "Prob. of winning House" : "Probability of winning control"], { 
+                    x: d3.min(d_history, d => d.from_date), dy: -4,
+                    frameAnchor: "top", textAnchor: "start", lineAnchor: "bottom",
+                    fontWeight: "bold", fontSize: 15,
+                }),
+            Plot.text(["TODAY"], { 
+                    x: today, dy: -4,
+                    frameAnchor: "top", textAnchor: "middle", lineAnchor: "bottom",
+                    fontWeight: "bold",
+                }),
+            Plot.text([days_til > 20 + SMALL*30 ? "ELECTION DAY" : ""], { 
+                    x: elec_date, dy: -4,
+                    frameAnchor: "top", textAnchor: "middle", lineAnchor: "bottom",
+                    fontWeight: "bold",
+                }),
+            Plot.text([fmt_pct(d_sum.s_prob)], { 
+                    x: today, y: d_sum.s_prob, dy: -6, dx: 4,
+                    frameAnchor: "top", textAnchor: "start", 
+                    fontWeight: "bold", fontSize: 15, fill: BLUE, 
+                    stroke: "white", strokeWidth: 4,
+                }),
+            Plot.text([fmt_pct(1 - d_sum.s_prob)], { 
+                    x: today, y: 1 - d_sum.s_prob, dy: -6, dx: 4,
+                    frameAnchor: "top", textAnchor: "start", 
+                    fontWeight: "bold", fontSize: 15, fill: RED,
+                    stroke: "white", strokeWidth: 4,
+                }),
+        ],
+        
+        width: Math.min(w_BODY, width),
+        height: 300,
+        marginRight: 40,
+        
+        style: {
+        }
+    })
+}
+```
+
+```{ojs}
+//| label: plot-hist-seats
+plot_hist_seats = {
+    const today = d3.max(d_history, d => d.from_date);
+    const days_til = (elec_date - today) / (24 * 3600 * 1000);
+    const ymin = d3.min(d_history, d => d.s_q10) * 0.9;
+    const ymax = d3.max(d_history, d => d.s_q90) / 0.9;
+    
+    return Plot.plot({
+        y: {
+            label: null,
+            domain: [ymin, ymax],
+            grid: true,
+            axis: "right",
+            ticks: 5,
+            insetTop: 4,
+        },
+        x: {label: null},
+        
+        marks: [
+            Plot.areaY(d_history, {
+                    x: "from_date",
+                    y1: d => Math.max(d.s_q10, 217.5),
+                    y2: d => Math.max(d.s_q90, 217.5),
+                    fill: BLUE, opacity: 0.4,
+                }),
+            Plot.areaY(d_history, {
+                    x: "from_date",
+                    y1: d => Math.max(d.s_q25, 217.5),
+                    y2: d => Math.max(d.s_q75, 217.5),
+                    fill: BLUE, opacity: 0.4,
+                }),
+            Plot.areaY(d_history, {
+                    x: "from_date",
+                    y1: d => Math.min(d.s_q10, 217.5),
+                    y2: d => Math.min(d.s_q90, 217.5),
+                    fill: RED, opacity: 0.4,
+                }),
+            Plot.areaY(d_history, {
+                    x: "from_date",
+                    y1: d => Math.min(d.s_q25, 217.5),
+                    y2: d => Math.min(d.s_q75, 217.5),
+                    fill: RED, opacity: 0.4,
+                }),
+            Plot.line(d_history, {x: "from_date", y: "s_med", strokeWidth: 3}),
+            
+            Plot.ruleY([217.5], {stroke: "#0007"}),
+            Plot.ruleX([elec_date, today]),
+            
+            Plot.text([SMALL ? "Forecasted Dem. seats" : "Forecasted Democratic seats won"], { 
+                    x: d3.min(d_history, d => d.from_date), dy: -4,
+                    frameAnchor: "top", textAnchor: "start", lineAnchor: "bottom",
+                    fontWeight: "bold", fontSize: 15,
+                }),
+            Plot.text(["TODAY"], { 
+                    x: today, dy: -4,
+                    frameAnchor: "top", textAnchor: "middle", lineAnchor: "bottom",
+                    fontWeight: "bold",
+                }),
+            Plot.text([days_til > 20 + SMALL*30 ? "ELECTION DAY" : ""], { 
+                    x: elec_date, dy: -4,
+                    frameAnchor: "top", textAnchor: "middle", lineAnchor: "bottom",
+                    fontWeight: "bold",
+                }),
+            Plot.text([d_sum.s_med], { 
+                    x: today, y: d_sum.s_med, dy: -6, dx: 4,
+                    frameAnchor: "top", textAnchor: "start", 
+                    fontWeight: "bold", fontSize: 15, fill: "#223",
+                }),
+        ],
+        
+        width: Math.min(w_BODY, width),
+        height: 300,
+        marginRight: 40,
+        
+        style: {
+        }
+    })
+}
+```
+
 
 
 <hr style="margin: 2em 0" />
@@ -316,3 +678,13 @@ A detailed write-up of the model, along with code and data, are available [here]
 <p class="text-muted"><small>
 Data are courtesy of FiveThirtyEight, Data for Progress, VEST, the ALARM Project, Daily Kos Elections, the MIT Election Data + Science Lab, and IPUMS.
 </small></p>
+
+
+<svg height="10" width="10" xmlns="http://www.w3.org/2000/svg" version="1.1"> 
+<defs> 
+<pattern id="diagonalHatch" width="3" height="3" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+  <line x1="0" y1="0" x2="0" y2="3" style="stroke: #0105; stroke-width: 3;" />
+</pattern>
+</defs> 
+</svg>
+

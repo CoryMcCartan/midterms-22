@@ -5,7 +5,7 @@
 .dem {
     color: #3D77BB;
 }
-.rep {
+.rep, .gop {
     color: #B25D4C;
 }
 
@@ -75,4 +75,27 @@
             margin: 2px 0;
         }
     }
+}
+
+table {
+    .chip {
+        padding: 2px 3px;
+        text-align: center;
+        border-radius: 2px;
+    }
+
+    .est {
+        height: 1.5rem;
+        font-size: 10px;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+}
+
+#distr-tab table td {
+    overflow: visible;
+}
+
+input {
+    outline: none;
 }
