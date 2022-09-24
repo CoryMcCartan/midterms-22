@@ -5,7 +5,7 @@
 
 #### Cory McCartan
 
-<img src="doc/cover.jpg" alt="U.S. Capitol at sunset" style="width: 100%;">
+<img src="readme-doc/cover.jpg" alt="U.S. Capitol at sunset" style="width: 100%;">
 
 A dynamic Bayesian model to forecast the 2022 U.S. House elections.
 
@@ -175,17 +175,17 @@ and [diagnostic code](R/build/build_intent.R).
 Estimates for the 2010–2020 cycles, based only on previous years, are
 shown below.
 
-![2010 intent estimates](doc/intent_backtest_2010.svg)
+![2010 intent estimates](readme-doc/intent_backtest_2010.svg)
 
-![2012 intent estimates](doc/intent_backtest_2012.svg)
+![2012 intent estimates](readme-doc/intent_backtest_2012.svg)
 
-![2014 intent estimates](doc/intent_backtest_2014.svg)
+![2014 intent estimates](readme-doc/intent_backtest_2014.svg)
 
-![2016 intent estimates](doc/intent_backtest_2016.svg)
+![2016 intent estimates](readme-doc/intent_backtest_2016.svg)
 
-![2018 intent estimates](doc/intent_backtest_2018.svg)
+![2018 intent estimates](readme-doc/intent_backtest_2018.svg)
 
-![2020 intent estimates](doc/intent_backtest_2020.svg)
+![2020 intent estimates](readme-doc/intent_backtest_2020.svg)
 
 ### Outcomes model
 
@@ -220,4 +220,4 @@ random effects is estimated around 0.04. The model is fit to all 3,075
 contested House elections from 2006 to 2020. Posterior summaries for all
 coefficients are shown below. The overall model $R^2$ is around 0.93.
 
-![Outcome model summary](doc/outcomes_model_ests.svg)
+![Outcome model summary](readme-doc/outcomes_model_ests.svg)

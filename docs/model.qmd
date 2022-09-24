@@ -22,15 +22,37 @@ d_sum = FileAttachment("summary.json").json()
 geom_hex = FileAttachment("hex.json").json()
 d_history = FileAttachment("history.csv").csv({typed: true})
 d_hist = FileAttachment("seats_hist.csv").csv({typed: true})
-d_distr = FileAttachment("districts.csv").csv({typed: true})
+d_distr_list = FileAttachment("districts.csv").csv({typed: true})
+d_distr = d3.index(d_distr_list, d => d.state, d => d.district)
 
 DARK_BLUE = "#0063B1"
 DARK_RED = "#A0442C"
 BLUE = "#3D77BB"
 RED = "#B25D4C"
 
+color = {
+    let midpt = "#fafffa";
+    let color_dem = d3.scaleLinear()
+        .domain([0.5, 1.0])
+        .range([midpt, DARK_BLUE]);
+    let color_gop = d3.scaleLinear()
+        .domain([0.0, 0.5])
+        .range([DARK_RED, midpt]);
+    return x => x <= 0.5 ? color_gop(x) : color_dem(x);
+}
+
+window.AP = {AK: "Alaska", AL: "Ala.", AR: "Ark.", AZ: "Ariz.", CA: "Calif.", 
+    CO: "Colo.", CT: "Conn.", DC: "D.C.", DE: "Del.", FL: "Fla.", GA: "Ga.", 
+    HI: "Hawaii", IA: "Iowa", ID: "Idaho", IL: "Ill.", IN: "Ind.", KS: "Kan.", 
+    KY: "Ky.", LA: "La.", MA: "Mass.", MD: "Md.", ME: "Me.", MI: "Mich.", 
+    MN: "Minn.", MO: "Mo.", MS: "Miss.", MT: "Mont.", NC: "N.C.", ND: "N.D.", 
+    NE: "Neb.", NH: "N.H.", NJ: "N.J.", NM: "N.M.", NV: "Nev.", NY: "N.Y.", 
+    OH: "Ohio", OK: "Okla.", OR: "Ore.", PA: "Pa.", RI: "R.I.", SC: "S.C.", 
+    SD: "S.D.", TN: "Tenn.", TX: "Tex.", UT: "Utah", VA: "Va.", VT: "Vt.", 
+    WA: "Wash.", WI: "Wis.", WV: "W.Va.", WY: "Wyo."};
+
 window.d3 = d3;
-window.d_sum = d_sum;
+window.d_distr = d_distr;
 ```
 
 ```{ojs}
@@ -42,6 +64,7 @@ let last_elec = 222;
 let xmin = Math.max(Math.min(d_sum.s_q10*exag_fac, 218 - 10), 0)
 let xmax = Math.min(Math.max(d_sum.s_q90/exag_fac, 218 + 10), 435)
 let s_gain = "+" + Math.abs(222 - Math.round(d_sum.s_med));
+let overl = Math.max(0.58, 1 - Math.sqrt(width) / 80);
 
 let text_shadow = function(text, opt) {
     let opt2 = {...opt}
@@ -51,7 +74,7 @@ let text_shadow = function(text, opt) {
     return [Plot.text([text], opt2), Plot.text([text], opt)]
 }
 
-return Plot.plot({
+window.plot = Plot.plot({
     x: {
         domain: [xmin, xmax],
         clamp: true,
@@ -69,8 +92,8 @@ return Plot.plot({
     },
     marks: [
         Plot.rectY(d_hist, {
-                x1: d => d.dem_seats - 0.56,
-                x2: d => d.dem_seats + 0.56,
+                x1: d => d.dem_seats - overl,
+                x2: d => d.dem_seats + overl,
                 y: "pr",
                 fill: d => d.dem_seats >= 218 ? BLUE : RED,
             }),
@@ -94,12 +117,12 @@ return Plot.plot({
             fill: "white", fontSize: 14, fontWeight: "bold",
             }),
         Plot.text(["← DEM. MAJORITY"], { 
-            x: 218, dy: -4, dx: -3,
+            x: 217.5, dy: -4, dx: -3,
             frameAnchor: "bottom", textAnchor: "end",
             fontWeight: "bold", fill: "#111",
             }),
         Plot.text(["REP. MAJORITY →"], { 
-            x: 218, dy: -4, dx: 3,
+            x: 217.5, dy: -4, dx: 3,
             frameAnchor: "bottom", textAnchor: "start",
             fontWeight: "bold", fill: "#111",
             }),
@@ -127,11 +150,11 @@ return Plot.plot({
         overflow: "visible",
     }
 })
+return window.plot;
 }
 ```
 
 ::: {.banner}
-
 ```{ojs}
 //| label: summary
 //| column: screen
@@ -161,5 +184,135 @@ They have a **${fmt_pct(prob)} chance** of ${phrase} the House.
 <p class="updated">Last updated ${date_fmt}.</p>`;
 }
 ```
-
 :::
+
+<!--
+<div class="alert alert-dismissible alert-danger" style="margin-top: 1rem;">
+<strong>NEW</strong><br /><hr />
+<span style="color: black;">Look at this.</span>
+</div>
+-->
+
+# The House map {#map}
+
+:::{.column-screen}
+```{ojs}
+//| label: plot-map
+{
+let distrs = topojson.feature(geom_hex, geom_hex.objects.foo).features
+    
+const w = 960;
+const h = w * 0.72;
+
+const svg = d3
+    .create("svg")
+    .attr("viewBox", [0, 0, w, h])
+    .style("width", "100%")
+    .style("height", "auto");
+
+let proj = d3.geoAlbers()
+    .scale(0.9*w)
+    .translate([0.98*w/2, 0.91*h/2]);
+let path = d3.geoPath(proj);
+
+let geom_distrs = svg
+    .append("g")
+    .attr("class", "distrs")
+    .selectAll("path")
+    .data(distrs)
+    .enter().append("path")
+    .attr("fill", d => {
+      let match = d_distr.get(d.properties.state).get(d.properties.district);
+      return color(+match.pr_dem);
+    })
+    .attr("stroke", "#111")
+    .attr("stroke-width", 0.5)
+    .attr("d", path);
+
+let geom_distrs_hover = svg
+    .append("g")
+    .attr("class", "distrs")
+    .selectAll("path")
+    .data(distrs)
+    .enter().append("path")
+    .attr("fill", "none")
+    .attr("stroke", "black")
+    .attr("stroke-width", 0.0)
+    .attr("d", path);    
+
+let tt = d3.select("#plot-map").append("div")
+        .attr("class", "map-tooltip")
+        .style("visibility", "hidden");
+    
+let mmv = function(e, d) {
+    let [mx, my] = d3.pointer(e);
+    if (mx < 60) mx = 60;
+    if (mx > w - 160) mx = w - 160;
+    
+    let state = d.properties.state;
+    let district = d.properties.district;
+    let match = d_distr.get(state).get(district);
+    let prob = match.pr_dem;
+    let party = prob > 0.5 ? "Democrat" : "Republican";
+    let inc = {
+        dem: `<b style='color: ${DARK_BLUE}'>Dem.</b> incumbent`,
+        gop: `<b style='color: ${DARK_RED}'>Rep.</b> incumbent`,
+        open: "<b>Open</b> seat",
+    }[match.inc_seat]
+    let prob_text;
+    let prob_color = prob > 0.5 ? DARK_BLUE : DARK_RED;
+    if (match.unopp == 1) {
+        prob_text = `The <b style="color: ${prob_color}">${party}</b>
+            is running unopposed and will win the seat.`
+    } else {
+        prob_text = `The <b style="color: ${prob_color}">${party}</b> 
+            has a <b>${fmt_pct(prob > 0.5 ? prob : 1 - prob)}</b> chance of winning.`
+    }
+    
+    d3.select(this).style("stroke-width", 2.4);
+    
+    let txt = `<h3>${window.AP[state]} ${district}</h3>
+        <p>${inc}</p>
+        <div style="width: 100%; height: 1rem; margin: 4px 0; display: flex;">
+        <div style="background: ${BLUE}; flex-basis: ${100*prob}%"></div>
+        <div style="background: ${RED}; flex-basis: ${100 - 100*prob}%"></div>
+        </div>
+        <p>${prob_text}</p>
+        `;
+        
+    let svg_dim = svg.node().getBoundingClientRect();
+
+    tt.style("visibility", "visible")
+      .html(txt)
+      .style("left", (mx - 50)*svg_dim.width/w + "px")
+      .style("bottom", (h - my + 25)*svg_dim.height/h + "px");
+}
+let mout = function(d) {
+    geom_distrs_hover.style("stroke-width", "0");
+    tt.style("visibility", "hidden");
+}
+
+geom_distrs_hover.on("mousemove", mmv);
+geom_distrs_hover.on("touchmove", mmv);
+svg.on("mouseout", mout);
+svg.on("touchend", mout);
+
+return svg.node();
+}
+```
+:::
+
+# Public opinion over time {#gcb}
+
+# How the odds have changed {#history}
+
+
+<hr style="margin: 2em 0" />
+
+<p class="text-muted"><small>
+A detailed write-up of the model, along with code and data, are available [here](https://github.com/CoryMcCartan/midterms-22).
+</small></p>
+
+<p class="text-muted"><small>
+Data are courtesy of FiveThirtyEight, Data for Progress, VEST, the ALARM Project, Daily Kos Elections, the MIT Election Data + Science Lab, and IPUMS.
+</small></p>

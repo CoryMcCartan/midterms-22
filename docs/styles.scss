@@ -31,3 +31,48 @@
     overflow: visible;
 }
 
+#plot-map {
+    position: relative;
+    max-width: 1080px;
+    margin: -1rem auto 0;
+    overflow: visible;
+
+    svg {
+        display: block;
+
+        .distrs > path {
+            pointer-events: all;
+            cursor: pointer;
+        }
+    }
+
+    .map-tooltip {
+        position: absolute;
+        width: 200px;
+        padding: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: normal;
+        line-height: 1.1;
+        z-index: 20;
+        background: #ffffffd4;
+        border-radius: 2px;
+        border: 1px solid #0005;
+        backdrop-filter: blur(2px);
+
+        h3 {
+            margin: 0 0 4px;
+            padding: 0;
+            font-size: 1.2em;
+            display: inline;
+        }
+        h3 + p {
+            display: inline;
+            margin-left: 4px;
+            float: right;
+        }
+
+        p {
+            margin: 2px 0;
+        }
+    }
+}
