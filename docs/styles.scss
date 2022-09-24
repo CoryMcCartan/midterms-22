@@ -8,6 +8,12 @@
 .rep, .gop {
     color: #B25D4C;
 }
+.ddem {
+    color: #0063B1;
+}
+.drep {
+    color: #A0442C;
+}
 
 .banner {
     background: $gray-300;
@@ -79,9 +85,21 @@
 
 table {
     .chip {
-        padding: 2px 3px;
+        padding: 4px 4px;
         text-align: center;
         border-radius: 2px;
+        font-size: 0.75em;
+    }
+
+    .inc {
+        font-size: 0.85em;
+        text-transform: uppercase;
+    }
+
+    .cand {
+        font-size: 0.75em;
+        line-height: 1.15;
+        font-weight: 600;
     }
 
     .est {

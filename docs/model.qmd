@@ -34,6 +34,7 @@ d_distr_list = {
         d.rating = rate(d.pr_dem);
         d.dem_cand = fmt_surname(d.dem_cand);
         d.rep_cand = fmt_surname(d.rep_cand);
+        d.cands = [d.dem_cand, d.rep_cand, d.inc_seat];
         d.search = {dem: "incumbent dem. ", open: "open seat ", gop: "incumbent rep. incumbent gop. "}[d.inc_seat] 
                 + ["contested ", "unopposed uncontested "][d.unopp];
         return d;
@@ -262,8 +263,10 @@ let tt = d3.select("#plot-map").append("div")
     
 let mmv = function(e, d) {
     let [mx, my] = d3.pointer(e);
-    if (mx < 60) mx = 60;
-    if (mx > w - 160) mx = w - 160;
+    let svg_dim = svg.node().getBoundingClientRect();
+    let w_fac = svg_dim.width/w;
+    if (mx < 50/w_fac) mx = 50/w_fac;
+    if (mx > w - 190/w_fac) mx = w - 190/w_fac;
     
     let prob = d.match.pr_dem;
     let cand;
@@ -298,7 +301,7 @@ let mmv = function(e, d) {
         <p>${prob_text}</p>
         `;
         
-    let svg_dim = svg.node().getBoundingClientRect();
+    
 
     tt.style("visibility", "visible")
       .html(txt)
@@ -422,6 +425,9 @@ viewof search = Inputs.search(d_distr_list, {
     autocomplete: false,
     width: Math.min(width - 8, w_BODY),
 })
+
+md`Democrats are expected to win **${d3.sum(tab_distr, d => d.pr_dem).toFixed(1)}
+of the ${tab_distr.length}** districts selected below, on average.`
 ```
 
 <p class="text-muted">
@@ -431,10 +437,12 @@ Try searching for "Pelosi", "WA 7," "open," "safe," "contested," "lean rep.," or
 
 ```{ojs}
 //| label: distr-tab
-tab_distr = {
-    window.search = search;
+viewof tab_distr = {
+    let fmt_name = function(x) {
+        return html`<span style="font-weight: 500; font-size: ${small ? 0.85 : 1.0}em;">${x}</span>`
+    }
     let fmt_inc = function(x) {
-        return html`<span style="color: ${{dem: DARK_BLUE, gop: DARK_RED, open: "black"}[x]}">
+        return html`<span class="inc" style="color: ${{dem: DARK_BLUE, gop: DARK_RED, open: "black"}[x]}">
             ${{dem: "Dem.", gop: "Rep.", open: "Open"}[x]}
             </span>`
     }
@@ -464,7 +472,7 @@ tab_distr = {
     let oci_r = RED + "88";
     let fmt_vs = function(int) {
         if (int[0] == "NA") {
-            return html`<div style="text-align: center; color: #777">(Unopposed)</div>`
+            return html`<div style="text-align: center; color: #777; font-size: 0.85em;">(Unopposed)</div>`
         } else {
             let gr = `linear-gradient(90deg, transparent 0%,
                transparent ${x_dem(int[4])}%, ${oci_d} ${x_dem(int[4])}%, 
@@ -485,31 +493,51 @@ tab_distr = {
     }
     let fmt_vs_tiny = function(int) {
         if (int[0] == "NA") {
-            return html`<span style="color: #777">(Unopp.)</span>`
+            return html`<span style="color: #777; font-size: 0.85em;">(Unopp.)</span>`
         } else {
             let color = int[0] > 0.5 ? DARK_BLUE : DARK_RED;
             return html`<span style="color: ${color};">${fmt_pct(int[0], 1)}</span>`;
         }
     }
     
-    let cols = ["name", "inc_seat", "pr_dem", "interval", "part_base", ];
-    let cols_small = ["name", "inc_seat", "pr_dem", "interval", ];
-    const tiny = width < 460;
+    let fmt_cands = function(x) {
+        let na_html = "<span style='color: #777'>&ndash;</span>";
+        let d_cand = x[0] == "NA" ? na_html : x[0];
+        let r_cand = x[1] == "NA" ? na_html : x[1];
+        if (SMALL) {
+            if (x[2] == "dem") {
+                d_cand += "*"
+            } else if (x[2] == "rep") {
+                r_cand += "*"
+            }
+        }
+        return html`<div class="ddem cand">${d_cand}</div>
+        <div class="drep cand">${r_cand}</div>`
+    }
+    
+    let cols = ["name", "cands", "inc_seat", "pr_dem", "interval", "part_base", ];
+    let cols_small = ["name", "cands", "pr_dem", "interval", "part_base", ];
+    let cols_tiny = ["name", "cands", "pr_dem", "interval", ];
+    const tiny = width < 496;
+    const small = width < 650
     
     return Inputs.table(search, {
-        columns: SMALL ? cols_small : cols,
+        columns: small ? (tiny ? cols_tiny : cols_small) : cols,
         
         header: {
-            name: "District",
-            inc_seat: tiny ? "Inc." : "Incumbent",
-            pr_dem: "Win prob.",
-            interval: tiny ? "Est. vote" : "Vote forecast",
-            part_base: "2020 pres.",
+            name: small ? "Distr." : "District",
+            inc_seat: "Inc.",
+            cands: "Candidates",
+            pr_dem: small ? "Prob." : "Win prob.",
+            interval: small ? "Est. vote" : "Vote forecast",
+            part_base: small ? "2020" : "2020 pres.",
         },
         
         format: {
+            name: fmt_name,
             inc_seat: fmt_inc,
             pr_dem: fmt_prob,
+            cands: fmt_cands,
             interval: tiny ? fmt_vs_tiny : fmt_vs,
             part_base: fmt_part,
         },
@@ -517,12 +545,14 @@ tab_distr = {
         width: {
             interval: 400,
         },
-        maxWidth: w_BODY,
+        maxWidth: Math.min(w_BODY, width),
         
         rows: 30,
         layout: "fixed",
     })
 }
+
+SMALL ? html`<small style="color: #777">*Incumbent candidate</small` : html``
 ```
 
 ## How the odds have changed {#history}
