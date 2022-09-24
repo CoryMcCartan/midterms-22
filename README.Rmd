@@ -104,10 +104,8 @@ presidential races as a prior for firm performance this cycle.
 We can decompose firm error into several components:
 
 - Constant year-to-year bias in all firms in polling these races.
-- Year-specific bias shared by all firms, to varying extents. We call the
-extent to which a firm is affected by the year-specific shared bias the
-"herding," which is a slightly idiosyncratic usage.
-- Firm bias.
+- Year-specific bias shared by all firms.
+- Firm-specific bias.
 - Bias from polling methodology (IVR/online/phone/mixed/unknown).
 - Bias from LV polls. Due to limited data we only code an indicator for if a
 poll is not an LV poll---we don't distinguish between RV/A/V polls.
