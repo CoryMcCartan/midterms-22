@@ -7,6 +7,9 @@ format:
         theme:
             - journal
             - styles.scss
+        email-obfuscation: javascript
+        include-in-header:
+            text: "<link rel='icon' href='https://corymccartan.com/us-house-18/assets/flag.gif'>"
 output-file: index.html
 execute: 
     echo: false
@@ -415,7 +418,7 @@ viewof search = Inputs.search(d_distr_list, {
     label: "Districts:",
     columns: ["name", "state", "inc_seat", "search", "rating", "dem_cand", "rep_cand"],
     autocomplete: false,
-    width: Math.min(width, w_BODY),
+    width: Math.min(width - 8, w_BODY),
 })
 ```
 
