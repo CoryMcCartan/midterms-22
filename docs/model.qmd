@@ -183,7 +183,9 @@ dem_lead = d_sum.s_prob > 0.5
             month: "long", 
             day: "numeric", 
             hour: "numeric", 
-            minute: "numeric" })       
+            minute: "numeric",
+            timeZoneName: "short",
+            })       
 
     return md`
 The <b class="${win_class}">${win_party}</b> are expected to win
