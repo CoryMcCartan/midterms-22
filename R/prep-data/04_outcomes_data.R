@@ -29,14 +29,16 @@ d_hist <- raw |>
 d_cand_raw <- read_csv(here("data-raw/dfp/house_candidates_2010_2022.csv"), show_col_types=FALSE)
 
 d_22 <- d_cand_raw |>
-    filter(year == 2022) |>
+    filter(year == 2022, candidate_number <= 2) |>
+    mutate(party = c(DEMOCRATIC="dem", REPUBLICAN="gop")[party_affiliation]) |>
+    pivot_wider(year:district, names_from=candidate_number,
+                values_from=c(party, incumbency_status)) |>
     transmute(year = 2022L,
               state = state_code,
               district = as.integer(str_sub(district, 4)),
-              inc_seat = factor(if_else(dem_inc == 1, "dem",
-                                        if_else(gop_inc == 1, "gop", "open")),
+              inc_seat = factor(if_else(incumbency_status_1 == "incumbent", party_1, "open"),
                                 levels=c("dem", "open", "gop")),
-              unopp = is.na(dem_candidate) | is.na(gop_candidate),
+              unopp = 1*(is.na(party_2) | party_1 == party_2),
               ldem_seat = NA_real_)
 
 d_pres_20 = map_dfr(state.abb, function(abbr) {
@@ -74,9 +76,8 @@ d_22 <- full_join(d_22, d_pres_20, by=c("year", "state", "district"))
 d_dk_raw <- read_sheet("1WveGDjicdkFlTcuW1MYwXzvrzf78igsi7Gz9d_X8qa8", sheet="House")
 d_cand_names <- read_csv(here("data-raw/dfp/house_candidates_2010_2022.csv"), show_col_types=FALSE) |>
     filter(year == 2022) |>
-    select(district, dem_candidate, gop_candidate) |>
-    pivot_longer(dem_candidate:gop_candidate, names_to="party",
-                 names_pattern="([a-z]+)_candidate", values_to="name") |>
+    mutate(party = c(DEMOCRATIC="dem", REPUBLICAN="gop")[party_affiliation]) |>
+    select(district, party, name=candidate_name) |>
     drop_na() |>
     mutate(initials = str_replace_all(str_c(" ", str_squish(name)), "[ -.](\\w)(\\w*)", "\\1"))
 d_fec22 <- d_dk_raw |>
@@ -175,12 +176,26 @@ d_medsl_names <- d_medsl_raw |>
     pivot_wider(names_from=party, values_from=candidate, names_glue="{party}_{.value}")
 
 d_cand_names <- d_cand_raw |>
-    separate(district, c(NA, "district"), sep="-") |>
+    filter(candidate_number <= 2) |>
+    mutate(party = c(DEMOCRATIC="dem", REPUBLICAN="gop")[party_affiliation]) |>
+    pivot_wider(year:district, names_from=candidate_number,
+                values_from=c(party, candidate_name)) |>
     transmute(year = year,
               state = state_code,
-              district = as.integer(district),
-              dem_candidate = proc_name(dem_candidate),
-              rep_candidate = proc_name(gop_candidate))
+              district = as.integer(str_sub(district, 4)),
+              dem_candidate = case_when(
+                  party_1 == "dem" & party_2 == "gop" ~ proc_name(candidate_name_1),
+                  party_1 == "dem" & is.na(party_2) ~ proc_name(candidate_name_1),
+                  party_1 == "gop" & party_2 == "dem" ~ proc_name(candidate_name_2),
+                  TRUE ~ NA_character_,
+              ),
+              rep_candidate = case_when(
+                  party_1 == "gop" & party_2 == "dem" ~ proc_name(candidate_name_1),
+                  party_1 == "gop" & is.na(party_2) ~ proc_name(candidate_name_1),
+                  party_1 == "dem" & party_2 == "gop" ~ proc_name(candidate_name_2),
+                  TRUE ~ NA_character_,
+              ))
+
 
 d_names = full_join(d_cand_names, d_medsl_names,
                     by=c("state", "year", "district"), suffix=c("_dfp", "_medsl")) |>

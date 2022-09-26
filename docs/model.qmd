@@ -29,7 +29,9 @@ d_hist = FileAttachment("seats_hist.csv").csv({typed: true})
 d_distr_list = {
     let raw = await FileAttachment("districts.csv").csv({typed: true});
     return raw.map(d => {
-        d.name = AP[d.state] + " " + d.district;
+        let at_large = ["AK", "DE", "ND", "SD", "VT", "WY"].includes(d.state)
+        d.name = AP[d.state] + " " + (at_large ? "At-Large" : d.district);
+        d.name_short = AP[d.state] +  (at_large ? "" : " " + d.district);
         d.interval = [d.dem_mean, d.dem_q10, d.dem_q25, d.dem_q75, d.dem_q90];
         d.rating = rate(d.pr_dem);
         d.dem_cand = fmt_surname(d.dem_cand);
@@ -270,10 +272,13 @@ let mmv = function(e, d) {
     
     let prob = d.match.pr_dem;
     let cand;
+    let miss;
     if (prob > 0.5) {
-        cand = d.match.dem_cand == "NA" ? "The Democrat" : d.match.dem_cand;
+        cand = d.match.dem_cand == "NA" ? "Democrats" : d.match.dem_cand;
+        miss = d.match.dem_cand == "NA";
     } else {
-        cand = d.match.rep_cand == "NA" ? "The Republican" : d.match.rep_cand;
+        cand = d.match.rep_cand == "NA" ? "Republicans" : d.match.rep_cand;
+        miss = d.match.rep_cand == "NA";
     }
     let inc = {
         dem: `<b style='color: ${DARK_BLUE}'>Dem.</b> incumbent`,
@@ -284,10 +289,11 @@ let mmv = function(e, d) {
     let prob_color = prob > 0.5 ? DARK_BLUE : DARK_RED;
     if (d.match.unopp == 1) {
         prob_text = `<b style="color: ${prob_color}">${cand}</b>
-            is running unopposed and will win the seat.`
+            ${miss ? "are" : "is"} running unopposed and will win the seat.`
     } else {
         prob_text = `<b style="color: ${prob_color}">${cand}</b> 
-            has a <b>${fmt_pct(prob > 0.5 ? prob : 1 - prob)}</b> chance of winning.`
+            ${miss ? "have" : "has"} a 
+            <b>${fmt_pct(prob > 0.5 ? prob : 1 - prob)}</b> chance of winning.`
     }
     
     d3.select(this).attr("stroke-width", 2.4);
@@ -300,8 +306,6 @@ let mmv = function(e, d) {
         </div>
         <p>${prob_text}</p>
         `;
-        
-    
 
     tt.style("visibility", "visible")
       .html(txt)
@@ -515,9 +519,9 @@ viewof tab_distr = {
         <div class="drep cand">${r_cand}</div>`
     }
     
-    let cols = ["name", "cands", "inc_seat", "pr_dem", "interval", "part_base", ];
-    let cols_small = ["name", "cands", "pr_dem", "interval", "part_base", ];
-    let cols_tiny = ["name", "cands", "pr_dem", "interval", ];
+    let cols = ["name_short", "cands", "inc_seat", "pr_dem", "interval", "part_base", ];
+    let cols_small = ["name_short", "cands", "pr_dem", "interval", "part_base", ];
+    let cols_tiny = ["name_short", "cands", "pr_dem", "interval", ];
     const tiny = width < 496;
     const small = width < 650
     
@@ -525,7 +529,7 @@ viewof tab_distr = {
         columns: small ? (tiny ? cols_tiny : cols_small) : cols,
         
         header: {
-            name: small ? "Distr." : "District",
+            name_short: small ? "Distr." : "District",
             inc_seat: "Inc.",
             cands: "Candidates",
             pr_dem: small ? "Prob." : "Win prob.",
@@ -534,7 +538,7 @@ viewof tab_distr = {
         },
         
         format: {
-            name: fmt_name,
+            name_short: fmt_name,
             inc_seat: fmt_inc,
             pr_dem: fmt_prob,
             cands: fmt_cands,

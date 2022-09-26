@@ -193,9 +193,9 @@ district. We use a multilevel model with a student-t response, as
 described by the following (`brms`) model syntax:
 
 ``` r
-ldem_seat ~ inc_pres*midterm + (polar + ldem_pres_adj + ldem_gen)^2 +
-    polar * (inc_seat + region + ldem_exp + exp_mis) - polar:ldem_gen - polar +
-    (1 + edu_o15 + suburban | year) + (1 | division:year) + (1 | dem_cand) + (1 | rep_cand)
+ldem_seat ~ ldem_seat ~ inc_pres + offset(ldem_pred) + ldem_pres_adj:ldem_gen +
+    polar*(inc_seat + ldem_exp + exp_mis) - polar + region +
+    (1 + edu_o15 | year) + (1 | division:year) + (1 | dem_cand) + (1 | rep_cand)
     
 sigma ~ polar + I(ldem_pres_adj^2)
 ```
@@ -205,17 +205,17 @@ the party of the seat’s icumbent, or “open” if the seat is open;
 `ldem_pres_adj` is the logit last presidential result in the district,
 shifted back to a neutral national environment (i.e., subtracting off
 the national presidential result); `ldem_gen` is the logit generic
-ballot; `polar` meaures polarization as the lagged correlation between
-House and presidential results; `ldem_exp` is the logit share of
-campaign expenditures by the Democrat; `exp_mis` codes whether
-expenditure data are missing for the race (as they unfortunately often
-are); and `dem_cand` and `rep_cand` are the Democratic and Republican
-candidates, respectively.
+ballot; `ldem_pred` is the sum of these two; `polar` meaures
+polarization as the lagged correlation between House and presidential
+results; `ldem_exp` is the logit share of campaign expenditures by the
+Democrat; `exp_mis` codes whether expenditure data are missing for the
+race (as they unfortunately often are); and `dem_cand` and `rep_cand`
+are the Democratic and Republican candidates, respectively.
 
 The standard deviation of the year random effects is estimated around
 0.05 (on the logit scale); the standard deviation of the division-year
-random effects is estimated around 0.04. The model is fit to all 3,075
-contested House elections from 2006 to 2020. Posterior summaries for all
-coefficients are shown below. The overall model $R^2$ is around 0.93.
+random effects is estimated around 0.04. The model is fit to all 2,320
+contested House elections from 2010 to 2020. Posterior summaries for all
+coefficients are shown below. The overall model $R^2$ is around 0.97.
 
 ![Outcome model summary](readme-doc/outcomes_model_ests.svg)

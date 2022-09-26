@@ -67,16 +67,17 @@ run_forecast <- function(elec_date, start_date, from_date=Sys.Date(),
 
     d_house_22 = read_csv(here("data-raw/produced/hist_house_races.csv.gz"), show_col_types=FALSE) |>
         filter(year == 2022) |>
+        rows_update(tibble(state="AK", district=1, inc_seat="dem"), by=c("state", "district")) |>
         mutate(dem_cand_full = dem_cand,
                rep_cand_full = rep_cand,
                dem_cand = coalesce(str_c(state, ": ", dem_cand), "<other>"),
                rep_cand = coalesce(str_c(state, ": ", rep_cand), "<other>"),
                ldem_pres_adj = ldem_pres - ldem_pres_natl,
                inc_seat = coalesce(inc_seat, "open"),
-               unopp = coalesce(unopp, 0)) |>
-        rows_update(tibble(state="AK", district=1, inc_seat="dem"), by=c("state", "district"))
+               inc_seat = c(dem=1, open=0, gop=-1)[inc_seat],
+               unopp = coalesce(unopp, 0))
     d_house_pred = d_house_22 |>
-        mutate(midterm = 1*(year %% 4 == 2),
+        mutate(inc_midterm = c(dem=-1, gop=1)[inc_pres]*(year %% 4 == 2),
                ldem_exp = log(dem_exp) - log(rep_exp),
                exp_mis = 1*(is.na(ldem_exp) | is.infinite(ldem_exp)),
                ldem_exp = if_else(exp_mis == 1, 0, ldem_exp),
@@ -84,7 +85,8 @@ run_forecast <- function(elec_date, start_date, from_date=Sys.Date(),
         filter(unopp == 0)
     d_house_unopp = d_house_22 |>
         filter(unopp == 1) |>
-        mutate(pr_dem = if_else(inc_seat == "dem", 1, 1*(ldem_pres > ldem_pres_natl)),
+        # mutate(pr_dem = if_else(inc_seat == "dem", 1, 1*(ldem_pres > ldem_pres_natl)),
+        mutate(pr_dem = if_else(inc_seat == 1, 1, 1*(ldem_pres > ldem_pres_natl)),
                part_base = plogis(ldem_pres_adj))
 
     # mix the national intent and outcome draws
@@ -121,6 +123,7 @@ run_forecast <- function(elec_date, start_date, from_date=Sys.Date(),
                dem_q75 = plogis(apply(m_pred, 2, quantile, probs=0.75)),
                dem_q90 = plogis(apply(m_pred, 2, quantile, probs=0.9)))
     ) |>
+        mutate(inc_seat = c("gop", "open", "dem")[inc_seat + 2]) |>
         select(state, district, dem_cand=dem_cand_full, rep_cand=rep_cand_full,
                inc_seat, unopp, part_base, pr_dem, dem_mean:dem_q90) |>
         arrange(state, district)
@@ -142,6 +145,7 @@ run_forecast <- function(elec_date, start_date, from_date=Sys.Date(),
 
     list(pred_seats = pred_seats,
          pred_natl = pred_natl,
+         m_pred = m_pred,
          gcb = m_gcb$draws("natl_dem"),
          d_pred_22 = d_pred_22,
          n_polls = stan_d$N,
@@ -150,6 +154,7 @@ run_forecast <- function(elec_date, start_date, from_date=Sys.Date(),
 
 save_forecast <- function(forecast, elec_date, from_date) {
     tt_elec = round(elec_date - from_date)
+    fmt_trunc = \(x) as.character(round(x, digits=5))
 
     # history
     if (file.exists(hist_path <- here("docs/history.csv"))) {
@@ -171,7 +176,7 @@ save_forecast <- function(forecast, elec_date, from_date) {
         arrange(desc(timestamp)) |>
         slice_head(n=1) |>
         arrange(from_date) |>
-        mutate(across(where(is.numeric), round, digits=5))
+        mutate(across(where(is.numeric), fmt_trunc))
     write_csv(d_hist, hist_path)
 
     # other outputs
@@ -179,7 +184,7 @@ save_forecast <- function(forecast, elec_date, from_date) {
         write_json(forecast$out, here("docs/summary.json"), auto_unbox=TRUE, digits=5)
 
         forecast$d_pred_22 |>
-            mutate(across(where(is.numeric), round, digits=4)) |>
+            mutate(across(where(is.numeric), fmt_trunc)) |>
             write_csv(here("docs/districts.csv"))
 
         d_intent = summarize_natl(forecast$gcb, elec_date, c(0.5, 0.8)) |>
@@ -188,14 +193,14 @@ save_forecast <- function(forecast, elec_date, from_date) {
                    q25 = .lower_0.5,
                    q75 = .upper_0.5,
                    q90 = .upper_0.8) |>
-            mutate(across(where(is.numeric), round, digits=4))
+            mutate(across(where(is.numeric), fmt_trunc))
         write_csv(d_intent, here("docs/natl_intent.csv"))
 
         N_sim = length(forecast$pred_seats)
         tibble(dem_seats = 1:400,
                pr = 100*tabulate(forecast$pred_seats, nbins=400) / N_sim) |>
             mutate(cdf = cumsum(pr/100),
-                   across(where(is.numeric), round, digits=4)) |>
+                   across(where(is.numeric), fmt_trunc)) |>
             write_csv(here("docs/seats_hist.csv"))
     }
 }

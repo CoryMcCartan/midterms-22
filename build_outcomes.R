@@ -19,44 +19,48 @@ d_fit <- d |>
     mutate(ldem_pres_adj = ldem_pres - ldem_pres_natl,
            ldem_pred = ldem_pres_adj + ldem_gen,
            ldem_exp = log(dem_exp) - log(rep_exp),
+           inc_seat = c(dem=1, open=0, gop=-1)[inc_seat],
            exp_mis = 1*(is.na(ldem_exp) | is.infinite(ldem_exp)),
            ldem_exp = if_else(exp_mis == 1, 0, ldem_exp),
-           midterm = 1*(year %% 4 == 2),
+           inc_midterm = c(dem=-1, gop=1)[inc_pres]*(year %% 4 == 2),
            div_yr = str_c(division, "_", year)) |>
-    filter(unopp == 0, !is.infinite(ldem_seat), year >= 2006) |>
+    filter(unopp == 0, !is.infinite(ldem_seat), year >= 2010) |>
     mutate(dem_cand = fct_drop(dem_cand),
            rep_cand = fct_drop(rep_cand))
 
 # BRMS ------
 
-form = ldem_seat ~ inc_pres*midterm + (polar + ldem_pres_adj + ldem_gen)^2 +
-    polar * (inc_seat + region + ldem_exp + exp_mis) - polar:ldem_gen - polar +
-    (1 + edu_o15 + suburban | year) +
-    (1 | division:year) + (1 | dem_cand) + (1 | rep_cand)
+form = ldem_seat ~ inc_pres + offset(ldem_pred) + ldem_pres_adj:ldem_gen +
+    polar*(inc_seat + ldem_exp + exp_mis) - polar + region +
+    (1 + edu_o15 | year) + (1 | division:year) +
+    (1 | dem_cand) + (1 | rep_cand)
 bprior = c(
-    prior(student_t(5, 0, 1), class=b),
-    prior(gamma(2, 2/0.04), class=sd, group="division:year"),
-    prior(gamma(2, 2/0.08), class=sd, coef="Intercept", group="year"),
-    prior(gamma(5, 5/0.03), class=sd, group="year"),
-    prior(gamma(2, 2/0.05), class=sd, group="dem_cand"),
-    prior(gamma(2, 2/0.05), class=sd, group="rep_cand")
+    prior(student_t(3, 0, 0.5), class=b),
+    # about 0.5pp
+    prior(gamma(4, 4/0.02), class=sd, group="division:year"),
+    prior(gamma(4, 4/0.02), class=sd, group="year"),
+    # about 1.0pp
+    prior(gamma(4, 4/0.04), class=sd, coef="Intercept", group="year"),
+    # about 2pp
+    prior(gamma(4, 4/0.08), class=sd, group="dem_cand"),
+    prior(gamma(4, 4/0.08), class=sd, group="rep_cand")
 )
 
 m = brm(bf(form, sigma ~ polar + I(ldem_pres_adj^2), decomp="QR"),
         data=d_fit, family=student(), prior=bprior,
-        threads=2, chains=4, backend="cmdstanr", normalize=FALSE,
-        iter=1500, warmup=500, control=list(adapt_delta=0.99, step_size=0.05),
+        threads=2, chains=3, backend="cmdstanr", normalize=FALSE,
+        iter=2000, warmup=500, control=list(adapt_delta=0.99, step_size=0.05),
         file=here("stan/outcomes_m.rds"), file_refit="on_change",
         stan_model_args=list(stanc_options=list("O1")))
 
 
 summary(m)
 
-p = mcmc_plot(m, variable="b_[^s]", regex=TRUE) +
+mcmc_plot(m, variable="b_[^s]", regex=TRUE) +
     geom_vline(xintercept=0, lty="dashed") +
     theme_bw() +
     theme(axis.text.y=element_text(face="bold"))
-ggsave(here("doc/outcomes_model_ests.svg"), width=7, height=6)
+ggsave(here("readme-doc/outcomes_model_ests.svg"), width=7, height=6)
 
 
 
@@ -81,7 +85,7 @@ marg_plot = function(eff, pal="puget", which=1:15) {
 marg_plot("ldem_pres_adj:polar") +
     marg_plot("ldem_gen:ldem_pres_adj") +
     marg_plot("ldem_gen:inc_seat", "rainier", c(1, 3, 2)) +
-    marg_plot("polar:inc_pres", "rainier", c(1, 3)) +
+    # marg_plot("polar:inc_pres", "rainier", c(1, 3)) +
     marg_plot("polar:inc_seat", "rainier", c(1, 3, 2)) +
     marg_plot("polar:region", "palouse") +
     plot_layout(guides="collect")

@@ -1,10 +1,4 @@
 
-# compare
-ci_ours = tibble(model="ours",
-                 low=quantile(pred_seats, 0.1),
-                 med=quantile(pred_seats, 0.5),
-                 high=quantile(pred_seats, 0.9))
-
 d_econ = read_csv("https://cdn-dev.economistdatateam.com/us-midterms-2022/data/house/histogram.csv",
                   show_col_types=FALSE) |>
     rename(icdf = prob_at_least_this_many_dem_seats)
@@ -32,6 +26,11 @@ ci_538_deluxe = tibble(model="538_deluxe",
                        low=d_538$deluxe$p10_seats_Dparty,
                        med=d_538$deluxe$median_seats_Dparty,
                        high=d_538$deluxe$p90_seats_Dparty)
+
+ci_ours = tibble(model="ours",
+                 low=quantile(forecast$pred_seats, 0.1),
+                 med=quantile(forecast$pred_seats, 0.5),
+                 high=quantile(forecast$pred_seats, 0.9))
 
 bind_rows(ci_ours, ci_econ, ci_538_lite, ci_538_classic, ci_538_deluxe) |>
 ggplot(aes(model, med, ymin=low, ymax=high)) +
