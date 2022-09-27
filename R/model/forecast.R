@@ -108,6 +108,7 @@ run_forecast <- function(elec_date, start_date, from_date=Sys.Date(),
                           sample_new_levels="uncertainty", cores=1,
                           allow_new_levels=TRUE)
     }))
+    colnames(m_pred) = with(d_house_pred, str_c(state, "-", district))
     cli_progress_done()
 
     pred_seats = sum(d_house_unopp$pr_dem) + rowSums(m_pred > 0)
@@ -202,5 +203,7 @@ save_forecast <- function(forecast, elec_date, from_date) {
             mutate(cdf = cumsum(pr/100),
                    across(where(is.numeric), fmt_trunc)) |>
             write_csv(here("docs/seats_hist.csv"))
+
+        write_rds(forecast$m_pred, here("docs/draws_matrix.rds"), compress="gz")
     }
 }

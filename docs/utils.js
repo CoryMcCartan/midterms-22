@@ -33,6 +33,7 @@ export function fmt_surname(x) {
         .replace("C. RODGERS", "C. MCMORRIS RODGERS")
         .replace("S. DELBENE", "S. DelBENE")
         .replace("J. SKINNER", "J. MCLEOD-SKINNER")
+        .replace("D. SCHULTZ", "D. WASSERMAN SCHULTZ")
         .replace(/ MC([A-Z])/, " Mc$1")
         .replace(/ DE([SLG])([AEIOU])/, " De$1$2")
         .replace(/ DI([SLG])([AEIOU])/, " Di$1$2");
