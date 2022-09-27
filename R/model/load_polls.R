@@ -9,7 +9,7 @@ suppressMessages({
 
 load_polls <- function(year=2022, limit_per_firm=100, from_date=Sys.Date(), force=FALSE) {
     if (year >= 2018) {
-        out <- download_polls(year, from_date) |>
+        out <- download_polls(year, from_date, force=force) |>
             transmute(year = as.integer(cycle),
                       race = "house",
                       firm = pollster,

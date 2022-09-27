@@ -108,12 +108,56 @@ table {
         font-weight: bold;
         line-height: 1.5rem;
     }
+
+    .firm {
+        white-space: break-spaces;
+        line-height: 1.05;
+        font-size: 0.85em;
+        font-weight: 500;
+    }
+    .date {
+        color: #777;
+        font-size: 0.85em;
+    }
+    .poll-type, .poll-lv {
+        font-size: 0.7em;
+        line-height: 1.15;
+        font-weight: 500;
+        color: #444;
+    }
+    .poll-lv {
+        color: #777;
+    }
 }
 
-#distr-tab table td {
-    overflow: visible;
+#distr-tab table {
+    td, th {
+        overflow: visible;
+    }
+}
+
+#polls-tab table {
+    td {
+        font-size: 0.85rem;
+    }
+
+    td:first-child, th:first-child { /* checkboxes */
+        display: none;
+    }
 }
 
 input {
     outline: none;
+}
+
+@media (max-width: 600px) {
+    #distr-tab table td, #polls-tab table td {
+        font-size: 0.85rem;
+    }
+
+    #distr-tab table {
+        td:first-child, th:first-child { /* checkboxes */
+            display: none;
+        }
+    }
 }

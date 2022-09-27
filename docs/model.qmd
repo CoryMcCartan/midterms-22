@@ -24,7 +24,6 @@ d3 = require("d3")
 d_sum = FileAttachment("summary.json").json()
 geom_hex = FileAttachment("hex.json").json()
 d_history = FileAttachment("history.csv").csv({typed: true})
-d_gcb = FileAttachment("natl_intent.csv").csv({typed: true})
 d_hist = FileAttachment("seats_hist.csv").csv({typed: true})
 d_distr_list = {
     let raw = await FileAttachment("districts.csv").csv({typed: true});
@@ -62,10 +61,6 @@ color = {
         .range([DARK_RED, midpt]);
     return x => x <= 0.5 ? color_gop(x) : color_dem(x);
 }
-
-window.Plot = Plot;
-window.d3 = d3;
-window.d_distr_list = d_distr_list;
 ```
 
 ```{ojs}
@@ -234,7 +229,7 @@ const svg = d3
 
 let proj = d3.geoAlbers()
     .scale(0.9*w)
-    .translate([0.98*w/2, 0.91*h/2]);
+    .translate([0.97*w/2, 0.91*h/2]);
 let path = d3.geoPath(proj);
 
 let geom_distrs = svg
@@ -328,10 +323,13 @@ return svg.node();
 :::
 
 ## Public opinion over time {#gcb}
+This chart shows the model's best estimate of how the generic congressional
+ballot has evolved over the past few months.
 
 ```{ojs}
 //| label: plot-gcb
 plot_gcb = {
+    let d_gcb = await FileAttachment("natl_intent.csv").csv({typed: true});
     const ci_w = d_sum.i_q90 - d_sum.i_q10
     const ymin = Math.max(Math.min(d_sum.i_med - 1*ci_w, 0.45), 0)
     const ymax = Math.min(Math.max(d_sum.i_med + 1*ci_w, 0.52), 1)
@@ -561,6 +559,11 @@ SMALL ? html`<small style="color: #777">*Incumbent candidate</small` : html``
 
 ## How the odds have changed {#history}
 
+The model is regularly re-run as new data and polls come in.
+The charts below track how the model's election-day forecast has changed over time.
+
+:::{layout-ncol=2}
+
 ```{ojs}
 //| label: plot-prob
 plot_prob = {
@@ -586,7 +589,7 @@ plot_prob = {
             Plot.ruleY([0.5], {stroke: "#0007"}),
             Plot.ruleX([elec_date, today]),
             
-            Plot.text([SMALL ? "Prob. of winning House" : "Probability of winning control"], { 
+            Plot.text(["Odds of winning House"], { 
                     x: d3.min(d_history, d => d.from_date), dy: -4,
                     frameAnchor: "top", textAnchor: "start", lineAnchor: "bottom",
                     fontWeight: "bold", fontSize: 15,
@@ -615,15 +618,77 @@ plot_prob = {
                 }),
         ],
         
-        width: Math.min(w_BODY, width),
+        width: width < 768 ? width : Math.min(w_BODY, width) * 0.48,
         height: 300,
         marginRight: 40,
-        
-        style: {
-        }
+        marginLeft: 0,
     })
 }
 ```
+
+```{ojs}
+//| label: plot-gcb-prob
+plot_gcb_prob = {
+    const today = d3.max(d_history, d => d.from_date);
+    const days_til = (elec_date - today) / (24 * 3600 * 1000);
+    
+    return Plot.plot({
+        y: {
+            label: null,
+            domain: [0, 1],
+            grid: true,
+            tickFormat: "%",
+            axis: "right",
+            ticks: [0, 0.25, 0.5, 0.75, 1],
+            insetTop: 4,
+        },
+        x: {label: null},
+        
+        marks: [
+            Plot.line(d_history, {x: "from_date", y: "i_prob", strokeWidth: 3, stroke: BLUE}),
+            Plot.line(d_history, {x: "from_date", y: d => 1 - d.i_prob, strokeWidth: 3, stroke: RED}),
+            
+            Plot.ruleY([0.5], {stroke: "#0007"}),
+            Plot.ruleX([elec_date, today]),
+            
+            Plot.text(["Odds of winning pop. vote"], { 
+                    x: d3.min(d_history, d => d.from_date), dy: -4,
+                    frameAnchor: "top", textAnchor: "start", lineAnchor: "bottom",
+                    fontWeight: "bold", fontSize: 15,
+                }),
+            Plot.text(["TODAY"], { 
+                    x: today, dy: -4,
+                    frameAnchor: "top", textAnchor: "middle", lineAnchor: "bottom",
+                    fontWeight: "bold",
+                }),
+            Plot.text([days_til > 20 + SMALL*30 ? "ELECTION DAY" : ""], { 
+                    x: elec_date, dy: -4,
+                    frameAnchor: "top", textAnchor: "middle", lineAnchor: "bottom",
+                    fontWeight: "bold",
+                }),
+            Plot.text([fmt_pct(d_sum.i_prob)], { 
+                    x: today, y: d_sum.i_prob, dy: -6, dx: 4,
+                    frameAnchor: "top", textAnchor: "start", 
+                    fontWeight: "bold", fontSize: 15, fill: BLUE, 
+                    stroke: "white", strokeWidth: 4,
+                }),
+            Plot.text([fmt_pct(1 - d_sum.i_prob)], { 
+                    x: today, y: 1 - d_sum.i_prob, dy: -6, dx: 4,
+                    frameAnchor: "top", textAnchor: "start", 
+                    fontWeight: "bold", fontSize: 15, fill: RED,
+                    stroke: "white", strokeWidth: 4,
+                }),
+        ],
+        
+        width: width < 768 ? width : Math.min(w_BODY, width) * 0.48,
+        height: 300,
+        marginRight: 40,
+        marginLeft: 0,
+    })
+}
+```
+
+:::
 
 ```{ojs}
 //| label: plot-hist-seats
@@ -699,13 +764,87 @@ plot_hist_seats = {
         width: Math.min(w_BODY, width),
         height: 300,
         marginRight: 40,
-        
-        style: {
-        }
+        marginLeft: 0,
     })
 }
 ```
 
+# National polling {#polls}
+
+The most recent generic congressional ballot polls are shown in the table below.
+The <b>Impact</b> column roughly measures how adding the poll to the model moved
+the forecast towards Democrats or Republicans.
+
+```{ojs}
+//| label: polls-tab
+{
+    let d_polls = await FileAttachment("polls.csv").csv({typed: true});
+    d_polls = d_polls.map(d => {
+        d.lv_type = [d.lv, d.type];
+        return d;
+    });
+    
+    let fmt_firm = x => html`<div class="firm">${x}</div>`;
+    let fmt_date = x => html`<span class="date">${x.toLocaleString("en-US", { month: 'short', day: 'numeric' })}</span>`;
+    let fmt_type = function(x) {
+        let type = x[1] == "unknown" ? "&ndash;" : x[1].toUpperCase();
+        let lv = x[0] == 1 ? "LV" : "RV/Adults";
+        return html`<div class="poll-type">${type}</div>
+            <div class="poll-lv">${lv}</div>`
+    }
+    let fmt_bias = function(x) {
+        let color = x > 0.0 ? DARK_BLUE : DARK_RED;
+        let prefix = x > 0.0 ? "D" : "R";
+        return html`<span style="color: ${color}; font-size: ${SMALL ? 0.75 : 0.9}em;">
+            ${prefix}+${(100*Math.abs(x)).toFixed(1)}</span>`;
+    }
+    let fmt_est = function(x) {
+        return html`<div class="chip" style="background: ${color(5*x-2)};">
+            ${fmt_pct(x, 1)}</div>`;
+    }
+    let fmt_impact = function(x) {
+        let tcolor = x > 0.0 ? "#006381" : "#80442C";
+        let prefix = x > 0.0 ? "D" : "R";
+        return html`<div class="chip" style="background: ${color(0.5+x)}; color: ${tcolor};">
+            ${prefix}+${Math.abs(x).toFixed(2)}</div>`
+    }
+    
+
+    let cols = ["date", "firm", "firm_bias", "lv_type", "est", "impact"];
+    let cols_small = ["date", "firm", "firm_bias", "est", "impact"];
+    
+    return Inputs.table(d_polls, {
+        columns: SMALL ? cols_small : cols,
+        
+        header: {
+            date: "Date",
+            firm: SMALL ? "Firm" : "Polling firm",
+            firm_bias: SMALL ? "Bias" : "Firm bias",
+            lv_type: "Poll type",
+            est: SMALL ? "Result" : "Poll result",
+            impact: "Impact",
+        },
+        
+        format: {
+            date: fmt_date,
+            firm: fmt_firm,
+            firm_bias: fmt_bias,
+            lv_type: fmt_type,
+            est: fmt_est,
+            impact: fmt_impact,
+        },
+        
+        width: {
+            firm: SMALL ? 120 : 350,
+            impact: SMALL ? 50 : 80,
+        },
+        maxWidth: Math.min(w_BODY, width),
+        
+        rows: 20,
+        layout: "fixed",
+    })
+}
+```
 
 
 <hr style="margin: 2em 0" />

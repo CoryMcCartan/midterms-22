@@ -13,7 +13,7 @@ suppressMessages({
 })
 
 run_forecast <- function(elec_date, start_date, from_date=Sys.Date(),
-                         refresh_polls=FALSE, chains=4, iter=400, N_mix_natl=40) {
+                         refresh_polls=FALSE, chains=4, iter=800, N_mix_natl=40) {
     # Load data -----
     cli_h1("Loading data")
 
@@ -57,9 +57,32 @@ run_forecast <- function(elec_date, start_date, from_date=Sys.Date(),
     vote_period_wt[1 + seq_len(early_vote_len)] = (1 - vote_period_wt[1]) *
         rep(1/early_vote_len, early_vote_len)
 
-    draws_gcb = as_draws_rvars(m_gcb$draws("mu"))
+    draws_gcb = as_draws_rvars(m_gcb$draws(c("mu", "bias", "r_firms", "log_lik")))
     pred_natl = rvar_sum(draws_gcb$mu * vote_period_wt)
     cli_alert_success("Draws extracted.")
+
+    # LOO-based poll impact score
+    ll = as_draws_array(draws_gcb$log_lik)
+    reff = loo::relative_eff(exp(-ll))
+    psis_obj = suppressWarnings(loo::psis(ll, r_eff=reff))
+    loo_wt = weights(psis_obj, log=FALSE)
+    impact = colSums(draws_of(pred_natl, with_chains=FALSE)[, 1] * loo_wt) - E(pred_natl)
+
+    d_firms = tibble(firm_id = stan_d$firm_ids,
+                     bias = E(draws_gcb$bias) + E(draws_gcb$r_firms))
+    d_polls = filter(d_polls,
+                     tte >= as.integer(elec_date - from_date),
+                     tte <= as.integer(elec_date - start_date)) |>
+        mutate(impact = impact) |>
+        left_join(d_firms, by=c("firm_id")) |>
+        arrange(tte) |>
+        transmute(date = elec_date - tte,
+                  firm = firm,
+                  type = type,
+                  lv = 1 - not_lv,
+                  firm_bias = bias/4,
+                  est = plogis(est),
+                  impact = 100*impact)
 
 
     # Predict outcomes -----
@@ -150,6 +173,7 @@ run_forecast <- function(elec_date, start_date, from_date=Sys.Date(),
          gcb = m_gcb$draws("natl_dem"),
          d_pred_22 = d_pred_22,
          n_polls = stan_d$N,
+         d_polls = d_polls,
          out = out)
 }
 
@@ -205,5 +229,10 @@ save_forecast <- function(forecast, elec_date, from_date) {
             write_csv(here("docs/seats_hist.csv"))
 
         write_rds(forecast$m_pred, here("docs/draws_matrix.rds"), compress="gz")
+
+        forecast$d_polls |>
+            mutate(across(where(is.numeric), fmt_trunc)) |>
+            slice_head(n=50) |>
+            write_csv(here("docs/polls.csv"))
     }
 }

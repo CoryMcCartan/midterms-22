@@ -22,7 +22,7 @@ option_list = list(
                 default=as.character(min(max(Sys.Date(), start_date), elec_date)),
                 help=paste0("The date to estimate from, between
                     Between ", start_date, " and ", elec_date, " (election day).")),
-    make_option("--iter", type="integer", default=400,
+    make_option("--iter", type="integer", default=800,
                 help="Number of MCMC iterations for voter intent estimation per chain,
                     not including warmup iterations."),
     make_option("--n_mix", type="integer", default=40,
