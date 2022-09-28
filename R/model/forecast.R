@@ -108,7 +108,6 @@ run_forecast <- function(elec_date, start_date, from_date=Sys.Date(),
         filter(unopp == 0)
     d_house_unopp = d_house_22 |>
         filter(unopp == 1) |>
-        # mutate(pr_dem = if_else(inc_seat == "dem", 1, 1*(ldem_pres > ldem_pres_natl)),
         mutate(pr_dem = if_else(inc_seat == 1, 1, 1*(ldem_pres > ldem_pres_natl)),
                part_base = plogis(ldem_pres_adj))
 
@@ -128,8 +127,7 @@ run_forecast <- function(elec_date, start_date, from_date=Sys.Date(),
             mutate(ldem_gen = mix_natl[i],
                    ldem_pred = ldem_pres_adj + ldem_gen)
         posterior_predict(m_outcomes, newdata=d_tmp, draw_ids=iter_grp[[i]],
-                          sample_new_levels="uncertainty", cores=1,
-                          allow_new_levels=TRUE)
+                          sample_new_levels="uncertainty", allow_new_levels=TRUE)
     }))
     colnames(m_pred) = with(d_house_pred, str_c(state, "-", district))
     cli_progress_done()

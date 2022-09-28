@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+Rscript R/run.R "$@"
+
+git add docs
+git commit -m 'Run model: `date "%b %e"`' || echo "No changes to commit."
+git push

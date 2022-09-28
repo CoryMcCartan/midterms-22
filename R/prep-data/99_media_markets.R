@@ -8,7 +8,6 @@ state_regex = str_c(c(state.abb, "DC"), collapse="|")
 parse_station = function(x) str_extract(x, "^[WK][A-Z]{2,3}(-[A-Z]{1,2})?")
 tidy_market = function(x) {
     x |>
-        # str_replace_all(str_glue(",? ({state_regex})"), " ") |>
         str_replace_all("[-–().,&]", " ") |>
         str_replace_all("Ft ", "Fort ") |>
         str_squish()
@@ -54,6 +53,7 @@ d_cd = read_sf(here("data-raw/dk/shp_22/2022 U.S. House of Representatives Distr
 
 d_states = tigris::states(cb=TRUE, resolution="20m") |>
     select(state = STUSPS, geometry) |>
+    filter(state != "PR") |>
     st_transform(5070) |>
     st_make_valid()
 
@@ -89,3 +89,38 @@ st_drop_geometry(d_dma) |>
     pivot_longer(-market:-households, names_prefix="station_",
                  names_to="affiliate", values_to="station") |>
 write_rds(here("data-raw/produced/media_markets.rds"), compress="gz")
+
+if (FALSE) {
+    library(wacolors)
+    library(scales)
+
+    d_rates = read_csv("data-raw/produced/ad_rates.csv", show_col_types=FALSE)
+    d_dma = left_join(d_dma, d_rates)
+
+    p = ggplot(tigris::shift_geometry(d_dma), aes(fill=rate_imp)) +
+        geom_sf(size=0.1, color="black") +
+        geom_sf(data=tigris::shift_geometry(d_states),
+                size=0.15, color="#dadada", fill=NA, inherit.aes=FALSE) +
+        scale_fill_wa_c(name="Ad rate", labels=dollar) +
+        theme_void() +
+        theme(legend.position=c(0.92, 0.3))
+    ggsave("data-raw/figures/ad_rates.pdf", plot=p, width=11, height=8.5)
+
+    d_markets = d |>
+        select(-stations) |>
+        unnest(markets) |>
+        left_join(select(d_rates, market, rate_imp), by=c("markets"="market")) |>
+        group_by(state, district, households, area) |>
+        summarize(cost = sum(rate_imp), .groups="drop") |>
+        left_join(d_cd, by=c("state", "district")) |>
+        st_as_sf()
+
+    p = ggplot(tigris::shift_geometry(d_markets), aes(fill=cost)) +
+        geom_sf(size=0.1, color="black") +
+        geom_sf(data=tigris::shift_geometry(d_states),
+                size=0.15, color="#dadada", fill=NA, inherit.aes=FALSE) +
+        scale_fill_wa_c(name="Ad cost", labels=dollar) +
+        theme_void() +
+        theme(legend.position=c(0.92, 0.3))
+    ggsave("data-raw/figures/distr_ad_costs.pdf", plot=p, width=11, height=8.5)
+}

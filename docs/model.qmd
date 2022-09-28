@@ -28,10 +28,11 @@ d_hist = FileAttachment("seats_hist.csv").csv({typed: true})
 d_distr_list = {
     let raw = await FileAttachment("districts.csv").csv({typed: true});
     return raw.map(d => {
-        let at_large = ["AK", "DE", "ND", "SD", "VT", "WY"].includes(d.state)
+        let at_large = ["AK", "DE", "ND", "SD", "VT", "WY"].includes(d.state);
         d.name = AP[d.state] + " " + (at_large ? "At-Large" : d.district);
         d.name_short = AP[d.state] +  (at_large ? "" : " " + d.district);
-        d.interval = [d.dem_mean, d.dem_q10, d.dem_q25, d.dem_q75, d.dem_q90];
+        d.rcv = ["AK", "ME"].includes(d.state);
+        d.interval = [d.dem_mean, d.dem_q10, d.dem_q25, d.dem_q75, d.dem_q90, d.rcv];
         d.rating = rate(d.pr_dem);
         d.dem_cand = fmt_surname(d.dem_cand);
         d.rep_cand = fmt_surname(d.rep_cand);
@@ -290,6 +291,9 @@ let mmv = function(e, d) {
             ${miss ? "have" : "has"} a 
             <b>${fmt_pct(prob > 0.5 ? prob : 1 - prob)}</b> chance of winning.`
     }
+    let disclaimer = d.match.rcv ? `<p style="color: #777; font-size: 0.75em; font-style: italic; margin-top: 0.5em;">
+        Estimates do not account for rank-choice voting.
+    </p>` : "";
     
     d3.select(this).attr("stroke-width", 2.4);
     
@@ -300,6 +304,7 @@ let mmv = function(e, d) {
         <div style="background: ${RED}; flex-basis: ${100 - 100*prob}%"></div>
         </div>
         <p>${prob_text}</p>
+        ${disclaimer}
         `;
 
     tt.style("visibility", "visible")
@@ -325,6 +330,7 @@ return svg.node();
 ## Public opinion over time {#gcb}
 This chart shows the model's best estimate of how the generic congressional
 ballot has evolved over the past few months.
+The darker and lighter bands show 50% and 80% credible intervals.
 
 ```{ojs}
 //| label: plot-gcb
@@ -390,12 +396,12 @@ plot_gcb = {
                     frameAnchor: "top", textAnchor: "start", lineAnchor: "bottom",
                     fontWeight: "bold", fontSize: 15,
                 }),
-            Plot.text(["TODAY"], { 
+            Plot.text([days_til > 20 + SMALL*30 ? "TODAY" : ""], { 
                     x: today, dy: -4,
                     frameAnchor: "top", textAnchor: "middle", lineAnchor: "bottom",
                     fontWeight: "bold",
                 }),
-            Plot.text([days_til > 20 + SMALL*30 ? "ELECTION DAY" : ""], { 
+            Plot.text(["ELECTION DAY"], { 
                     x: elec_date, dy: -4,
                     frameAnchor: "top", textAnchor: "middle", lineAnchor: "bottom",
                     fontWeight: "bold",
@@ -486,10 +492,11 @@ viewof tab_distr = {
                ${ici_r} ${x_rep(int[2])}%, ${oci_r} ${x_rep(int[2])}%,
                ${oci_r} ${x_rep(int[1])}%, transparent ${x_rep(int[1])}%,
                transparent 100%)`;
+            let disclaimer = int[5] ? "&dagger;" : ""; // RCV
             return html`
                 <div class="est" style="background: ${gr}; 
                     padding-left: calc(${x(int[0])}% - 6px);">
-                &#x25cf;&nbsp;${fmt_pct(int[0])}</div>
+                &#x25cf;&nbsp;${fmt_pct(int[0])}${disclaimer}</div>
                 `;
         }
     }
@@ -498,7 +505,8 @@ viewof tab_distr = {
             return html`<span style="color: #777; font-size: 0.85em;">(Unopp.)</span>`
         } else {
             let color = int[0] > 0.5 ? DARK_BLUE : DARK_RED;
-            return html`<span style="color: ${color};">${fmt_pct(int[0], 1)}</span>`;
+            let disclaimer = int[5] ? "&dagger;" : ""; // RCV
+            return html`<span style="color: ${color};">${fmt_pct(int[0], 1)}${disclaimer}</span>`;
         }
     }
     
@@ -507,7 +515,7 @@ viewof tab_distr = {
         let d_cand = x[0] == "NA" ? na_html : x[0];
         let r_cand = x[1] == "NA" ? na_html : x[1];
         if (SMALL) {
-            if (x[2] == "dem") {
+            if (x[2] == "dem") { // incumbent
                 d_cand += "*"
             } else if (x[2] == "rep") {
                 r_cand += "*"
@@ -554,8 +562,9 @@ viewof tab_distr = {
     })
 }
 
-SMALL ? html`<small style="color: #777">*Incumbent candidate</small` : html``
+SMALL ? html`<small style="color: #777">*Incumbent candidate</small>` : html``
 ```
+<small style="color: #777">&dagger;Estimates do not account for rank-choice voting.</small>
 
 ## How the odds have changed {#history}
 
@@ -594,12 +603,12 @@ plot_prob = {
                     frameAnchor: "top", textAnchor: "start", lineAnchor: "bottom",
                     fontWeight: "bold", fontSize: 15,
                 }),
-            Plot.text(["TODAY"], { 
+            Plot.text([days_til > 20 + SMALL*30 ? "TODAY" : ""], { 
                     x: today, dy: -4,
                     frameAnchor: "top", textAnchor: "middle", lineAnchor: "bottom",
                     fontWeight: "bold",
                 }),
-            Plot.text([days_til > 20 + SMALL*30 ? "ELECTION DAY" : ""], { 
+            Plot.text(["ELECTION DAY"], { 
                     x: elec_date, dy: -4,
                     frameAnchor: "top", textAnchor: "middle", lineAnchor: "bottom",
                     fontWeight: "bold",
@@ -656,12 +665,12 @@ plot_gcb_prob = {
                     frameAnchor: "top", textAnchor: "start", lineAnchor: "bottom",
                     fontWeight: "bold", fontSize: 15,
                 }),
-            Plot.text(["TODAY"], { 
+            Plot.text([days_til > 20 + SMALL*30 ? "TODAY" : ""], { 
                     x: today, dy: -4,
                     frameAnchor: "top", textAnchor: "middle", lineAnchor: "bottom",
                     fontWeight: "bold",
                 }),
-            Plot.text([days_til > 20 + SMALL*30 ? "ELECTION DAY" : ""], { 
+            Plot.text(["ELECTION DAY"], { 
                     x: elec_date, dy: -4,
                     frameAnchor: "top", textAnchor: "middle", lineAnchor: "bottom",
                     fontWeight: "bold",
@@ -744,12 +753,12 @@ plot_hist_seats = {
                     frameAnchor: "top", textAnchor: "start", lineAnchor: "bottom",
                     fontWeight: "bold", fontSize: 15,
                 }),
-            Plot.text(["TODAY"], { 
+            Plot.text([days_til > 20 + SMALL*30 ? "TODAY" : ""], { 
                     x: today, dy: -4,
                     frameAnchor: "top", textAnchor: "middle", lineAnchor: "bottom",
                     fontWeight: "bold",
                 }),
-            Plot.text([days_til > 20 + SMALL*30 ? "ELECTION DAY" : ""], { 
+            Plot.text(["ELECTION DAY"], { 
                     x: elec_date, dy: -4,
                     frameAnchor: "top", textAnchor: "middle", lineAnchor: "bottom",
                     fontWeight: "bold",
@@ -772,8 +781,8 @@ plot_hist_seats = {
 # National polling {#polls}
 
 The most recent generic congressional ballot polls are shown in the table below.
-The <b>Impact</b> column roughly measures how adding the poll to the model moved
-the forecast towards Democrats or Republicans.
+The <b>Impact</b> column roughly measures how the poll is currently affecting the 
+model---whether it is pulling the forecast towards Democrats or Republicans, and by how much.
 
 ```{ojs}
 //| label: polls-tab
@@ -855,6 +864,7 @@ A detailed write-up of the model, along with code and data, are available [here]
 
 <p class="text-muted"><small>
 Data are courtesy of FiveThirtyEight, Data for Progress, VEST, the ALARM Project, Daily Kos Elections, the MIT Election Data + Science Lab, and IPUMS.
+<!--Jeremiah, Kuriwaki, and Snyder 2021-->
 </small></p>
 
 
