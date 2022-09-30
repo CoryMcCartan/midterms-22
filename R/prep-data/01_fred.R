@@ -28,4 +28,4 @@ d |>
     filter(month == max(month)) |>
     ungroup() |>
     select(-date, -month) |>
-    write_csv(here::here("data-raw/fred_ind.csv"))
+    write_csv(here::here("data-raw/produced/fred_ind.csv"))
