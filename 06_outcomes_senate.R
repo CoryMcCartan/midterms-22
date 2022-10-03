@@ -2,7 +2,7 @@ library(tidyverse)
 library(here)
 
 d_state <- read_csv(here("data-raw/produced/hist_house_races.csv.gz"), show_col_types=FALSE) |>
-    select(year, state, ldem_gen, polar, pop:pov, region, division) |>
+    select(year, state, ldem_gen, polar, inc_pres, pop:pov, region, division) |>
     distinct()
 
 parse_name = function(x) {

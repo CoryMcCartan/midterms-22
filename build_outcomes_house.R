@@ -22,13 +22,12 @@ d_fit <- d |>
            inc_seat = c(dem=1, open=0, gop=-1)[inc_seat],
            exp_mis = 1*(is.na(ldem_exp) | is.infinite(ldem_exp)),
            ldem_exp = if_else(exp_mis == 1, 0, ldem_exp),
-           inc_midterm = c(dem=-1, gop=1)[inc_pres]*(year %% 4 == 2),
-           div_yr = str_c(division, "_", year)) |>
+           inc_midterm = c(dem=-1, gop=1)[inc_pres]*(year %% 4 == 2)) |>
     filter(unopp == 0, !is.infinite(ldem_seat), year >= 2010) |>
     mutate(dem_cand = fct_drop(dem_cand),
            rep_cand = fct_drop(rep_cand))
 
-# BRMS ------
+# Fit model ------
 
 form = ldem_seat ~ inc_pres + offset(ldem_pred) + ldem_pres_adj:ldem_gen +
     polar*(inc_seat + ldem_exp + exp_mis) - polar + region +
@@ -50,7 +49,7 @@ m = brm(bf(form, sigma ~ polar + I(ldem_pres_adj^2), decomp="QR"),
         data=d_fit, family=student(), prior=bprior,
         threads=2, chains=3, backend="cmdstanr", normalize=FALSE,
         iter=2000, warmup=500, control=list(adapt_delta=0.99, step_size=0.05),
-        file=here("stan/outcomes_m.rds"), file_refit="on_change",
+        file=here("stan/outcomes_house_m.rds"), file_refit="on_change",
         stan_model_args=list(stanc_options=list("O1")))
 
 
@@ -60,7 +59,7 @@ mcmc_plot(m, variable="b_[^s]", regex=TRUE) +
     geom_vline(xintercept=0, lty="dashed") +
     theme_bw() +
     theme(axis.text.y=element_text(face="bold"))
-ggsave(here("readme-doc/outcomes_model_ests.svg"), width=7, height=6)
+ggsave(here("readme-doc/outcomes_model_house_ests.svg"), width=7, height=6)
 
 
 

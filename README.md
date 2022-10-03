@@ -185,17 +185,29 @@ shown below.
 
 ![2020 intent estimates](readme-doc/intent_backtest_2020.svg)
 
-### Outcomes model
+### Outcomes models
 
-The outcomes model maps district partisanship, the national environment,
-and other district and national factors onto vote shares in each
-district. We use a multilevel model with a student-t response, as
-described by the following (`brms`) model syntax:
+The outcomes models maps district partisanship, the national
+environment, and other district and national factors onto vote shares in
+each House district and senate race. We use a multilevel model with a
+student-t response, as described by the following (`brms`) model syntax.
+
+**House:**
 
 ``` r
 ldem_seat ~ ldem_seat ~ inc_pres + offset(ldem_pred) + ldem_pres_adj:ldem_gen +
     polar*(inc_seat + ldem_exp + exp_mis) - polar + region +
     (1 + edu_o15 | year) + (1 | division:year) + (1 | dem_cand) + (1 | rep_cand)
+    
+sigma ~ polar + I(ldem_pres_adj^2)
+```
+
+**Senate:**
+
+``` r
+ldem_seat ~ inc_pres + ldem_pres_adj + ldem_gen +
+    ldem_pres_adj:ldem_gen + polar*inc_seat - polar +
+    (1 + edu_o15 | year) + (1 | cand_dem) + (1 | cand_rep)
     
 sigma ~ polar + I(ldem_pres_adj^2)
 ```
@@ -212,10 +224,19 @@ Democrat; `exp_mis` codes whether expenditure data are missing for the
 race (as they unfortunately often are); and `dem_cand` and `rep_cand`
 are the Democratic and Republican candidates, respectively.
 
-The standard deviation of the year random effects is estimated around
-0.05 (on the logit scale); the standard deviation of the division-year
-random effects is estimated around 0.04. The model is fit to all 2,320
-contested House elections from 2010 to 2020. Posterior summaries for all
-coefficients are shown below. The overall model $R^2$ is around 0.97.
+For the House model, the standard deviation of the year random effects
+is estimated around 0.05 (on the logit scale); the standard deviation of
+the division-year random effects is estimated around 0.04. The model is
+fit to all 2,320 contested House elections from 2010 to 2020. Posterior
+summaries for all coefficients are shown below. The overall model $R^2$
+is around 0.97 for the House model.
 
-![Outcome model summary](readme-doc/outcomes_model_ests.svg)
+![House outcome model summary](readme-doc/outcomes_model_house_ests.svg)
+
+For the Senate model, the standard deviation of the year random effects
+is estimated around 0.03 (on the logit scale). The model is fit to all
+249 contested, two-way Senate elections from 2006 to 2020. Posterior
+summaries for all coefficients are shown below. The overall model $R^2$
+is around 0.83.
+
+![Senate outcome model summary](readme-doc/outcomes_model_sen_ests.svg)

@@ -34,6 +34,7 @@ d_distr_list = {
         d.rcv = ["AK", "ME"].includes(d.state);
         d.interval = [d.dem_mean, d.dem_q10, d.dem_q25, d.dem_q75, d.dem_q90, d.rcv];
         d.rating = rate(d.pr_dem);
+        d.margin = Math.abs(d.dem_mean - 0.5);
         d.dem_cand = fmt_surname(d.dem_cand);
         d.rep_cand = fmt_surname(d.rep_cand);
         d.cands = [d.dem_cand, d.rep_cand, d.inc_seat];
@@ -525,9 +526,9 @@ viewof tab_distr = {
         <div class="drep cand">${r_cand}</div>`
     }
     
-    let cols = ["name_short", "cands", "inc_seat", "pr_dem", "interval", "part_base", ];
-    let cols_small = ["name_short", "cands", "pr_dem", "interval", "part_base", ];
-    let cols_tiny = ["name_short", "cands", "pr_dem", "interval", ];
+    let cols = ["margin", "name_short", "cands", "inc_seat", "pr_dem", "interval", "part_base", ];
+    let cols_small = ["margin", "name_short", "cands", "pr_dem", "interval", "part_base", ];
+    let cols_tiny = ["margin", "name_short", "cands", "pr_dem", "interval", ];
     const tiny = width < 496;
     const small = width < 650
     
@@ -551,6 +552,8 @@ viewof tab_distr = {
             interval: tiny ? fmt_vs_tiny : fmt_vs,
             part_base: fmt_part,
         },
+        
+        sort: "margin",
         
         width: {
             interval: 400,

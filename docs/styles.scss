@@ -134,6 +134,10 @@ table {
     td, th {
         overflow: visible;
     }
+
+    td:nth-child(2), th:nth-child(2) {
+        display: none;
+    }
 }
 
 #polls-tab table {
