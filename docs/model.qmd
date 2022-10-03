@@ -37,6 +37,10 @@ d_distr_list = {
         d.margin = Math.abs(d.dem_mean - 0.5);
         d.dem_cand = fmt_surname(d.dem_cand);
         d.rep_cand = fmt_surname(d.rep_cand);
+        if (d.state == "AK") {
+            d.dem_cand = "NA";
+            d.rep_cand = "NA";
+        }
         d.cands = [d.dem_cand, d.rep_cand, d.inc_seat];
         d.search = {dem: "incumbent dem. ", open: "open seat ", gop: "incumbent rep. incumbent gop. "}[d.inc_seat] 
                 + ["contested ", "unopposed uncontested "][d.unopp];
