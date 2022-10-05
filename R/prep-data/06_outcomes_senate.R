@@ -13,7 +13,7 @@ parse_name = function(x) {
 d_cand_raw <- read_tsv(here("data-raw/dv/candidates_2006-2020.tab"), show_col_types=FALSE)
 d_cand = d_cand_raw |>
     rename(name = name_snyder) |>
-    filter(office == "S", type == "G") |>
+    filter(office == "S", type == "G" | (type == "S" & year %% 2 == 0)) |>
     mutate(dist = as.integer(dist),
            party = case_when(str_detect(name, "SANDERS, BERNARD") ~ "dem",
                              str_detect(name, "KING, ANGUS") ~ "dem",
@@ -40,7 +40,39 @@ d_cand = d_cand_raw |>
     arrange(year, state) %>%
     mutate(ldem_seat = log(votes_dem) - log(votes_rep)) |>
     select(-cand_oth)
-# TODO check if S. BROWN is the same in MA 2012 and NH 2014
+
+parse_name_22 = function(x) {
+    str_c(str_sub(x, 1, 1), ". ", word(x, 2, -1))
+}
+
+d_22 <- read_csv(here("data-raw/dfp/senate_candidates_2022.csv"), show_col_types=FALSE) |>
+    filter(year == 2022, candidate_number <= 2) |>
+    transmute(year = year,
+              class = 3,
+              state = state_code,
+              inc = 1*(incumbency_status == "incumbent"),
+              party = str_to_lower(str_sub(party_affiliation, 1, 3)),
+              cand = parse_name_22(candidate_name),
+              votes = NA_real_) |>
+    group_by(year, state) |>
+    mutate(unopp = 1L*(n() < 2 | max(table(party)) == n()),
+           multi = 1L*(n() > 2),
+           inc = coalesce(ifelse(any(inc == 1), party[inc == 1], "open"), "open")) |>
+    bind_rows(tibble(year=2022, class=2, state="OK", inc="open",
+                     party=c("dem", "rep"), cand=c("K. HORN", "M. MULLIN"),
+                     unopp=0, multi=0)) |>
+    bind_rows(tibble(year=2022, class=3, state="LA", inc="rep",
+                     party=c("rep", "dem"), cand=c("J. KENNEDY", "NA"),
+                     unopp=0, multi=0)) |>
+    ungroup() |>
+    pivot_wider(names_from=party, values_from=c(cand, votes),
+                values_fn = ~ .[1]) |>
+    arrange(state) %>%
+    mutate(ldem_seat = log(votes_dem) - log(votes_rep)) |>
+    select(-any_of("cand_oth"))
+
+d_cand <- bind_rows(d_cand, d_22)
+
 
 d_pres <- read_csv(here("data-raw/medsl/1976-2020-president.csv"), show_col_types=FALSE) |>
     transmute(year = year + 2,

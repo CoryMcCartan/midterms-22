@@ -21,3 +21,6 @@ stan/*
 !stan/*.hpp
 
 R/billing/
+
+docs/search.json
+docs/site_libs/quarto-search

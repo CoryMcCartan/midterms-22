@@ -5,8 +5,9 @@ elec_date = as.Date("2022-11-08")
 
 source(here("R/model/forecast.R"))
 
-dates = as.Date("2022-05-19") + seq(1, 147, 2)
+dates = as.Date("2022-05-01") + seq(112, 152, 3) - 1
 
+options(readr.num_threads=1)
 purrr::walk(dates, safely(function(from_date) {
     forecast = run_forecast(elec_date, start_date, from_date,
                             refresh_polls=FALSE,

@@ -27,7 +27,7 @@ set.seed(5118)
 
 <img src="readme-doc/cover.jpg" alt="U.S. Capitol at sunset" style="width: 100%;">
 
-A dynamic Bayesian model to forecast the 2022 U.S. House elections.
+A dynamic Bayesian model to forecast the 2022 U.S. midterm elections.
 
 ## Directory structure
 - Code for all the analyses in [`R/`](R/) and [`stan/`](stan/). README files in
@@ -229,7 +229,7 @@ Estimates for the 2010--2020 cycles, based only on previous years, are shown bel
 
 ### Outcomes models
 
-The outcomes models maps district partisanship, the national environment, and other district and national factors onto vote shares in each House district and senate race.
+The outcomes models maps district partisanship, the national environment, and other district and national factors onto vote shares in each House district and Senate race.
 We use a multilevel model with a student-t response, as described by the following (`brms`) model syntax.
 
 **House:**
@@ -245,9 +245,10 @@ sigma ~ polar + I(ldem_pres_adj^2)
 **Senate:**
 
 ```r
-ldem_seat ~ inc_pres + ldem_pres_adj + ldem_gen +
-    ldem_pres_adj:ldem_gen + polar*inc_seat - polar +
-    (1 + edu_o15 | year) + (1 | cand_dem) + (1 | cand_rep)
+ldem_seat ~ ldem_pres_adj + offset(ldem_gen) + ldem_pres_adj:ldem_gen +
+    (midterm + inc_pres + inc_seat)^2 +
+    (1 + white + edu_o15 | year) + (1 | region) +
+    (1 | cand_dem) + (1 | cand_rep)
     
 sigma ~ polar + I(ldem_pres_adj^2)
 ```

@@ -12,6 +12,9 @@ suppressMessages({
     source(here("R/model/load_polls.R"))
 })
 
+DEM_VP = TRUE
+D_SEN_SEATS_NOTUP = 36
+
 run_forecast <- function(elec_date, start_date, from_date=Sys.Date(),
                          refresh_polls=FALSE, chains=4, iter=800, N_mix_natl=40) {
     # Load data -----
@@ -88,9 +91,44 @@ run_forecast <- function(elec_date, start_date, from_date=Sys.Date(),
     # Predict outcomes -----
     cli_h1("Forecasting seat outcomes")
 
+    d_house = prep_house_d(from_date)
+    d_senate = prep_senate_d(from_date)
+
+    # mix the national intent and outcome draws
+    pr_mix_natl = seq(0.5/N_mix_natl, 1, 1/N_mix_natl)
+    mix_natl = quantile(draws_of(pred_natl)[, 1], probs=pr_mix_natl, names=FALSE) # evenly space natl draws (reduce var)
+
+    house_forecast = pred_house(d_house, mix_natl, N_mix_natl)
+    senate_forecast = pred_senate(d_senate, mix_natl, N_mix_natl)
+
+    list(
+        pred_natl = pred_natl,
+        gcb = m_gcb$draws("natl_dem"),
+        n_polls = stan_d$N,
+        d_polls = d_polls,
+        house = house_forecast,
+        senate = senate_forecast,
+        out = c(list(
+            i_prob = E(pred_natl > 0),
+            i_med = plogis(median(pred_natl)),
+            i_q10 = plogis(quantile(pred_natl, 0.1)),
+            i_q25 = plogis(quantile(pred_natl, 0.25)),
+            i_q75 = plogis(quantile(pred_natl, 0.75)),
+            i_q90 = plogis(quantile(pred_natl, 0.9)),
+            pr_DsDh = mean(house_forecast$pred_seats >= 218 & senate_forecast$pred_seats >= 50),
+            pr_DsRh = mean(house_forecast$pred_seats < 218 &  senate_forecast$pred_seats >= 50),
+            pr_RsDh = mean(house_forecast$pred_seats >= 218 & senate_forecast$pred_seats < 50),
+            pr_RsRh = mean(house_forecast$pred_seats < 218 &  senate_forecast$pred_seats < 50)
+        ), house_forecast$out, senate_forecast$out)
+    )
+}
+
+prep_house_d <- function(from_date) {
     d_house_22 = read_csv(here("data-raw/produced/hist_house_races.csv.gz"), show_col_types=FALSE) |>
         filter(year == 2022) |>
-        rows_update(tibble(state="AK", district=1, inc_seat="dem"), by=c("state", "district")) |>
+        rows_update(tibble(state="AK", district=1,
+                           inc_seat=ifelse(from_date > ymd("2022-08-16"), "dem", "open")),
+                           by=c("state", "district")) |>
         mutate(dem_cand_full = dem_cand,
                rep_cand_full = rep_cand,
                dem_cand = coalesce(str_c(state, ": ", dem_cand), "<other>"),
@@ -111,32 +149,33 @@ run_forecast <- function(elec_date, start_date, from_date=Sys.Date(),
         mutate(pr_dem = if_else(inc_seat == 1, 1, 1*(ldem_pres > ldem_pres_natl)),
                part_base = plogis(ldem_pres_adj))
 
-    # mix the national intent and outcome draws
-    pr_mix_natl = seq(0.5/N_mix_natl, 1, 1/N_mix_natl)
-    mix_natl = quantile(draws_of(pred_natl)[, 1], probs=pr_mix_natl, names=FALSE) # evenly space natl draws (reduce var)
+    list(all=d_house_22, pred=d_house_pred, unopp=d_house_unopp)
+}
 
-    m_outcomes = read_rds(here("stan/outcomes_m.rds"))
+pred_house <- function(d_house, mix_natl, N_mix_natl) {
+    m_outcomes = read_rds(here("stan/outcomes_house_m.rds"))
     N_outcomes = sum(m_outcomes$fit@sim$n_save)
     N_per_chunk = N_outcomes %/% N_mix_natl
     iter_grp = lapply(seq_len(N_mix_natl), \(i) (i-1)*N_per_chunk + seq_len(N_per_chunk))
 
-    pb = cli_progress_along(1:N_mix_natl, name="Combining draws")
+    pb = cli_progress_along(1:N_mix_natl, name="Combining draws for House model")
     set.seed(5118)
     m_pred = do.call(rbind, map(pb, function(i) {
-        d_tmp = d_house_pred |>
+        d_tmp = d_house$pred |>
             mutate(ldem_gen = mix_natl[i],
                    ldem_pred = ldem_pres_adj + ldem_gen)
         posterior_predict(m_outcomes, newdata=d_tmp, draw_ids=iter_grp[[i]],
-                          sample_new_levels="uncertainty", allow_new_levels=TRUE)
+                          sample_new_levels="uncertainty", allow_new_levels=TRUE, cores=1)
     }))
-    colnames(m_pred) = with(d_house_pred, str_c(state, "-", district))
+    colnames(m_pred) = with(d_house$pred, str_c(state, "-", district))
     cli_progress_done()
+    cli_alert_success("House predictions complete.")
 
-    pred_seats = sum(d_house_unopp$pr_dem) + rowSums(m_pred > 0)
+    pred_seats = sum(d_house$unopp$pr_dem) + rowSums(m_pred > 0)
 
     d_pred_22 = bind_rows(
-        d_house_unopp,
-        mutate(d_house_pred,
+        d_house$unopp,
+        mutate(d_house$pred,
                part_base = plogis(ldem_pres_adj),
                pr_dem = colMeans(m_pred > 0),
                dem_mean = colMeans(plogis(m_pred)),
@@ -151,27 +190,91 @@ run_forecast <- function(elec_date, start_date, from_date=Sys.Date(),
         arrange(state, district)
 
     out = list(
-        s_prob = mean(pred_seats >= 218),
-        s_med = round(median(pred_seats)),
-        s_q10 = round(quantile(pred_seats, 0.1)),
-        s_q25 = round(quantile(pred_seats, 0.25)),
-        s_q75 = round(quantile(pred_seats, 0.75)),
-        s_q90 = round(quantile(pred_seats, 0.9)),
-        i_prob = E(pred_natl > 0),
-        i_med = plogis(median(pred_natl)),
-        i_q10 = plogis(quantile(pred_natl, 0.1)),
-        i_q25 = plogis(quantile(pred_natl, 0.25)),
-        i_q75 = plogis(quantile(pred_natl, 0.75)),
-        i_q90 = plogis(quantile(pred_natl, 0.9))
+        house_prob = mean(pred_seats >= 218),
+        house_med = round(median(pred_seats)),
+        house_q10 = round(quantile(pred_seats, 0.1)),
+        house_q25 = round(quantile(pred_seats, 0.25)),
+        house_q75 = round(quantile(pred_seats, 0.75)),
+        house_q90 = round(quantile(pred_seats, 0.9))
     )
 
     list(pred_seats = pred_seats,
-         pred_natl = pred_natl,
          m_pred = m_pred,
-         gcb = m_gcb$draws("natl_dem"),
          d_pred_22 = d_pred_22,
-         n_polls = stan_d$N,
-         d_polls = d_polls,
+         out = out)
+}
+
+prep_senate_d <- function(from_date) {
+    d_sen_22 <- read_csv(here("data-raw/produced/hist_sen_races.csv.gz"), show_col_types=FALSE) |>
+        filter(year == 2022) |>
+        mutate(dem_cand_full = cand_dem,
+               rep_cand_full = cand_rep,
+               cand_dem = coalesce(cand_dem, "<other>"),
+               cand_rep = coalesce(cand_rep, "<other>"),
+               ldem_pres_adj = ldem_pres - ldem_pres_natl,
+               inc = coalesce(inc, "open"),
+               inc = c(dem=1, open=0, oth=0, rep=-1)[inc],
+               midterm = year %% 4 == 2,
+               unopp = coalesce(unopp, 0))
+    d_sen_pred = d_sen_22 |>
+        filter(unopp == 0)
+    d_sen_unopp = d_sen_22 |>
+        filter(unopp == 1) |>
+        mutate(pr_dem = if_else(inc == 1, 1, 1*(ldem_pres > ldem_pres_natl)),
+               part_base = plogis(ldem_pres_adj))
+
+    list(all=d_sen_22, pred=d_sen_pred, unopp=d_sen_unopp)
+}
+
+pred_senate <- function(d_senate, mix_natl, N_mix_natl) {
+    m_outcomes = read_rds(here("stan/outcomes_sen_m.rds"))
+    N_outcomes = sum(m_outcomes$fit@sim$n_save)
+    N_per_chunk = N_outcomes %/% N_mix_natl
+    iter_grp = lapply(seq_len(N_mix_natl), \(i) (i-1)*N_per_chunk + seq_len(N_per_chunk))
+
+    pb = cli_progress_along(1:N_mix_natl, name="Combining draws for Senate model")
+    set.seed(5118)
+    m_pred = do.call(rbind, map(pb, function(i) {
+        d_tmp = d_senate$pred |>
+            mutate(ldem_gen = mix_natl[i],
+                   ldem_pred = ldem_pres_adj + ldem_gen)
+        posterior_predict(m_outcomes, newdata=d_tmp, draw_ids=iter_grp[[i]],
+                          sample_new_levels="uncertainty", allow_new_levels=TRUE, cores=1)
+    }))
+    colnames(m_pred) = d_senate$pred$state
+    cli_progress_done()
+    cli_alert_success("Senate predictions complete.")
+
+    pred_seats = D_SEN_SEATS_NOTUP + sum(d_senate$unopp$pr_dem) + rowSums(m_pred > 0)
+
+    d_pred_22 = bind_rows(
+        d_senate$unopp,
+        mutate(d_senate$pred,
+               part_base = plogis(ldem_pres_adj),
+               pr_dem = colMeans(m_pred > 0),
+               dem_mean = colMeans(plogis(m_pred)),
+               dem_q10 = plogis(apply(m_pred, 2, quantile, probs=0.1)),
+               dem_q25 = plogis(apply(m_pred, 2, quantile, probs=0.25)),
+               dem_q75 = plogis(apply(m_pred, 2, quantile, probs=0.75)),
+               dem_q90 = plogis(apply(m_pred, 2, quantile, probs=0.9)))
+    ) |>
+        mutate(inc_seat = c("gop", "open", "dem")[inc + 2]) |>
+        select(state, dem_cand=dem_cand_full, rep_cand=rep_cand_full,
+               inc_seat, unopp, part_base, pr_dem, dem_mean:dem_q90) |>
+        arrange(state)
+
+    out = list(
+        sen_prob = mean(pred_seats >= 51 - DEM_VP),
+        sen_med = round(median(pred_seats), 1),
+        sen_q10 = round(quantile(pred_seats, 0.1), 1),
+        sen_q25 = round(quantile(pred_seats, 0.25), 1),
+        sen_q75 = round(quantile(pred_seats, 0.75), 1),
+        sen_q90 = round(quantile(pred_seats, 0.9), 1)
+    )
+
+    list(pred_seats = pred_seats,
+         m_pred = m_pred,
+         d_pred_22 = d_pred_22,
          out = out)
 }
 
@@ -206,9 +309,12 @@ save_forecast <- function(forecast, elec_date, from_date) {
     if (from_date == Sys.Date()) {
         write_json(forecast$out, here("docs/summary.json"), auto_unbox=TRUE, digits=5)
 
-        forecast$d_pred_22 |>
+        forecast$house$d_pred_22 |>
             mutate(across(where(is.numeric), fmt_trunc)) |>
-            write_csv(here("docs/districts.csv"))
+            write_csv(here("docs/house_districts.csv"), na="")
+        forecast$senate$d_pred_22 |>
+            mutate(across(where(is.numeric), fmt_trunc)) |>
+            write_csv(here("docs/senate_races.csv"), na="")
 
         d_intent = summarize_natl(forecast$gcb, elec_date, c(0.5, 0.8)) |>
             pivot_wider(names_from=.width, values_from=c(.lower, .upper)) |>
@@ -219,14 +325,19 @@ save_forecast <- function(forecast, elec_date, from_date) {
             mutate(across(where(is.numeric), fmt_trunc))
         write_csv(d_intent, here("docs/natl_intent.csv"))
 
-        N_sim = length(forecast$pred_seats)
+        N_sim = length(forecast$house$pred_seats)
         tibble(dem_seats = 1:400,
-               pr = 100*tabulate(forecast$pred_seats, nbins=400) / N_sim) |>
+               pr = 100*tabulate(forecast$house$pred_seats, nbins=400) / N_sim) |>
             mutate(cdf = cumsum(pr/100),
                    across(where(is.numeric), fmt_trunc)) |>
-            write_csv(here("docs/seats_hist.csv"))
+            write_csv(here("docs/seats_hist_house.csv"))
+        tibble(dem_seats = 1:65,
+               pr = 100*tabulate(forecast$senate$pred_seats, nbins=65) / N_sim) |>
+            mutate(cdf = cumsum(pr/100),
+                   across(where(is.numeric), fmt_trunc)) |>
+            write_csv(here("docs/seats_hist_senate.csv"))
 
-        write_rds(forecast$m_pred, here("docs/draws_matrix.rds"), compress="gz")
+        # write_rds(forecast$m_pred, here("docs/draws_matrix.rds"), compress="gz")
 
         forecast$d_polls |>
             mutate(across(where(is.numeric), fmt_trunc)) |>

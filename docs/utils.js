@@ -26,6 +26,7 @@ export function rate(x) {
 }
 
 export function fmt_surname(x) {
+    if (x === null) return x;
     return x
         .replace("A. CORTEZ", "A. OCASIO-CORTEZ")
         .replace("M. MEEKS", "M. MILLER-MEEKS")

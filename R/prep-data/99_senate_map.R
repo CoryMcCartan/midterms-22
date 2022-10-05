@@ -10,10 +10,10 @@ d_states = tigris::states(cb=TRUE, resolution="5m") |>
               area = as.numeric(st_area(geometry)),
               scale = sqrt(min(area) / area))
 # OK special
-d_special = d_states[d_out$state == "OK", ]
+d_special = d_states[d_states$state == "OK", ]
 d_special$state = "OK-S"
 d_special$scale = d_special$scale / sqrt(2)
-d_states$scale[d_out$state == "OK"] = d_special$scale
+d_states$scale[d_states$state == "OK"] = d_special$scale
 d_states = bind_rows(d_states, d_special)
 
 bbox = st_bbox(d_states)
@@ -87,7 +87,7 @@ d_out = st_drop_geometry(d_states) |>
     transmute(state=state, geometry=scaled) |>
     st_as_sf() |>
     st_set_crs(5070) |>
-    st_transform(3857)
+    st_transform(4326)
 write_rds(d_out, here("data-raw/manual/states_eqarea.rds"), compress="xz")
 
 json = geojsonio::topojson_json(d_out, quantization=1e5)

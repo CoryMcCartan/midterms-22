@@ -29,7 +29,7 @@ d_fit <- d |>
 
 # Fit model ------
 
-form = ldem_seat ~ inc_pres + offset(ldem_pred) + ldem_pres_adj:ldem_gen +
+form = ldem_seat ~ inc_pres + ldem_pres_adj + offset(ldem_gen) + ldem_pres_adj:ldem_gen +
     polar*(inc_seat + ldem_exp + exp_mis) - polar + region +
     (1 + edu_o15 | year) + (1 | division:year) +
     (1 | dem_cand) + (1 | rep_cand)

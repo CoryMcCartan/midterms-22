@@ -52,21 +52,24 @@ cli_alert_success("Forecast complete.")
 tt_elec = round(elec_date - from_date)
 with(forecast$out, cat(str_glue("\n
  ===========================================
-  2022 U.S. House Forecast
+  2022 U.S. Midterms Forecast
   {as.character(Sys.Date(), format='%B %d, %Y')}
  -------------------------------------------
   Forecast from: {as.character(from_date, format='%B %d, %Y')}
   {tt_elec} day{if (tt_elec > 1) 's'} until the election.
   {forecast$n_polls} polls.
 
-  Dem. share of two-party vote:  {sprintf('%.1f%%', 100*i_med)}%
-  Median seat estimate:          {round(s_med)}
-  80% CI for seats:              {round(s_q10)} - {round(s_q90)}
-  Prob. of keeping control:      {round(100*s_prob)}%
-  Prob. of winning pop. vote:    {round(100*i_prob)}%
+  Dem. share of two-party vote:      {sprintf('%.1f%%', 100*i_med)}%
+  Median House seat estimate:        {round(house_med)}
+    80% CI:                          {round(house_q10)} - {round(house_q90)}
+  Median Senate seat estimate:       {round(sen_med)}
+    80% CI:                          {round(sen_q10)} - {round(sen_q90)}
+  Prob. of keeping House control:    {round(100*house_prob)}%
+  Prob. of keeping Senate control:   {round(100*sen_prob)}%
+  Prob. of winning pop. vote:        {round(100*i_prob)}%
  ===========================================
 \n\n")))
-system("osascript -e 'display notification \"Model run complete.\" with title \"House Model\"'")
+system("osascript -e 'display notification \"Model run complete.\" with title \"Midterms Forecast\"'")
 
 if (isFALSE(opt$dry)) {
     save_forecast(forecast, elec_date, from_date)

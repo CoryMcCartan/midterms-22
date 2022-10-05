@@ -1,0 +1,32 @@
+project:
+    type: website
+    output-dir: .
+    preview:
+        port: 8000
+        watch-inputs: true
+        timeout: 60
+
+website:
+    title: 2022 Midterms
+    search: false
+    favicon: flag.gif
+    navbar:
+        logo: flag.gif
+        background: dark
+        search: false
+        right:
+            - text: House
+              href: house.html
+            - text: Senate
+              href: senate.html
+            - icon: github
+              href: https://github.com/CoryMcCartan/midterms-22/
+              aria-label: GitHub
+
+format:
+    html:
+        minimal: true
+        theme:
+            - journal
+            - styles.scss
+        email-obfuscation: javascript

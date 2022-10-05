@@ -14,3 +14,6 @@ LaTeX: pdfLaTeX
 
 AutoAppendNewline: Yes
 StripTrailingWhitespace: Yes
+
+BuildType: Website
+WebsitePath: /Users/cmccartan/Documents/Analyses/elections/fed22/docs
