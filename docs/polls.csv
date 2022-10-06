@@ -1,51 +1,51 @@
 date,firm,type,lv,firm_bias,est,impact
-2022-10-03,Ipsos,online,0,0.02316,0.50769,-0.0176
-2022-10-03,InsiderAdvantage,unknown,1,0.01246,0.48845,-0.00733
-2022-10-02,YouGov,online,1,0.01888,0.50538,-0.00121
-2022-09-27,Rasmussen (Pulse Opinion Research),ivr,1,0.00143,0.49438,-0.04913
-2022-09-27,NewsNation/Decision Desk HQ,online,0,0.01261,0.5057,-0.00157
-2022-09-26,Ipsos,online,0,0.02316,0.53623,-0.01589
-2022-09-26,Trafalgar Group,ivr,1,0.01198,0.47059,0.06127
-2022-09-25,YouGov,online,0,0.01888,0.49772,-0.07298
-2022-09-25,YouGov,online,0,0.01888,0.53521,-0.00282
-2022-09-25,YouGov,online,0,0.01888,0.52326,-0.0146
-2022-09-25,YouGov,online,1,0.01888,0.49462,-0.01808
-2022-09-24,Susquehanna,phone,1,0.01289,0.49425,0.0046
-2022-09-23,Monmouth U.,phone,0,0.01396,0.48913,-0.00714
-2022-09-23,Monmouth U.,phone,0,0.01396,0.48352,-0.00114
-2022-09-22,Big Village,online,0,0.01628,0.50973,-0.01185
-2022-09-22,Big Village,online,0,0.01628,0.52474,0.07671
-2022-09-22,Selzer,phone,1,0.01547,0.52273,-0.01237
-2022-09-20,Emerson College Polling Society,ivr,1,0.00015,0.50222,0.02008
-2022-09-20,Rasmussen (Pulse Opinion Research),ivr,1,0.00143,0.48837,-0.02117
-2022-09-19,ABC/Washington Post,phone,1,0.01644,0.47423,-0.16595
-2022-09-19,ABC/Washington Post,phone,0,0.01644,0.49462,-0.10506
-2022-09-19,Ipsos,online,0,0.02316,0.50746,-0.00348
-2022-09-19,McLaughlin,unknown,1,-0.01029,0.47826,-0.0222
-2022-09-18,Morning Consult,online,1,0.01295,0.52174,0.00387
-2022-09-18,YouGov,online,0,0.01888,0.52907,-0.00744
-2022-09-17,Echelon Insights,online,0,0.02333,0.53846,-0.0247
-2022-09-17,Echelon Insights,online,1,0.02333,0.52688,0.03161
-2022-09-17,Premise,online,0,0.01332,0.575,-0.02454
-2022-09-15,Cygnal Political,online,1,0.01323,0.50106,-0.00135
-2022-09-14,Morning Consult,online,1,0.01295,0.51613,-0.03836
-2022-09-13,OnMessage Inc.,online,1,0.01271,0.48315,0.01279
-2022-09-13,Rasmussen (Pulse Opinion Research),ivr,1,0.00143,0.49412,0.06502
-2022-09-12,Greenberg Quinlan Rosner,online,0,0.02307,0.51546,-0.00673
-2022-09-12,Ipsos,online,0,0.02316,0.52459,0.00589
-2022-09-12,Ipsos,online,0,0.02316,0.52857,0.00537
-2022-09-11,Hart Research Associates/Public Opinion Strategies,phone,0,0.01883,0.5,-0.0041
-2022-09-11,YouGov,online,0,0.01888,0.52364,0.01956
-2022-09-10,Beacon Research/Shaw & Company,phone,0,0.01192,0.51765,0.02087
-2022-09-10,Marquette Law School,online,0,0.01326,0.53409,-0.00776
-2022-09-10,Marquette Law School,online,0,0.01326,0.53571,-0.00498
-2022-09-10,Morning Consult,online,0,0.01295,0.52809,-0.02539
-2022-09-10,Winston,unknown,0,0.01094,0.5,0.00644
-2022-09-10,Siena College/NYT Upshot,phone,0,0.01297,0.51111,-0.02326
-2022-09-09,Global Strategy Group/GBAO/Navigator Research,online,0,0.02171,0.53333,-0.00491
-2022-09-08,Big Village,online,0,0.01628,0.53064,0.08926
-2022-09-08,Big Village,online,0,0.01628,0.52699,0.00056
-2022-09-08,TIPP,online,0,-0.00062,0.51064,0.01206
-2022-09-08,Trafalgar Group,ivr,1,0.01198,0.46837,-0.01279
-2022-09-07,Harris Poll,online,0,0.01689,0.51,-0.00022
-2022-09-07,"Cor Services, Inc.",ivr,1,0.01303,0.49438,-0.00645
+2022-10-03,Ipsos,online,0,0.02316,0.50769,-0.00643
+2022-10-03,InsiderAdvantage,unknown,1,0.01239,0.48845,-0.01357
+2022-10-02,YouGov,online,0,0.01869,0.50395,-0.00959
+2022-09-29,Morning Consult,online,1,0.0133,0.52688,0.02885
+2022-09-27,Morning Consult,online,1,0.0133,0.52688,-0.05097
+2022-09-27,Rasmussen (Pulse Opinion Research),ivr,1,0.00133,0.49438,0.10892
+2022-09-27,NewsNation/Decision Desk HQ,online,0,0.01262,0.5057,0.02256
+2022-09-26,Ipsos,online,0,0.02316,0.53623,0.0235
+2022-09-26,Trafalgar Group,ivr,1,0.01193,0.47059,0.02165
+2022-09-25,Morning Consult,online,1,0.0133,0.52174,0.01767
+2022-09-25,YouGov,online,0,0.01869,0.49772,0.08662
+2022-09-25,YouGov,online,0,0.01869,0.52326,-0.03104
+2022-09-25,YouGov,online,0,0.01869,0.53521,-0.02038
+2022-09-25,YouGov,online,1,0.01869,0.49462,-0.21772
+2022-09-24,Susquehanna,phone,1,0.01281,0.49425,0.01401
+2022-09-23,Monmouth U.,phone,0,0.0141,0.48352,0.0104
+2022-09-23,Monmouth U.,phone,0,0.0141,0.48913,0.01659
+2022-09-22,Big Village,online,0,0.01592,0.52474,-0.11721
+2022-09-22,Big Village,online,0,0.01592,0.50973,0.11058
+2022-09-22,Selzer,phone,1,0.01521,0.52273,-0.05903
+2022-09-22,YouGov,online,1,0.01869,0.49451,-0.00994
+2022-09-20,Emerson College Polling Society,ivr,1,3e-05,0.50222,-0.00499
+2022-09-20,Rasmussen (Pulse Opinion Research),ivr,1,0.00133,0.48837,-0.00766
+2022-09-19,ABC/Washington Post,phone,1,0.01642,0.47423,-0.14807
+2022-09-19,ABC/Washington Post,phone,0,0.01642,0.49462,-0.0788
+2022-09-19,Ipsos,online,0,0.02316,0.50746,0.01143
+2022-09-19,McLaughlin,unknown,1,-0.01092,0.47826,0.00351
+2022-09-19,Morning Consult,online,1,0.0133,0.51613,0.02325
+2022-09-18,YouGov,online,0,0.01869,0.52907,-0.00499
+2022-09-17,Echelon Insights,online,0,0.02243,0.53846,-0.0037
+2022-09-17,Echelon Insights,online,1,0.02243,0.52688,-0.01342
+2022-09-17,Premise,online,0,0.01333,0.575,-0.1066
+2022-09-16,Morning Consult,online,1,0.0133,0.51613,-0.01435
+2022-09-15,Cygnal Political,online,1,0.01299,0.50106,-0.0449
+2022-09-13,OnMessage Inc.,online,1,0.01263,0.48315,-0.02802
+2022-09-13,Rasmussen (Pulse Opinion Research),ivr,1,0.00133,0.49412,-0.00943
+2022-09-12,Greenberg Quinlan Rosner,online,0,0.02315,0.51546,0.02107
+2022-09-12,Ipsos,online,0,0.02316,0.52857,-0.01634
+2022-09-12,Ipsos,online,0,0.02316,0.52459,0.00893
+2022-09-11,Hart Research Associates/Public Opinion Strategies,phone,0,0.01894,0.5,-0.00463
+2022-09-11,YouGov,online,0,0.01869,0.52364,0.01608
+2022-09-10,Beacon Research/Shaw & Company,phone,0,0.01214,0.51765,0.00926
+2022-09-10,Marquette Law School,online,0,0.01321,0.53409,0.00195
+2022-09-10,Marquette Law School,online,0,0.01321,0.53571,0.06686
+2022-09-10,Morning Consult,online,0,0.0133,0.52809,-0.03497
+2022-09-10,Winston,unknown,0,0.01098,0.5,0.02279
+2022-09-10,Siena College/NYT Upshot,phone,0,0.01301,0.51111,0.00696
+2022-09-09,Morning Consult,online,1,0.0133,0.52174,0.06002
+2022-09-09,Global Strategy Group/GBAO/Navigator Research,online,0,0.02173,0.53333,0.00279
+2022-09-08,Big Village,online,0,0.01592,0.53064,0.00339

@@ -198,6 +198,30 @@ d |>
     arrange(year, race, tte, firm, pop) |>
 write_csv(here("data-raw/produced/hist_polls_house_pres.csv"))
 
+
+
+d_sen = raw_hist_all |>
+    filter(location != "US", type_simple == "Sen-G") |>
+    transmute(year = as.integer(str_sub(race, 1, 4)),
+              state = location,
+              firm = pollster,
+              firm_id = as.integer(pollster_rating_id),
+              type = str_to_lower(methodology),
+              type = case_when(type == "live phone" ~ "phone",
+                               str_detect(type, "ivr") ~ "ivr",
+                               type == "live phone/online" ~ "mixed",
+                               str_detect(type, "online") ~ "online"),
+              n = as.integer(samplesize),
+              tte = as.integer(mdy(electiondate) - mdy(polldate)),
+              est = qlogis(cand1_pct / (cand1_pct + cand2_pct)),
+              act = qlogis(cand1_actual / (cand1_actual + cand2_actual)),
+              err = est - act) |>
+    filter(year %% 2 == 0)
+d_sen |>
+    arrange(year, state, tte, firm) |>
+write_csv(here("data-raw/produced/hist_polls_senate.csv"))
+
+
 if (FALSE) {
     # how are polling errors distributed by methodology?
     d |>
@@ -244,5 +268,30 @@ if (FALSE) {
         geom_point(size=0.2) +
         scale_y_log10() +
         geom_smooth()
+
+    # error by state
+    m = d_sen |>
+        filter(year >= 2006) |>
+        group_by(year, state) |>
+        summarize(err = mean(err)) |>
+        ungroup() |>
+        pivot_wider(names_from=state, values_from=err) |>
+        select(-year) |>
+        as.matrix()
+    cor(t(m), use="pairwise.complete.obs")
+    d_sen |>
+        group_by(year, state, act) |>
+        summarize(err = mean(err)) |>
+    ggplot(aes(act, err, label=state)) +
+        facet_wrap(~ year) +
+        geom_smooth(method=lm) +
+        geom_text(size=2.5)
+
+    d_sen |>
+        filter(year >= 2006) |>
+        group_by(state) |>
+        summarize(t = mean(err) / sd(err) * sqrt(n())) |>
+        arrange(desc(t)) |>
+        print(n=50)
 
 }

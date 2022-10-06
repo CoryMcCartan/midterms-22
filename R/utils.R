@@ -9,6 +9,11 @@ hash_version <- function() {
     str_sub(rlang::hash(hashes), 1, 8)
 }
 
+conj_mean <- function(y, prior_loc=0, prior_nobs=1) {
+    n = length(y)
+    (prior_nobs * prior_loc + n * mean(y)) / (prior_nobs + n)
+}
+
 plot_time <- function(d, qty, election_date, ylab=NULL, thin=1) {
     library(geomtextpath)
 

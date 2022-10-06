@@ -90,3 +90,49 @@ get_latest_approval <- function(from_date=Sys.Date(), limit_per_firm=10, force=F
         pull(approve) |>
         mean()
 }
+
+get_senate_poll_avg <- function(from_date=Sys.Date(), force=FALSE) {
+    path <- here("data-raw/raw_sen_polls_cache.csv")
+
+    if (file.exists(path) && file.mtime(path) >= from_date && isFALSE(force)) {
+        raw <- read_csv(path, show_col_types=FALSE)
+    } else {
+        url <- "https://projects.fivethirtyeight.com/polls/data/senate_polls.csv"
+        raw <- read_csv(url, show_col_types=FALSE)
+        write_csv(raw, path)
+    }
+
+    parse_name = function(x) {
+        x = str_to_upper(str_replace_all(x, " ([A-Z]\\.)+ ", " "))
+        str_c(str_sub(x, 1, 1), ". ", word(x, 2, -1)) |>
+            str_replace("JUNIOR WALKER", "WALKER") |>
+            str_replace("BUSCH VALENTINE", "VALENTINE") |>
+            str_replace("PAUL LAXALT", "LAXALT") |>
+            str_replace("RAE PERKINS", "PERKINS")
+    }
+
+    d_pres = read_csv(here("data-raw/produced/hist_pres_state.csv"), show_col_types=FALSE) |>
+        filter(year == 2022)
+
+    raw |>
+        mutate(start_date = mdy(start_date),
+               end_date = mdy(end_date),
+               date = date_midpt(start_date, end_date)) |>
+        filter(date >= from_date - 30) |>
+        transmute(id = poll_id,
+                  state = state.abb[match(state, state.name)],
+                  party = str_to_lower(party),
+                  cand = parse_name(candidate_name),
+                  pct = pct/100) |>
+        filter(party %in% c("dem", "rep")) |>
+        group_by(id, party) |>
+        arrange(desc(pct)) |>
+        slice_head(n=1) |>
+        pivot_wider(names_from=party, values_from=c(cand, pct)) |>
+        left_join(d_pres, by="state") |>
+        mutate(est = log(pct_dem) - log(pct_rep),
+               cand_dem = if_else(state != "AK", cand_dem, NA_character_), # manual
+               ldem_pres_adj = ldem_pres - ldem_pres_natl) |>
+        group_by(state, cand_dem, cand_rep) |>
+        summarize(poll_avg = conj_mean(est, ldem_pres_adj[1], 2.0))
+}

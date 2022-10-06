@@ -31,6 +31,9 @@ run_forecast <- function(elec_date, start_date, from_date=Sys.Date(),
     d_polls <- load_polls(2022, from_date=from_date, force=refresh_polls)
     cli_alert_success("Generic Congressional ballot polls loaded.")
 
+    # Senate polls
+    d_sen_polls <- get_senate_poll_avg(from_date=from_date, force=refresh_polls)
+    cli_alert_success("Senate polls loaded.")
 
     # Estimate nat'l intent -----
     cli_h1("Estimating national intent")
@@ -92,7 +95,7 @@ run_forecast <- function(elec_date, start_date, from_date=Sys.Date(),
     cli_h1("Forecasting seat outcomes")
 
     d_house = prep_house_d(from_date)
-    d_senate = prep_senate_d(from_date)
+    d_senate = prep_senate_d(from_date, d_sen_polls)
 
     # mix the national intent and outcome draws
     pr_mix_natl = seq(0.5/N_mix_natl, 1, 1/N_mix_natl)
@@ -204,14 +207,18 @@ pred_house <- function(d_house, mix_natl, N_mix_natl) {
          out = out)
 }
 
-prep_senate_d <- function(from_date) {
+prep_senate_d <- function(from_date, d_sen_polls) {
     d_sen_22 <- read_csv(here("data-raw/produced/hist_sen_races.csv.gz"), show_col_types=FALSE) |>
         filter(year == 2022) |>
+        select(-poll_avg, -miss_polls) |>
+        left_join(d_sen_polls, by=c("state", "cand_dem", "cand_rep")) |>
         mutate(dem_cand_full = cand_dem,
                rep_cand_full = cand_rep,
                cand_dem = coalesce(cand_dem, "<other>"),
                cand_rep = coalesce(cand_rep, "<other>"),
                ldem_pres_adj = ldem_pres - ldem_pres_natl,
+               miss_polls = 1*is.na(poll_avg),
+               poll_avg = coalesce(poll_avg, ldem_pres_adj),
                inc = coalesce(inc, "open"),
                inc = c(dem=1, open=0, oth=0, rep=-1)[inc],
                midterm = year %% 4 == 2,

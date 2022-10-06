@@ -91,17 +91,32 @@ d_pres <- read_csv(here("data-raw/medsl/1976-2020-president.csv"), show_col_type
     summarize(ldem_pres = log(sum(dem)) - log(sum(rep)),
               ldem_pres_natl = ldem_pres_natl[1],
               .groups="drop") |>
-    filter(year >= 2006) |>
     complete(year = unique(d_cand$year), state) |>
     group_by(state) |>
     arrange(year) |>
     fill(ldem_pres, ldem_pres_natl) |>
     ungroup()
+write_csv(d_pres, here("data-raw/produced/hist_pres_state.csv"))
+
+
+d_polls <- read_csv(here("data-raw/produced/hist_polls_senate.csv"), show_col_types=FALSE) |>
+    inner_join(d_pres, by=c("year", "state")) |>
+    mutate(ldem_pres_adj = ldem_pres - ldem_pres_natl) |>
+    group_by(year, state) |>
+    summarize(poll_avg = conj_mean(est, ldem_pres_adj[1], 2.0),
+              ldem_pres_adj = ldem_pres_adj[1],
+              act = act[1],
+              err = poll_avg - act) |>
+    group_by(state) |>
+    mutate(lag_err = lag(err, order_by=year)) |>
+    drop_na()
 
 
 d = d_cand |>
-    left_join(d_pres, by=c("year", "state")) |>
+    inner_join(d_pres, by=c("year", "state")) |>
+    left_join(select(d_polls, year, state, poll_avg), by=c("year", "state")) |>
+    mutate(miss_polls = 1*is.na(poll_avg),
+           poll_avg = coalesce(poll_avg, ldem_pres - ldem_pres_natl)) |>
     left_join(d_state, by=c("year", "state"))
-
 
 write_csv(d, here("data-raw/produced/hist_sen_races.csv.gz"))

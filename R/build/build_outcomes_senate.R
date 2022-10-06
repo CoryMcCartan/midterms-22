@@ -25,13 +25,12 @@ d_fit <- d |>
 
 # Fit model ------
 
-form = ldem_seat ~ ldem_pres_adj + offset(ldem_gen) + ldem_pres_adj:ldem_gen +
-    (midterm + inc_pres + inc)^2 +
-    (1 + white + edu_o15 | year) + (1 | region) +
+form = ldem_seat ~ ldem_pres_adj * ldem_gen +
+    (midterm + inc_pres + inc)^2 + miss_polls*inc +
+    (1 + white + edu_o15 + poll_avg | year) + (1 | region) +
     (1 | cand_dem) + (1 | cand_rep)
 bprior = c(
     prior(student_t(3, 0, 0.1), class=b),
-    prior(student_t(3, 0, 1), class=b, coef="ldem_pres_adj"),
     # about 0.5pp
     prior(gamma(4, 4/0.02), class=sd, group="year"),
     # about 1.0pp
@@ -41,7 +40,7 @@ bprior = c(
     prior(gamma(4, 4/0.12), class=sd, group="cand_rep")
 )
 
-m = brm(bf(form, sigma ~ polar + I(ldem_pres_adj^2), decomp="QR"),
+m = brm(bf(form, sigma ~ polar + I(ldem_pres_adj^2) + miss_polls, decomp="QR"),
         data=d_fit, family=student(), prior=bprior,
         threads=2, chains=3, backend="cmdstanr", normalize=FALSE,
         iter=2000, warmup=500, control=list(adapt_delta=0.99, step_size=0.1),
@@ -52,6 +51,7 @@ summary(m)
 
 mcmc_plot(m, variable="b_[^s]", regex=TRUE) +
     geom_vline(xintercept=0, lty="dashed") +
+    scale_x_continuous(expand=c(0.01, 0.01)) +
     theme_bw() +
     theme(axis.text.y=element_text(face="bold"))
 ggsave(here("readme-doc/outcomes_model_sen_ests.svg"), width=7, height=6)

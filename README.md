@@ -205,25 +205,29 @@ sigma ~ polar + I(ldem_pres_adj^2)
 **Senate:**
 
 ``` r
-ldem_seat ~ ldem_pres_adj + offset(ldem_gen) + ldem_pres_adj:ldem_gen +
-    (midterm + inc_pres + inc_seat)^2 +
-    (1 + white + edu_o15 | year) + (1 | region) +
+ldem_seat ~ ldem_pres_adj * ldem_gen +
+    (midterm + inc_pres + inc_seat)^2 + miss_polls*inc_seatc +
+    (1 + white + edu_o15 + poll_avg | year) + (1 | region) +
     (1 | cand_dem) + (1 | cand_rep)
     
 sigma ~ polar + I(ldem_pres_adj^2)
 ```
 
-Here, `inc_pres` is the party of the incumbent president; `inc_seat` is
-the party of the seat’s icumbent, or “open” if the seat is open;
-`ldem_pres_adj` is the logit last presidential result in the district,
-shifted back to a neutral national environment (i.e., subtracting off
-the national presidential result); `ldem_gen` is the logit generic
-ballot; `ldem_pred` is the sum of these two; `polar` meaures
-polarization as the lagged correlation between House and presidential
-results; `ldem_exp` is the logit share of campaign expenditures by the
-Democrat; `exp_mis` codes whether expenditure data are missing for the
-race (as they unfortunately often are); and `dem_cand` and `rep_cand`
-are the Democratic and Republican candidates, respectively.
+Here, `inc_pres` is the party of the incumbent president, coded as plus
+or minus 1; `inc_seat` is the party of the seat’s incumbent, coded as 1
+for a Democrat, -1 for a Republican and 0 if open; `ldem_pres_adj` is
+the logit last presidential result in the district, shifted back to a
+neutral national environment (i.e., subtracting off the national
+presidential result); `ldem_gen` is the logit generic ballot;
+`ldem_pred` is the sum of these two; `polar` measures polarization as
+the lagged correlation between House and presidential results;
+`ldem_exp` is the logit share of campaign expenditures by the Democrat;
+`exp_mis` codes whether expenditure data are missing for the race (as
+they unfortunately often are); `poll_avg` is the average of polls
+conducted in the last 30 days, shrunk to `ldem_pres_adj` based on the
+number of polls; `miss_polls` is an indicator for no polling being
+available; and `dem_cand` and `rep_cand` are the Democratic and
+Republican candidates, respectively.
 
 For the House model, the standard deviation of the year random effects
 is estimated around 0.05 (on the logit scale); the standard deviation of
@@ -236,8 +240,8 @@ is around 0.97 for the House model.
 
 For the Senate model, the standard deviation of the year random effects
 is estimated around 0.03 (on the logit scale). The model is fit to all
-249 contested, two-way Senate elections from 2006 to 2020. Posterior
+258 contested, two-way Senate elections from 2006 to 2020. Posterior
 summaries for all coefficients are shown below. The overall model $R^2$
-is around 0.83.
+is around 0.89.
 
 ![Senate outcome model summary](readme-doc/outcomes_model_sen_ests.svg)
