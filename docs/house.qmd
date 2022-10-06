@@ -861,7 +861,6 @@ A detailed write-up of the model, along with code and data, are available [here]
 
 <p class="text-muted"><small>
 Data are courtesy of FiveThirtyEight, Data for Progress, VEST, the ALARM Project, Daily Kos Elections, the MIT Election Data + Science Lab, and IPUMS.
-<!--Jeremiah, Kuriwaki, and Snyder 2021-->
 </small></p>
 
 
@@ -873,3 +872,13 @@ Data are courtesy of FiveThirtyEight, Data for Progress, VEST, the ALARM Project
 </defs> 
 </svg>
 
+<script type="text/javascript">
+const params = new Proxy(new URLSearchParams(window.location.search), {
+    get: (searchParams, prop) => searchParams.get(prop),
+});
+if (params.embedded == "true") {
+    document.getElementById("quarto-header").remove();
+    document.getElementById("title-block-header").remove();
+    setTimeout(() => window.scrollTo(0, 0), 300);
+}
+</script>

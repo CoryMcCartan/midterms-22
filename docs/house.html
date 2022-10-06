@@ -1180,11 +1180,21 @@ You can search by district state, number, candidate, incumbency, rating, or cont
 <small> A detailed write-up of the model, along with code and data, are available <a href="https://github.com/CoryMcCartan/midterms-22">here</a>. </small>
 </p>
 <p class="text-muted">
-<small> Data are courtesy of FiveThirtyEight, Data for Progress, VEST, the ALARM Project, Daily Kos Elections, the MIT Election Data + Science Lab, and IPUMS. <!--Jeremiah, Kuriwaki, and Snyder 2021--> </small>
+<small> Data are courtesy of FiveThirtyEight, Data for Progress, VEST, the ALARM Project, Daily Kos Elections, the MIT Election Data + Science Lab, and IPUMS. </small>
 </p>
 <svg height="10" width="10" xmlns="http://www.w3.org/2000/svg" version="1.1">
 <defs> <pattern id="diagonalHatch" width="3" height="3" patterntransform="rotate(45 0 0)" patternunits="userSpaceOnUse"> <line x1="0" y1="0" x2="0" y2="3" style="stroke: #0105; stroke-width: 3;"></line> </pattern> </defs>
 </svg>
+<script type="text/javascript">
+const params = new Proxy(new URLSearchParams(window.location.search), {
+    get: (searchParams, prop) => searchParams.get(prop),
+});
+if (params.embedded == "true") {
+    document.getElementById("quarto-header").remove();
+    document.getElementById("title-block-header").remove();
+    setTimeout(() => window.scrollTo(0, 0), 300);
+}
+</script>
 
 
 </section>
