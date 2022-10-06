@@ -209,7 +209,7 @@ let distrs = topojson.feature(geom_hex, geom_hex.objects.foo).features.map(d => 
     d.match = d_distr.get(d.properties.state).get(d.properties.district);
     d.flip = ((d.match.pr_dem > 0.5 && d.match.inc_seat == "gop") 
                 || (d.match.pr_dem < 0.5 && d.match.inc_seat == "dem"))
-            && (Math.abs(d.match.pr_dem - 0.5) > 0.1);
+            && (Math.abs(d.match.pr_dem - 0.5) > 0.01);
     return d;
 })
     
@@ -535,7 +535,7 @@ viewof tab_distr = {
             cands: "Candidates",
             pr_dem: small ? "Prob." : "Win prob.",
             interval: small ? "Est. vote" : "Vote forecast",
-            part_base: small ? "2020" : "2020 pres.",
+            part_base: small ? "Lean" : "Part. Lean",
         },
         
         format: {

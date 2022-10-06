@@ -59,13 +59,13 @@ dem_lead = d_sum.sen_prob > 0.5
     return md`
 As of ${date_fmt}, there is a:
 
-**${fmt_pct(d_sum.pr_RsRh)} chance** of a <b class="rep">Republican</b> Senate and <b class="rep">Republican</b> House.
-
 **${fmt_pct(d_sum.pr_DsRh)} chance** of a <b class="dem">Democratic</b> Senate and <b class="rep">Republican</b> House.
 
-**${fmt_pct(d_sum.pr_RsDh)} chance** of a <b class="rep">Republican</b> Senate and <b class="dem">Democratic</b> House.
+**${fmt_pct(d_sum.pr_RsRh)} chance** of a <b class="rep">Republican</b> Senate and <b class="rep">Republican</b> House.
 
 **${fmt_pct(d_sum.pr_DsDh)} chance** of a <b class="dem">Democratic</b> Senate and <b class="dem">Democratic</b> House.
+
+**${fmt_pct(d_sum.pr_RsDh)} chance** of a <b class="rep">Republican</b> Senate and <b class="dem">Democratic</b> House.
 `;
 }
 ```
