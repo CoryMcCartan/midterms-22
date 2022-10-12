@@ -163,7 +163,7 @@ return window.plot;
 //| label: summary
 //| column: screen
 
-dem_lead = d_sum.house_prob > 0.5
+dem_lead = true; // d_sum.house_prob > 0.5
 {
     let win_party = dem_lead ? "Democrats" : "Republicans"
     let win_class = dem_lead ? "dem" : "rep"
@@ -200,6 +200,10 @@ They have a **${fmt_pct(prob)} chance** of ${phrase} the House.
 -->
 
 ## The House map {#map}
+
+Each district is shaded by the probability of a Democratic or Republican win.
+Cross-hatching indicates an incumbent who has a 50% or higher chance of losing.
+You can hover over a district to learn more.
 
 :::{.column-screen}
 ```{ojs}
@@ -533,7 +537,7 @@ viewof tab_distr = {
             name_short: small ? "Distr." : "District",
             inc_seat: "Inc.",
             cands: "Candidates",
-            pr_dem: small ? "Prob." : "Win prob.",
+            pr_dem: small ? "Prob." : "Dem. prob.",
             interval: small ? "Est. vote" : "Vote forecast",
             part_base: small ? "Lean" : "Part. Lean",
         },
@@ -856,7 +860,8 @@ model---whether it is pulling the forecast towards Democrats or Republicans, and
 <hr style="margin: 2em 0" />
 
 <p class="text-muted"><small>
-A detailed write-up of the model, along with code and data, are available [here](https://github.com/CoryMcCartan/midterms-22).
+A detailed write-up of the model, along with code and data, are available
+<a href="https://github.com/CoryMcCartan/midterms-22" target="_blank">here</a>.
 </small></p>
 
 <p class="text-muted"><small>
