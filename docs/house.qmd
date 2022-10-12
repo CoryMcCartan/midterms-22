@@ -59,6 +59,8 @@ color = {
 }
 ```
 
+
+
 ```{ojs}
 //| label: plot-hist
 //| column: screen
@@ -67,7 +69,7 @@ let exag_fac = 1 - Math.sqrt(width)/80;
 let last_elec = 222;
 let xmin = Math.max(Math.min(d_sum.house_q10*exag_fac, 218 - 10), 0)
 let xmax = Math.min(Math.max(d_sum.house_q90/exag_fac, 218 + 10), 435)
-let s_gain = "+" + Math.abs(last_elec - Math.round(d_sum.house_med));
+let s_gain = "-" + Math.abs(last_elec - Math.round(d_sum.house_med));
 let overl = Math.max(0.58, 1 - Math.sqrt(width) / 80);
 
 let text_shadow = function(text, opt) {
@@ -115,7 +117,7 @@ window.plot = Plot.plot({
             frameAnchor: "bottom", textAnchor: "start", lineAnchor: "bottom",
             fill: "white", fontSize: 40, fontWeight: "bold",
             }),
-        text_shadow("GAIN", { 
+        text_shadow("LOSS", { 
             x: d_sum.house_med, dy: -42, dx: 5,
             frameAnchor: "bottom", textAnchor: "start", lineAnchor: "top",
             fill: "white", fontSize: 14, fontWeight: "bold",
@@ -198,6 +200,7 @@ They have a **${fmt_pct(prob)} chance** of ${phrase} the House.
 <span style="color: black;">Look at this.</span>
 </div>
 -->
+
 
 ## The House map {#map}
 
@@ -325,6 +328,7 @@ return svg.node();
 }
 ```
 :::
+
 
 ## Public opinion over time {#gcb}
 This chart shows the model's best estimate of how the generic congressional
