@@ -76,13 +76,6 @@ if (isFALSE(opt$dry)) {
     cli_alert_success("Forecast saved.")
 }
 
-d_shift = tibble(natl = rep(plogis(forecast$mix_natl),
-                  each=length(forecast$house$pred_seats)/opt$n_mix),
-       seats = forecast$house$pred_seats) |>
-    mutate(natl = round(natl*200)/200) |>
-    group_by(natl) |>
-    mutate(pr_win = mean(seats >= 218)) |>
-    ungroup()
 ggplot(d_shift, aes(natl, seats, group=natl, fill=pr_win)) +
     geom_hline(yintercept=217.5, lty="dashed") +
     geom_vline(xintercept=0.5, lty="dashed") +
@@ -114,15 +107,3 @@ ggplot(aes(natl, reorder(district, dem_mean), fill=pr_dem)) +
     scale_x_continuous(labels=scales::percent) +
     theme_bw() +
     theme(axis.text.y=element_text(face="bold"))
-
-tibble(house_seats = forecast$house$pred_seats,
-       sen_seats = forecast$senate$pred_seats) |>
-    mutate(win_house = house_seats >= 218) |>
-    group_by(win_house, sen_seats) |>
-    summarize(win_house = win_house[1],
-              n = n() * (2*win_house - 1)) |>
-ggplot(aes(n, sen_seats, fill=factor((sen_seats >= 50) + win_house))) +
-    geom_col(orientation="y") +
-    geom_vline(xintercept=0, size=2) +
-    scale_fill_manual(values=c(.GOP, "#A054A0", .DEM), guide='none') +
-    theme_bw()

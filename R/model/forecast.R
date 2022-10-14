@@ -351,5 +351,22 @@ save_forecast <- function(forecast, elec_date, from_date) {
             mutate(across(where(is.numeric), fmt_trunc)) |>
             slice_head(n=50) |>
             write_csv(here("docs/polls.csv"))
+
+        N_rep = length(forecast$house$pred_seats) / length(forecast$mix_natl)
+        tibble(natl = rep(plogis(forecast$mix_natl), each=N_rep),
+                         seats = forecast$house$pred_seats) |>
+            mutate(natl = round(natl*200)/200) |>
+            group_by(natl) |>
+            summarize(pr_win = mean(seats >= 218),
+                      q01 = quantile(seats, 0.01),
+                      q05 = quantile(seats, 0.05),
+                      q10 = quantile(seats, 0.10),
+                      q25 = quantile(seats, 0.25),
+                      q50 = quantile(seats, 0.50),
+                      q75 = quantile(seats, 0.75),
+                      q90 = quantile(seats, 0.9),
+                      q95 = quantile(seats, 0.95),
+                      q99 = quantile(seats, 0.99)) |>
+            write_csv(here("docs/house_shifts.csv"))
     }
 }

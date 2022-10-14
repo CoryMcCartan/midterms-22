@@ -427,6 +427,103 @@ plot_gcb = {
 ```
 
 
+## How the national environment affects outcomes {#shifts}
+
+The chart below shows the range of outcomes we forecast conditional on different national environments.
+For example, if Democrats win 51% of the vote nationwide, they are expected to eke out a majority on average, but could win anywhere from around 185 to around 250 seats.
+The colored box covers the middle 50% of possible outcomes, the thick line covers the middle 80% of outcomes, and the thin line covers 98% of outcomes.
+
+```{ojs}
+//| include: false
+d_shift = FileAttachment("house_shifts.csv").csv({typed: true})
+window.d_shift = d_shift
+```
+```{ojs}
+Plot.plot({
+    x: {
+        domain: [0.45, 0.535],
+        tickFormat: "%",
+        label: "National Democratic vote share",
+        grid: true,
+    },
+    y: {
+        grid: true,
+        line: true,
+        domain: [150, 270],
+        label: "Democratic seats won",
+    },
+    marks: [
+        Plot.ruleY([217.5], {stroke: "#0007"}),
+        Plot.ruleX([0.50], {stroke: "#0004"}),
+        Plot.ruleX(d_shift, {
+            x: "natl",
+            y1: "q01", 
+            y2: "q99",
+            strokeWidth: 1.4,
+        }),
+        Plot.ruleX(d_shift, {
+            x: "natl",
+            y: "q10", 
+            y2: "q90",
+            strokeWidth: 4,
+        }),
+        Plot.rect(d_shift, {
+            x1: x => x.natl - 0.002, 
+            x2: x => x.natl + 0.002, 
+            y1: "q25", 
+            y2: "q75",
+            stroke: "black",
+            strokeWidth: 0.8,
+            fill: x => color(x.pr_win)
+        }),
+        Plot.text(["Majority"], { 
+                y: 218, dy: -2, dx: 3,
+                frameAnchor: "left", textAnchor: "start", lineAnchor: "bottom",
+            }),
+        () => Plot.plot({
+            x: {
+                domain: [0.45, 0.535],
+                axis: null
+            },
+            y: {
+                grid: false,
+                domain: [150 - 222, 270 - 222],
+                transform: x => x - 222,
+                axis: "right", 
+                line: true,
+                tickSize: -4,
+                tickFormat: x => (x >= 0 ? "+" : "") + x,
+                label: "Seats gained or lost",
+            },
+            marks: [
+                Plot.ruleY(d_shift, {
+                    x1: x => x.natl - 0.002, 
+                    x2: x => x.natl + 0.002, 
+                    y: "q50", 
+                    strokeWidth: 3,
+                })
+            ],
+            
+            width: Math.min(w_BODY, width),
+            height: 400,
+            marginLeft: 40,
+            marginRight: 40,
+            marginBottom: 40,
+        })
+    ],
+    
+    width: Math.min(w_BODY, width),
+    height: 400,
+    marginRight: 40,
+    marginLeft: 40,
+    marginBottom: 40,
+    
+    style: {
+    }
+})
+```
+
+
 ## The 435 House races {#table}
 
 ```{ojs}
@@ -862,6 +959,10 @@ model---whether it is pulling the forecast towards Democrats or Republicans, and
 
 
 <hr style="margin: 2em 0" />
+
+<p class="text-muted"><small>
+50% and 80% credible intervals are presented throughout.
+</small></p>
 
 <p class="text-muted"><small>
 A detailed write-up of the model, along with code and data, are available
