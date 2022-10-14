@@ -107,6 +107,7 @@ run_forecast <- function(elec_date, start_date, from_date=Sys.Date(),
     list(
         pred_natl = pred_natl,
         gcb = m_gcb$draws("natl_dem"),
+        mix_natl = mix_natl,
         n_polls = stan_d$N,
         d_polls = d_polls,
         house = house_forecast,
