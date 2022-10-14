@@ -989,6 +989,13 @@ const params = new Proxy(new URLSearchParams(window.location.search), {
 if (params.embedded == "true") {
     document.getElementById("quarto-header").remove();
     document.getElementById("title-block-header").remove();
+    let css = `@media (max-width: 767.98px) { body .page-columns, body.fullcontent:not(.floating):not(.docked) .page-columns, body.slimcontent:not(.floating):not(.docked) .page-columns, body.docked .page-columns, body.docked.slimcontent .page-columns, body.docked.fullcontent .page-columns, body.floating .page-columns, body.floating.slimcontent .page-columns, body.floating.fullcontent .page-columns {
+        grid-template-columns: [screen-start] 0em [screen-start-inset page-start page-start-inset body-start-outset body-start body-content-start] minmax(0px, 1fr) [body-content-end body-end body-end-outset page-end-inset page-end screen-end-inset] 0em [screen-end];}}
+    .banner { background: linear-gradient(90deg, white 0%, #f0f2f6 15%, #f0f2f6 85%, white 100%) !important; }`;
+    let style = document.createElement("style");
+    style.type = "text/css";
+    style.appendChild(document.createTextNode(css));
+    document.head.appendChild(style);
     setTimeout(() => window.scrollTo(0, 0), 300);
 }
 </script>
