@@ -75,35 +75,3 @@ if (isFALSE(opt$dry)) {
     save_forecast(forecast, elec_date, from_date)
     cli_alert_success("Forecast saved.")
 }
-
-ggplot(d_shift, aes(natl, seats, group=natl, fill=pr_win)) +
-    geom_hline(yintercept=217.5, lty="dashed") +
-    geom_vline(xintercept=0.5, lty="dashed") +
-    geom_boxplot() +
-    ggredist::scale_fill_party_c(name="Win prob.") +
-    scale_x_continuous(labels=scales::percent) +
-    theme_bw()
-
-d_22_small = forecast$house$d_pred_22 |>
-    mutate(district=str_c(state, "-", district)) |>
-    select(district, dem_mean)
-closest = head(order(abs(colMeans(forecast$house$m_pred > 0) - 0.5)), 30)
-
-apply(forecast$house$m_pred[, closest], 2, function(x) {
-    tapply(x > 0, d_shift$natl, mean)
-}) |>
-    as.data.frame() |>
-    rownames_to_column("natl") |>
-    as_tibble() |>
-    mutate(natl = as.numeric(natl)) |>
-    pivot_longer(-natl, names_to="district", values_to="pr_dem") |>
-    left_join(d_22_small, by="district") |>
-ggplot(aes(natl, reorder(district, dem_mean), fill=pr_dem)) +
-    geom_tile() +
-    geom_vline(xintercept=0.5, lty="dashed") +
-    coord_cartesian(expand=F) +
-    ggredist::scale_fill_party_c(name="Win prob.") +
-    labs(y=NULL) +
-    scale_x_continuous(labels=scales::percent) +
-    theme_bw() +
-    theme(axis.text.y=element_text(face="bold"))
