@@ -460,12 +460,14 @@ Plot.plot({
             y1: "q01", 
             y2: "q99",
             strokeWidth: 1.4,
+            clip: true,
         }),
         Plot.ruleX(d_shift, {
             x: "natl",
             y: "q10", 
             y2: "q90",
             strokeWidth: 4,
+            clip: true,
         }),
         Plot.rect(d_shift, {
             x1: x => x.natl - 0.002, 
@@ -474,7 +476,8 @@ Plot.plot({
             y2: "q75",
             stroke: "black",
             strokeWidth: 0.8,
-            fill: x => color(x.pr_win)
+            fill: x => color(x.pr_win),
+            clip: true,
         }),
         Plot.text(["Majority"], { 
                 y: 218, dy: -2, dx: 3,
@@ -501,6 +504,7 @@ Plot.plot({
                     x2: x => x.natl + 0.002, 
                     y: "q50", 
                     strokeWidth: 3,
+                    clip: true,
                 })
             ],
             
