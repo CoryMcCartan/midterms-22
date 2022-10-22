@@ -46,7 +46,7 @@
    margin: 0;
 }
 
-#plot-hist {
+#plot-hist, #plot-hist-house, #plot-hist-sen {
     overflow: visible;
 }
 
@@ -165,6 +165,10 @@ table {
 
 input {
     outline: none;
+}
+
+form.oi-ec050e-textarea {
+    width: unset !important;
 }
 
 @media (max-width: 600px) {

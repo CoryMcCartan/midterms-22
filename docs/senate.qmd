@@ -70,7 +70,7 @@ let last_elec = 50;
 let xmin = Math.max(Math.min(d_sum.sen_q10*exag_fac, 50 - 10), 0)
 let xmax = Math.min(Math.max(d_sum.sen_q90/exag_fac, 50 + 10), 100)
 let s_gain = "+" + Math.abs(last_elec - Math.round(d_sum.sen_med));
-let overl = 0.45;//Math.max(0.58, 1 - Math.sqrt(width) / 80);
+let overl = 0.45;
 
 let text_shadow = function(text, opt) {
     let opt2 = {...opt}

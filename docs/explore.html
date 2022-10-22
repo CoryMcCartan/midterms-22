@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>2022 Midterms - Explore Midterm Forecasts</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<link href="./flag.gif" rel="icon" type="image/gif">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-2KH5JZ6JS1"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+ 
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'analytics_storage': 'denied'
+  });
+gtag('config', 'G-2KH5JZ6JS1', { 'anonymize_ip': true});
+</script>
+<script type="module" src="site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
+<link href="site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
+
+
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="./index.html">
+    <img src="./flag.gif" alt="">
+    <span class="navbar-title">2022 Midterms</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./house.html">House</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./senate.html">Senate</a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/CoryMcCartan/midterms-22/"><i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+ </a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Explore Midterm Forecasts</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<div class="cell" data-include="false">
+<div class="sourceCode cell-code hidden" id="cb1" data-startfrom="10" data-source-offset="-0"><pre class="sourceCode js"><code class="sourceCode javascript" style="counter-reset: source-line 9;"><span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { fmt_pct<span class="op">,</span> rate<span class="op">,</span> fmt_surname<span class="op">,</span> AP<span class="op">,</span> load_image } <span class="im">from</span> <span class="st">"./utils.js"</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>d3 <span class="op">=</span> <span class="pp">require</span>(<span class="st">"d3"</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>d_sum <span class="op">=</span> <span class="fu">FileAttachment</span>(<span class="st">"summary.json"</span>)<span class="op">.</span><span class="fu">json</span>()</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>distrs <span class="op">=</span> <span class="fu">FileAttachment</span>(<span class="st">"house_districts.csv"</span>)<span class="op">.</span><span class="fu">csv</span>({<span class="dt">typed</span><span class="op">:</span> <span class="kw">true</span>})<span class="op">;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>states <span class="op">=</span> <span class="fu">FileAttachment</span>(<span class="st">"senate_races.csv"</span>)<span class="op">.</span><span class="fu">csv</span>({<span class="dt">typed</span><span class="op">:</span> <span class="kw">true</span>})<span class="op">;</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="bu">window</span><span class="op">.</span><span class="at">distrs</span> <span class="op">=</span> distrs<span class="op">;</span></span></code></pre></div>
+<div class="cell-output cell-output-display hidden">
+<div>
+<div id="ojs-cell-1-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display hidden">
+<div>
+<div id="ojs-cell-1-2" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display hidden">
+<div>
+<div id="ojs-cell-1-3" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display hidden">
+<div>
+<div id="ojs-cell-1-4" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display hidden">
+<div>
+<div id="ojs-cell-1-5" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display hidden">
+<div>
+<div id="ojs-cell-1-6" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<div class="sourceCode cell-code hidden" id="cb2" data-startfrom="18" data-source-offset="-294"><pre class="sourceCode js"><code class="sourceCode javascript" style="counter-reset: source-line 17;"><span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>draws <span class="op">=</span> {</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> names <span class="op">=</span> <span class="cf">await</span> <span class="fu">FileAttachment</span>(<span class="st">"draws_cols.json"</span>)<span class="op">.</span><span class="fu">json</span>()</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> raw <span class="op">=</span> <span class="cf">await</span> <span class="fu">load_image</span>(<span class="st">"draws.png"</span>)<span class="op">;</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> out <span class="op">=</span> <span class="kw">new</span> <span class="bu">Array</span>(raw<span class="op">.</span><span class="at">h</span>)<span class="op">;</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> n_house <span class="op">=</span> distrs<span class="op">.</span><span class="fu">reduce</span>((accuml<span class="op">,</span> x) <span class="kw">=&gt;</span> accuml <span class="op">+</span> <span class="op">!</span>x<span class="op">.</span><span class="at">unopp</span><span class="op">,</span> <span class="dv">0</span>)<span class="op">;</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> n_sen <span class="op">=</span> states<span class="op">.</span><span class="fu">reduce</span>((accuml<span class="op">,</span> x) <span class="kw">=&gt;</span> accuml <span class="op">+</span> <span class="op">!</span>x<span class="op">.</span><span class="at">unopp</span><span class="op">,</span> <span class="dv">0</span>)<span class="op">;</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (<span class="kw">let</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> raw<span class="op">.</span><span class="at">h</span><span class="op">;</span> i<span class="op">++</span>) {</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> obj <span class="op">=</span> {}</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>        obj<span class="op">.</span><span class="at">pred_natl</span> <span class="op">=</span> (raw[i<span class="op">*</span>raw<span class="op">.</span><span class="at">w</span> <span class="op">+</span> <span class="dv">0</span>] <span class="op">+</span> <span class="fl">2.0</span>) <span class="op">/</span> <span class="fl">5.0</span><span class="op">;</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>        obj<span class="op">.</span><span class="at">seats_house</span> <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">round</span>((raw[i<span class="op">*</span>raw<span class="op">.</span><span class="at">w</span> <span class="op">+</span> <span class="dv">1</span>] <span class="op">+</span> <span class="fl">0.5</span>) <span class="op">*</span> <span class="fl">200.0</span>)<span class="op">;</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>        obj<span class="op">.</span><span class="at">seats_sen</span> <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">round</span>((raw[i<span class="op">*</span>raw<span class="op">.</span><span class="at">w</span> <span class="op">+</span> <span class="dv">2</span>] <span class="op">+</span> <span class="fl">1.5</span>) <span class="op">*</span> <span class="fl">25.0</span>)<span class="op">;</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (<span class="kw">let</span> j <span class="op">=</span> <span class="dv">3</span><span class="op">;</span> j <span class="op">&lt;</span> names<span class="op">.</span><span class="at">length</span><span class="op">;</span> j<span class="op">++</span>) {</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>            obj[names[j]] <span class="op">=</span> raw[i<span class="op">*</span>raw<span class="op">.</span><span class="at">w</span> <span class="op">+</span> j]<span class="op">;</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>        out[i] <span class="op">=</span> obj<span class="op">;</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> out<span class="op">;</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="bu">window</span><span class="op">.</span><span class="at">draws</span> <span class="op">=</span> draws<span class="op">;</span></span></code></pre></div>
+<div class="cell-output cell-output-display hidden">
+<div>
+<div id="ojs-cell-1-7" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display hidden">
+<div>
+<div id="ojs-cell-1-8" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<div class="sourceCode cell-code hidden" id="cb3" data-startfrom="40" data-source-offset="-1026"><pre class="sourceCode js"><code class="sourceCode javascript" style="counter-reset: source-line 39;"><span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>DARK_BLUE <span class="op">=</span> <span class="st">"#0063B1"</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>DARK_RED <span class="op">=</span> <span class="st">"#A0442C"</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>BLUE <span class="op">=</span> <span class="st">"#3D77BB"</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>RED <span class="op">=</span> <span class="st">"#B25D4C"</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>w_BODY <span class="op">=</span> <span class="dv">796</span><span class="op">;</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>SMALL <span class="op">=</span> width <span class="op">&lt;</span> <span class="dv">600</span><span class="op">;</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>elec_date <span class="op">=</span> <span class="kw">new</span> <span class="bu">Date</span>(<span class="st">"2022-11-08"</span>)</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="bu">window</span><span class="op">.</span><span class="at">d3</span> <span class="op">=</span> d3<span class="op">;</span></span></code></pre></div>
+<div class="cell-output cell-output-display hidden">
+<div>
+<div id="ojs-cell-1-9" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display hidden">
+<div>
+<div id="ojs-cell-1-10" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display hidden">
+<div>
+<div id="ojs-cell-1-11" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display hidden">
+<div>
+<div id="ojs-cell-1-12" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display hidden">
+<div>
+<div id="ojs-cell-1-13" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display hidden">
+<div>
+<div id="ojs-cell-1-14" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display hidden">
+<div>
+<div id="ojs-cell-1-15" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display hidden">
+<div>
+<div id="ojs-cell-1-16" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code hidden" id="cb4" data-startfrom="51" data-source-offset="0"><pre class="sourceCode js"><code class="sourceCode javascript" style="counter-reset: source-line 50;"><span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>viewof text <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">textarea</span>({</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>    <span class="dt">placeholder</span><span class="op">:</span> <span class="vs">`Enter filtering conditions here. For example:</span></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a><span class="vs">    WA-8 win D</span></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a><span class="vs">    DE-AL &lt; 60%</span></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a><span class="vs">    OK-S GOP win</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a><span class="vs">    NC senate Dem loss</span></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a><span class="vs">    `</span><span class="op">,</span></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>    <span class="dt">spellcheck</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span></span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>    <span class="dt">autocomplete</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>    <span class="dt">autocapitalize</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>    <span class="dt">rows</span><span class="op">:</span> <span class="dv">5</span><span class="op">,</span></span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>    <span class="dt">resize</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>    <span class="dt">submit</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span></span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>    <span class="dt">monospace</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-2" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell" data-include="false">
+<div class="sourceCode cell-code hidden" id="cb5" data-startfrom="71" data-source-offset="-0"><pre class="sourceCode js"><code class="sourceCode javascript" style="counter-reset: source-line 70;"><span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>constr <span class="op">=</span> {</span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> lines <span class="op">=</span> text<span class="op">.</span><span class="fu">split</span>(<span class="ss">/</span><span class="sc">\r?\n</span><span class="ss">/</span>)</span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">map</span>(x <span class="kw">=&gt;</span> x<span class="op">.</span><span class="fu">trim</span>()<span class="op">.</span><span class="fu">replaceAll</span>(<span class="ss">/</span><span class="sc">\s+</span><span class="ss">/g</span><span class="op">,</span> <span class="st">" "</span>))</span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">filter</span>(x <span class="kw">=&gt;</span> x <span class="op">!=</span> <span class="st">""</span>)<span class="op">;</span></span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> regex_race <span class="op">=</span> <span class="ss">/</span><span class="sc">^([A-Z]{2})([- ](\d{1,2}|</span><span class="ss">AL</span><span class="sc">|</span><span class="ss">at</span><span class="sc">[- ]</span><span class="ss">large</span><span class="sc">|</span><span class="ss">S</span><span class="sc">(?</span><span class="ss">!</span><span class="sc">\w)|</span><span class="ss">special</span><span class="sc">|</span><span class="ss">senate</span><span class="sc">|</span><span class="ss">S senate</span><span class="sc">|</span><span class="ss">senate special</span><span class="sc">))?</span><span class="ss">/i</span></span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> races <span class="op">=</span> lines<span class="op">.</span><span class="fu">map</span>(x <span class="kw">=&gt;</span> {</span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> matches <span class="op">=</span> x<span class="op">.</span><span class="fu">match</span>(regex_race)<span class="op">;</span></span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (matches <span class="op">===</span> <span class="kw">null</span>) <span class="cf">return</span> <span class="st">""</span><span class="op">;</span></span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (<span class="kw">typeof</span> matches[<span class="dv">3</span>] <span class="op">==</span> <span class="st">"undefined"</span>) <span class="cf">return</span> matches[<span class="dv">1</span>]<span class="op">;</span></span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (matches[<span class="dv">3</span>]<span class="op">.</span><span class="fu">toLowerCase</span>() <span class="op">==</span> <span class="st">"senate"</span>) <span class="cf">return</span> matches[<span class="dv">1</span>]<span class="op">;</span></span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (<span class="ss">/</span><span class="sc">(</span><span class="ss">AL</span><span class="sc">|</span><span class="ss">at</span><span class="sc">[- ]</span><span class="ss">large</span><span class="sc">)</span><span class="ss">/i</span><span class="op">.</span><span class="fu">test</span>(matches[<span class="dv">3</span>])) matches[<span class="dv">3</span>] <span class="op">=</span> <span class="st">"1"</span><span class="op">;</span></span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (<span class="ss">/</span><span class="sc">(</span><span class="ss">S</span><span class="sc">(?</span><span class="ss">!</span><span class="sc">\w)|</span><span class="ss">special</span><span class="sc">|</span><span class="ss">S senate</span><span class="sc">|</span><span class="ss">senate special</span><span class="sc">)</span><span class="ss">/i</span><span class="op">.</span><span class="fu">test</span>(matches[<span class="dv">3</span>])) <span class="cf">return</span> matches[<span class="dv">1</span>] <span class="op">+</span> <span class="st">"-S"</span><span class="op">;</span></span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> matches[<span class="dv">1</span>] <span class="op">+</span> <span class="st">"-"</span> <span class="op">+</span> (<span class="op">+</span>matches[<span class="dv">3</span>])<span class="op">;</span></span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> lower <span class="op">=</span> lines<span class="op">.</span><span class="fu">map</span>(x <span class="kw">=&gt;</span> {</span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> x<span class="op">.</span><span class="fu">replace</span>(<span class="st">"&gt;="</span><span class="op">,</span> <span class="st">"&gt;"</span>)</span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">replace</span>(<span class="ss">/</span><span class="sc">(</span><span class="ss">win </span><span class="sc">(</span><span class="ss">D</span><span class="sc">|</span><span class="ss">dems</span><span class="sc">?)|(</span><span class="ss">D</span><span class="sc">|</span><span class="ss">dems</span><span class="sc">?)</span><span class="ss"> win</span><span class="sc">|(</span><span class="ss">R</span><span class="sc">|</span><span class="ss">GOP</span><span class="sc">|</span><span class="ss">rep</span><span class="sc">)</span><span class="ss"> lose</span><span class="sc">|</span><span class="ss">lose </span><span class="sc">(</span><span class="ss">R</span><span class="sc">|</span><span class="ss">GOP</span><span class="sc">|</span><span class="ss">rep</span><span class="sc">))</span><span class="ss">/i</span><span class="op">,</span> <span class="st">"&gt; 50%"</span>)<span class="op">;</span></span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> matches <span class="op">=</span> x<span class="op">.</span><span class="fu">match</span>(<span class="op">/&gt;</span> <span class="op">?</span>(\d<span class="op">*</span>(<span class="op">?:</span>\<span class="op">.</span>\d<span class="op">+</span>)<span class="op">?%?</span>)<span class="op">/</span>)<span class="op">;</span></span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (matches <span class="op">===</span> <span class="kw">null</span>) {</span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="fl">0.0</span><span class="op">;</span></span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a>        } <span class="cf">else</span> {</span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a>            <span class="kw">let</span> val <span class="op">=</span> <span class="pp">parseFloat</span>(matches[<span class="dv">1</span>])<span class="op">;</span></span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> (matches[<span class="dv">0</span>]<span class="op">.</span><span class="fu">endsWith</span>(<span class="st">"%"</span>)) val <span class="op">/=</span> <span class="fl">100.0</span><span class="op">;</span></span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> val<span class="op">;</span></span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> upper <span class="op">=</span> lines<span class="op">.</span><span class="fu">map</span>(x <span class="kw">=&gt;</span> {</span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> x<span class="op">.</span><span class="fu">replace</span>(<span class="ss">/&lt;</span><span class="sc">(?</span><span class="ss">!=</span><span class="sc">)</span><span class="ss">/</span><span class="op">,</span> <span class="st">"&lt;="</span>)</span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">replace</span>(<span class="ss">/</span><span class="sc">(</span><span class="ss">win </span><span class="sc">(</span><span class="ss">R</span><span class="sc">|</span><span class="ss">GOP</span><span class="sc">|</span><span class="ss">rep</span><span class="sc">)|(</span><span class="ss">R</span><span class="sc">|</span><span class="ss">GOP</span><span class="sc">|</span><span class="ss">rep</span><span class="sc">)</span><span class="ss"> win</span><span class="sc">|(</span><span class="ss">D</span><span class="sc">|</span><span class="ss">dems</span><span class="sc">?)</span><span class="ss"> los</span><span class="sc">[es]|</span><span class="ss">los</span><span class="sc">[es]</span><span class="ss"> </span><span class="sc">(</span><span class="ss">D</span><span class="sc">|</span><span class="ss"> dems</span><span class="sc">?))</span><span class="ss">/i</span><span class="op">,</span> <span class="st">"&lt;= 50%"</span>)<span class="op">;</span></span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> matches <span class="op">=</span> x<span class="op">.</span><span class="fu">match</span>(<span class="ss">/&lt;= </span><span class="sc">?(\d*(?</span><span class="ss">:</span><span class="sc">\.\d+)?</span><span class="ss">%</span><span class="sc">?)</span><span class="ss">/</span>)<span class="op">;</span></span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (matches <span class="op">===</span> <span class="kw">null</span>) {</span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="fl">1.0</span><span class="op">;</span></span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a>        } <span class="cf">else</span> {</span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a>            <span class="kw">let</span> val <span class="op">=</span> <span class="pp">parseFloat</span>(matches[<span class="dv">1</span>])<span class="op">;</span></span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> (matches[<span class="dv">0</span>]<span class="op">.</span><span class="fu">endsWith</span>(<span class="st">"%"</span>)) val <span class="op">/=</span> <span class="fl">100.0</span><span class="op">;</span></span>
+<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> val<span class="op">;</span></span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> d3<span class="op">.</span><span class="fu">zip</span>(races<span class="op">,</span> lower<span class="op">,</span> upper)<span class="op">.</span><span class="fu">map</span>(x <span class="kw">=&gt;</span> { </span>
+<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (x[<span class="dv">1</span>] <span class="op">&gt;=</span> x[<span class="dv">2</span>]) x[<span class="dv">1</span>] <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> { <span class="dt">key</span><span class="op">:</span> x[<span class="dv">0</span>]<span class="op">,</span> <span class="dt">lower</span><span class="op">:</span> x[<span class="dv">1</span>]<span class="op">,</span> <span class="dt">upper</span><span class="op">:</span> x[<span class="dv">2</span>]<span class="op">,</span> }<span class="op">;</span></span>
+<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a><span class="bu">window</span><span class="op">.</span><span class="at">constr</span> <span class="op">=</span> constr<span class="op">;</span></span></code></pre></div>
+<div class="cell-output cell-output-display hidden">
+<div>
+<div id="ojs-cell-3-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display hidden">
+<div>
+<div id="ojs-cell-3-2" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<div class="sourceCode cell-code hidden" id="cb6" data-startfrom="119" data-source-offset="-1806"><pre class="sourceCode js"><code class="sourceCode javascript" style="counter-reset: source-line 118;"><span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a>draws_f <span class="op">=</span> draws<span class="op">.</span><span class="fu">filter</span>(x <span class="kw">=&gt;</span> {</span>
+<span id="cb6-120"><a href="#cb6-120" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (<span class="kw">let</span> c <span class="kw">of</span> constr) {</span>
+<span id="cb6-121"><a href="#cb6-121" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (c<span class="op">.</span><span class="at">key</span> <span class="op">===</span> <span class="kw">null</span>) <span class="cf">continue</span><span class="op">;</span></span>
+<span id="cb6-122"><a href="#cb6-122" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (x[c<span class="op">.</span><span class="at">key</span>] <span class="op">&lt;=</span> c<span class="op">.</span><span class="at">lower</span> <span class="op">||</span> x[c<span class="op">.</span><span class="at">key</span>] <span class="op">&gt;</span> c<span class="op">.</span><span class="at">upper</span>) <span class="cf">return</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb6-123"><a href="#cb6-123" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-124"><a href="#cb6-124" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb6-125"><a href="#cb6-125" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span>
+<span id="cb6-126"><a href="#cb6-126" aria-hidden="true" tabindex="-1"></a><span class="bu">window</span><span class="op">.</span><span class="at">draws_f</span> <span class="op">=</span> draws_f<span class="op">;</span></span></code></pre></div>
+<div class="cell-output cell-output-display hidden">
+<div>
+<div id="ojs-cell-3-3" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display hidden">
+<div>
+<div id="ojs-cell-3-4" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+</div>
+<div class="cell page-columns page-full">
+<div class="sourceCode cell-code hidden" id="cb7" data-startfrom="131" data-source-offset="0"><pre class="sourceCode js"><code class="sourceCode javascript" style="counter-reset: source-line 130;"><span id="cb7-131"><a href="#cb7-131" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb7-132"><a href="#cb7-132" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> exag_fac <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sqrt</span>(width)<span class="op">/</span><span class="dv">80</span><span class="op">;</span></span>
+<span id="cb7-133"><a href="#cb7-133" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> last_elec <span class="op">=</span> <span class="dv">222</span><span class="op">;</span></span>
+<span id="cb7-134"><a href="#cb7-134" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> xmin <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">max</span>(<span class="bu">Math</span><span class="op">.</span><span class="fu">min</span>(d_sum<span class="op">.</span><span class="at">house_q10</span><span class="op">*</span>exag_fac<span class="op">,</span> <span class="dv">218</span> <span class="op">-</span> <span class="dv">10</span>)<span class="op">,</span> <span class="dv">0</span>)</span>
+<span id="cb7-135"><a href="#cb7-135" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> xmax <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">min</span>(<span class="bu">Math</span><span class="op">.</span><span class="fu">max</span>(d_sum<span class="op">.</span><span class="at">house_q90</span><span class="op">/</span>exag_fac<span class="op">,</span> <span class="dv">218</span> <span class="op">+</span> <span class="dv">10</span>)<span class="op">,</span> <span class="dv">435</span>)</span>
+<span id="cb7-136"><a href="#cb7-136" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> median <span class="op">=</span> d3<span class="op">.</span><span class="fu">median</span>(draws_f<span class="op">,</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">seats_house</span>)<span class="op">;</span></span>
+<span id="cb7-137"><a href="#cb7-137" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> s_gain <span class="op">=</span> (median <span class="op">&gt;=</span> last_elec <span class="op">?</span> <span class="st">"+"</span> <span class="op">:</span> <span class="st">"-"</span>) <span class="op">+</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">abs</span>(last_elec <span class="op">-</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">round</span>(median))<span class="op">;</span></span>
+<span id="cb7-138"><a href="#cb7-138" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> breaks <span class="op">=</span> <span class="bu">Array</span>(<span class="op">~~</span>((xmax <span class="op">-</span> xmin)<span class="op">/</span><span class="dv">2</span>))<span class="op">.</span><span class="fu">fill</span>()<span class="op">.</span><span class="fu">map</span>((e<span class="op">,</span> i) <span class="kw">=&gt;</span> <span class="dv">2</span><span class="op">*</span>i <span class="op">+</span> <span class="fl">0.5</span> <span class="op">+</span> <span class="op">~~</span>xmin)<span class="op">;</span></span>
+<span id="cb7-139"><a href="#cb7-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-140"><a href="#cb7-140" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> text_shadow <span class="op">=</span> <span class="kw">function</span>(text<span class="op">,</span> opt) {</span>
+<span id="cb7-141"><a href="#cb7-141" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> opt2 <span class="op">=</span> {<span class="op">...</span>opt}</span>
+<span id="cb7-142"><a href="#cb7-142" aria-hidden="true" tabindex="-1"></a>    opt2<span class="op">.</span><span class="at">dx</span> <span class="op">=</span> opt2<span class="op">.</span><span class="at">dx</span> <span class="op">+</span> <span class="dv">3</span></span>
+<span id="cb7-143"><a href="#cb7-143" aria-hidden="true" tabindex="-1"></a>    opt2<span class="op">.</span><span class="at">dy</span> <span class="op">=</span> opt2<span class="op">.</span><span class="at">dy</span> <span class="op">+</span> <span class="dv">3</span></span>
+<span id="cb7-144"><a href="#cb7-144" aria-hidden="true" tabindex="-1"></a>    opt2<span class="op">.</span><span class="at">fill</span> <span class="op">=</span> <span class="st">"#0007"</span></span>
+<span id="cb7-145"><a href="#cb7-145" aria-hidden="true" tabindex="-1"></a>    opt2<span class="op">.</span><span class="at">strokeWidth</span> <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb7-146"><a href="#cb7-146" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [Plot<span class="op">.</span><span class="fu">text</span>([text]<span class="op">,</span> opt2)<span class="op">,</span> Plot<span class="op">.</span><span class="fu">text</span>([text]<span class="op">,</span> opt)]</span>
+<span id="cb7-147"><a href="#cb7-147" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-148"><a href="#cb7-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-149"><a href="#cb7-149" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> plot <span class="op">=</span> Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<span id="cb7-150"><a href="#cb7-150" aria-hidden="true" tabindex="-1"></a>    <span class="dt">x</span><span class="op">:</span> {</span>
+<span id="cb7-151"><a href="#cb7-151" aria-hidden="true" tabindex="-1"></a>        <span class="dt">domain</span><span class="op">:</span> [xmin<span class="op">,</span> xmax]<span class="op">,</span></span>
+<span id="cb7-152"><a href="#cb7-152" aria-hidden="true" tabindex="-1"></a>        <span class="dt">clamp</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb7-153"><a href="#cb7-153" aria-hidden="true" tabindex="-1"></a>        <span class="dt">inset</span><span class="op">:</span> <span class="dv">10</span><span class="op">,</span></span>
+<span id="cb7-154"><a href="#cb7-154" aria-hidden="true" tabindex="-1"></a>        <span class="dt">tickSize</span><span class="op">:</span> <span class="dv">8</span><span class="op">,</span></span>
+<span id="cb7-155"><a href="#cb7-155" aria-hidden="true" tabindex="-1"></a>        <span class="dt">reverse</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb7-156"><a href="#cb7-156" aria-hidden="true" tabindex="-1"></a>        <span class="dt">label</span><span class="op">:</span> <span class="kw">null</span><span class="op">,</span></span>
+<span id="cb7-157"><a href="#cb7-157" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
+<span id="cb7-158"><a href="#cb7-158" aria-hidden="true" tabindex="-1"></a>    <span class="dt">y</span><span class="op">:</span> {</span>
+<span id="cb7-159"><a href="#cb7-159" aria-hidden="true" tabindex="-1"></a>        <span class="dt">legend</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span></span>
+<span id="cb7-160"><a href="#cb7-160" aria-hidden="true" tabindex="-1"></a>        <span class="dt">axis</span><span class="op">:</span> <span class="kw">null</span><span class="op">,</span></span>
+<span id="cb7-161"><a href="#cb7-161" aria-hidden="true" tabindex="-1"></a>        <span class="dt">insetTop</span><span class="op">:</span> <span class="dv">4</span><span class="op">,</span></span>
+<span id="cb7-162"><a href="#cb7-162" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
+<span id="cb7-163"><a href="#cb7-163" aria-hidden="true" tabindex="-1"></a>    <span class="dt">color</span><span class="op">:</span> {</span>
+<span id="cb7-164"><a href="#cb7-164" aria-hidden="true" tabindex="-1"></a>        <span class="dt">legend</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span></span>
+<span id="cb7-165"><a href="#cb7-165" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
+<span id="cb7-166"><a href="#cb7-166" aria-hidden="true" tabindex="-1"></a>    <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb7-167"><a href="#cb7-167" aria-hidden="true" tabindex="-1"></a>        Plot<span class="op">.</span><span class="fu">rectY</span>(draws_f<span class="op">,</span> Plot<span class="op">.</span><span class="fu">binX</span>({<span class="dt">y</span><span class="op">:</span> <span class="st">"count"</span>}<span class="op">,</span> {</span>
+<span id="cb7-168"><a href="#cb7-168" aria-hidden="true" tabindex="-1"></a>                <span class="dt">x</span><span class="op">:</span> <span class="st">"seats_house"</span><span class="op">,</span></span>
+<span id="cb7-169"><a href="#cb7-169" aria-hidden="true" tabindex="-1"></a>                <span class="dt">fill</span><span class="op">:</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">seats_house</span> <span class="op">&gt;=</span> <span class="dv">218</span> <span class="op">?</span> BLUE <span class="op">:</span> RED<span class="op">,</span></span>
+<span id="cb7-170"><a href="#cb7-170" aria-hidden="true" tabindex="-1"></a>                <span class="dt">inset</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span></span>
+<span id="cb7-171"><a href="#cb7-171" aria-hidden="true" tabindex="-1"></a>                <span class="dt">thresholds</span><span class="op">:</span> breaks<span class="op">,</span> </span>
+<span id="cb7-172"><a href="#cb7-172" aria-hidden="true" tabindex="-1"></a>            }))<span class="op">,</span></span>
+<span id="cb7-173"><a href="#cb7-173" aria-hidden="true" tabindex="-1"></a>        Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])<span class="op">,</span></span>
+<span id="cb7-174"><a href="#cb7-174" aria-hidden="true" tabindex="-1"></a>        Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>]<span class="op">,</span> {</span>
+<span id="cb7-175"><a href="#cb7-175" aria-hidden="true" tabindex="-1"></a>            <span class="dt">dy</span><span class="op">:</span> <span class="dv">2</span><span class="op">,</span></span>
+<span id="cb7-176"><a href="#cb7-176" aria-hidden="true" tabindex="-1"></a>            <span class="dt">strokeWidth</span><span class="op">:</span> <span class="dv">5</span><span class="op">,</span></span>
+<span id="cb7-177"><a href="#cb7-177" aria-hidden="true" tabindex="-1"></a>            <span class="dt">x1</span><span class="op">:</span> d3<span class="op">.</span><span class="fu">quantile</span>(draws_f<span class="op">,</span> <span class="fl">0.1</span><span class="op">,</span> x <span class="kw">=&gt;</span> x<span class="op">.</span><span class="at">seats_house</span>)<span class="op">,</span></span>
+<span id="cb7-178"><a href="#cb7-178" aria-hidden="true" tabindex="-1"></a>            <span class="dt">x2</span><span class="op">:</span> d3<span class="op">.</span><span class="fu">quantile</span>(draws_f<span class="op">,</span> <span class="fl">0.9</span><span class="op">,</span> x <span class="kw">=&gt;</span> x<span class="op">.</span><span class="at">seats_house</span>)<span class="op">,</span></span>
+<span id="cb7-179"><a href="#cb7-179" aria-hidden="true" tabindex="-1"></a>            <span class="dt">color</span><span class="op">:</span> <span class="st">"red"</span><span class="op">,</span></span>
+<span id="cb7-180"><a href="#cb7-180" aria-hidden="true" tabindex="-1"></a>            })<span class="op">,</span></span>
+<span id="cb7-181"><a href="#cb7-181" aria-hidden="true" tabindex="-1"></a>        Plot<span class="op">.</span><span class="fu">ruleX</span>([last_elec<span class="op">,</span> median])<span class="op">,</span></span>
+<span id="cb7-182"><a href="#cb7-182" aria-hidden="true" tabindex="-1"></a>        <span class="fu">text_shadow</span>(s_gain<span class="op">,</span> { </span>
+<span id="cb7-183"><a href="#cb7-183" aria-hidden="true" tabindex="-1"></a>            <span class="dt">x</span><span class="op">:</span> median<span class="op">,</span> <span class="dt">dy</span><span class="op">:</span> <span class="op">-</span><span class="dv">48</span><span class="op">,</span> <span class="dt">dx</span><span class="op">:</span> <span class="dv">3</span><span class="op">,</span></span>
+<span id="cb7-184"><a href="#cb7-184" aria-hidden="true" tabindex="-1"></a>            <span class="dt">frameAnchor</span><span class="op">:</span> <span class="st">"bottom"</span><span class="op">,</span> <span class="dt">textAnchor</span><span class="op">:</span> <span class="st">"start"</span><span class="op">,</span> <span class="dt">lineAnchor</span><span class="op">:</span> <span class="st">"bottom"</span><span class="op">,</span></span>
+<span id="cb7-185"><a href="#cb7-185" aria-hidden="true" tabindex="-1"></a>            <span class="dt">fill</span><span class="op">:</span> <span class="st">"white"</span><span class="op">,</span> <span class="dt">strokeWidth</span><span class="op">:</span> <span class="dv">4</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"black"</span><span class="op">,</span> <span class="dt">fontSize</span><span class="op">:</span> <span class="dv">40</span><span class="op">,</span> <span class="dt">fontWeight</span><span class="op">:</span> <span class="st">"bold"</span><span class="op">,</span></span>
+<span id="cb7-186"><a href="#cb7-186" aria-hidden="true" tabindex="-1"></a>            })<span class="op">,</span></span>
+<span id="cb7-187"><a href="#cb7-187" aria-hidden="true" tabindex="-1"></a>        <span class="fu">text_shadow</span>(median <span class="op">&gt;=</span> last_elec <span class="op">?</span> <span class="st">"GAIN"</span> <span class="op">:</span> <span class="st">"LOSS"</span><span class="op">,</span> { </span>
+<span id="cb7-188"><a href="#cb7-188" aria-hidden="true" tabindex="-1"></a>            <span class="dt">x</span><span class="op">:</span> median<span class="op">,</span> <span class="dt">dy</span><span class="op">:</span> <span class="op">-</span><span class="dv">42</span><span class="op">,</span> <span class="dt">dx</span><span class="op">:</span> <span class="dv">5</span><span class="op">,</span></span>
+<span id="cb7-189"><a href="#cb7-189" aria-hidden="true" tabindex="-1"></a>            <span class="dt">frameAnchor</span><span class="op">:</span> <span class="st">"bottom"</span><span class="op">,</span> <span class="dt">textAnchor</span><span class="op">:</span> <span class="st">"start"</span><span class="op">,</span> <span class="dt">lineAnchor</span><span class="op">:</span> <span class="st">"top"</span><span class="op">,</span></span>
+<span id="cb7-190"><a href="#cb7-190" aria-hidden="true" tabindex="-1"></a>            <span class="dt">fill</span><span class="op">:</span> <span class="st">"white"</span><span class="op">,</span> <span class="dt">strokeWidth</span><span class="op">:</span> <span class="dv">2</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"black"</span><span class="op">,</span> <span class="dt">fontSize</span><span class="op">:</span> <span class="dv">14</span><span class="op">,</span> <span class="dt">fontWeight</span><span class="op">:</span> <span class="st">"bold"</span><span class="op">,</span></span>
+<span id="cb7-191"><a href="#cb7-191" aria-hidden="true" tabindex="-1"></a>            })<span class="op">,</span></span>
+<span id="cb7-192"><a href="#cb7-192" aria-hidden="true" tabindex="-1"></a>        Plot<span class="op">.</span><span class="fu">text</span>([<span class="st">"← DEM. MAJORITY"</span>]<span class="op">,</span> { </span>
+<span id="cb7-193"><a href="#cb7-193" aria-hidden="true" tabindex="-1"></a>            <span class="dt">x</span><span class="op">:</span> <span class="fl">217.5</span><span class="op">,</span> <span class="dt">dy</span><span class="op">:</span> <span class="op">-</span><span class="dv">4</span><span class="op">,</span> <span class="dt">dx</span><span class="op">:</span> <span class="op">-</span><span class="dv">3</span><span class="op">,</span></span>
+<span id="cb7-194"><a href="#cb7-194" aria-hidden="true" tabindex="-1"></a>            <span class="dt">frameAnchor</span><span class="op">:</span> <span class="st">"bottom"</span><span class="op">,</span> <span class="dt">textAnchor</span><span class="op">:</span> <span class="st">"end"</span><span class="op">,</span></span>
+<span id="cb7-195"><a href="#cb7-195" aria-hidden="true" tabindex="-1"></a>            <span class="dt">fontWeight</span><span class="op">:</span> <span class="st">"bold"</span><span class="op">,</span> <span class="dt">fill</span><span class="op">:</span> <span class="st">"#111"</span><span class="op">,</span></span>
+<span id="cb7-196"><a href="#cb7-196" aria-hidden="true" tabindex="-1"></a>            })<span class="op">,</span></span>
+<span id="cb7-197"><a href="#cb7-197" aria-hidden="true" tabindex="-1"></a>        Plot<span class="op">.</span><span class="fu">text</span>([<span class="st">"REP. MAJORITY →"</span>]<span class="op">,</span> { </span>
+<span id="cb7-198"><a href="#cb7-198" aria-hidden="true" tabindex="-1"></a>            <span class="dt">x</span><span class="op">:</span> <span class="fl">217.5</span><span class="op">,</span> <span class="dt">dy</span><span class="op">:</span> <span class="op">-</span><span class="dv">4</span><span class="op">,</span> <span class="dt">dx</span><span class="op">:</span> <span class="dv">3</span><span class="op">,</span></span>
+<span id="cb7-199"><a href="#cb7-199" aria-hidden="true" tabindex="-1"></a>            <span class="dt">frameAnchor</span><span class="op">:</span> <span class="st">"bottom"</span><span class="op">,</span> <span class="dt">textAnchor</span><span class="op">:</span> <span class="st">"start"</span><span class="op">,</span></span>
+<span id="cb7-200"><a href="#cb7-200" aria-hidden="true" tabindex="-1"></a>            <span class="dt">fontWeight</span><span class="op">:</span> <span class="st">"bold"</span><span class="op">,</span> <span class="dt">fill</span><span class="op">:</span> <span class="st">"#111"</span><span class="op">,</span></span>
+<span id="cb7-201"><a href="#cb7-201" aria-hidden="true" tabindex="-1"></a>            })<span class="op">,</span></span>
+<span id="cb7-202"><a href="#cb7-202" aria-hidden="true" tabindex="-1"></a>         Plot<span class="op">.</span><span class="fu">text</span>([last_elec <span class="op">+</span> <span class="st">" LAST ELECTION"</span>]<span class="op">,</span> { </span>
+<span id="cb7-203"><a href="#cb7-203" aria-hidden="true" tabindex="-1"></a>            <span class="dt">x</span><span class="op">:</span> last_elec<span class="op">,</span> <span class="dt">dy</span><span class="op">:</span> <span class="op">-</span><span class="dv">4</span><span class="op">,</span></span>
+<span id="cb7-204"><a href="#cb7-204" aria-hidden="true" tabindex="-1"></a>            <span class="dt">frameAnchor</span><span class="op">:</span> <span class="st">"top"</span><span class="op">,</span> <span class="dt">textAnchor</span><span class="op">:</span> <span class="st">"middle"</span><span class="op">,</span> <span class="dt">lineAnchor</span><span class="op">:</span> <span class="st">"bottom"</span><span class="op">,</span></span>
+<span id="cb7-205"><a href="#cb7-205" aria-hidden="true" tabindex="-1"></a>            <span class="dt">fontWeight</span><span class="op">:</span> <span class="st">"bold"</span><span class="op">,</span></span>
+<span id="cb7-206"><a href="#cb7-206" aria-hidden="true" tabindex="-1"></a>            })<span class="op">,</span></span>
+<span id="cb7-207"><a href="#cb7-207" aria-hidden="true" tabindex="-1"></a>         Plot<span class="op">.</span><span class="fu">text</span>([<span class="st">"← DEM. HOUSE SEATS"</span>]<span class="op">,</span> { </span>
+<span id="cb7-208"><a href="#cb7-208" aria-hidden="true" tabindex="-1"></a>            <span class="dt">x</span><span class="op">:</span> xmax<span class="op">,</span> <span class="dt">dy</span><span class="op">:</span> <span class="op">-</span><span class="dv">4</span> <span class="op">-</span> (SMALL <span class="op">?</span> <span class="dv">10</span> <span class="op">:</span> <span class="dv">0</span>)<span class="op">,</span> <span class="dt">dx</span><span class="op">:</span> <span class="dv">4</span><span class="op">,</span></span>
+<span id="cb7-209"><a href="#cb7-209" aria-hidden="true" tabindex="-1"></a>            <span class="dt">frameAnchor</span><span class="op">:</span> <span class="st">"bottom"</span><span class="op">,</span> <span class="dt">textAnchor</span><span class="op">:</span> <span class="st">"start"</span><span class="op">,</span></span>
+<span id="cb7-210"><a href="#cb7-210" aria-hidden="true" tabindex="-1"></a>            <span class="dt">fontWeight</span><span class="op">:</span> <span class="st">"bold"</span><span class="op">,</span></span>
+<span id="cb7-211"><a href="#cb7-211" aria-hidden="true" tabindex="-1"></a>            })<span class="op">,</span></span>
+<span id="cb7-212"><a href="#cb7-212" aria-hidden="true" tabindex="-1"></a>    ]<span class="op">,</span></span>
+<span id="cb7-213"><a href="#cb7-213" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-214"><a href="#cb7-214" aria-hidden="true" tabindex="-1"></a>    <span class="dt">width</span><span class="op">:</span> width<span class="op">,</span></span>
+<span id="cb7-215"><a href="#cb7-215" aria-hidden="true" tabindex="-1"></a>    <span class="dt">height</span><span class="op">:</span> <span class="dv">240</span><span class="op">,</span></span>
+<span id="cb7-216"><a href="#cb7-216" aria-hidden="true" tabindex="-1"></a>    <span class="dt">marginTop</span><span class="op">:</span> <span class="dv">24</span><span class="op">,</span></span>
+<span id="cb7-217"><a href="#cb7-217" aria-hidden="true" tabindex="-1"></a>    <span class="dt">marginBottom</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span></span>
+<span id="cb7-218"><a href="#cb7-218" aria-hidden="true" tabindex="-1"></a>    <span class="dt">marginLeft</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span></span>
+<span id="cb7-219"><a href="#cb7-219" aria-hidden="true" tabindex="-1"></a>    <span class="dt">marginRight</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span></span>
+<span id="cb7-220"><a href="#cb7-220" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-221"><a href="#cb7-221" aria-hidden="true" tabindex="-1"></a>    <span class="dt">style</span><span class="op">:</span> {</span>
+<span id="cb7-222"><a href="#cb7-222" aria-hidden="true" tabindex="-1"></a>        <span class="dt">fontSize</span><span class="op">:</span> <span class="dv">9</span><span class="op">,</span></span>
+<span id="cb7-223"><a href="#cb7-223" aria-hidden="true" tabindex="-1"></a>        <span class="dt">color</span><span class="op">:</span> <span class="st">"#444"</span><span class="op">,</span></span>
+<span id="cb7-224"><a href="#cb7-224" aria-hidden="true" tabindex="-1"></a>        <span class="dt">overflow</span><span class="op">:</span> <span class="st">"visible"</span><span class="op">,</span></span>
+<span id="cb7-225"><a href="#cb7-225" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-226"><a href="#cb7-226" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb7-227"><a href="#cb7-227" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> plot<span class="op">;</span></span>
+<span id="cb7-228"><a href="#cb7-228" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div id="plot-hist-house" class="cell-output cell-output-display column-screen">
+<div id="ojs-cell-4" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<div class="banner page-columns page-full">
+<div id="summary" class="cell page-columns page-full">
+<div class="sourceCode cell-code hidden" id="cb8" data-startfrom="237" data-source-offset="-1"><pre class="sourceCode js"><code class="sourceCode javascript" style="counter-reset: source-line 236;"><span id="cb8-237"><a href="#cb8-237" aria-hidden="true" tabindex="-1"></a>dem_lead <span class="op">=</span> <span class="kw">true</span><span class="op">;</span> <span class="co">// d_sum.house_prob &gt; 0.5</span></span>
+<span id="cb8-238"><a href="#cb8-238" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb8-239"><a href="#cb8-239" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> q50 <span class="op">=</span> d3<span class="op">.</span><span class="fu">median</span>(draws_f<span class="op">,</span> x <span class="kw">=&gt;</span> x<span class="op">.</span><span class="at">pred_natl</span>)<span class="op">;</span></span>
+<span id="cb8-240"><a href="#cb8-240" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> dem_prob_house <span class="op">=</span> d3<span class="op">.</span><span class="fu">mean</span>(draws_f<span class="op">,</span> x <span class="kw">=&gt;</span> x<span class="op">.</span><span class="at">seats_house</span> <span class="op">&gt;=</span> <span class="dv">218</span>)<span class="op">;</span></span>
+<span id="cb8-241"><a href="#cb8-241" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> dem_prob_sen <span class="op">=</span> d3<span class="op">.</span><span class="fu">mean</span>(draws_f<span class="op">,</span> x <span class="kw">=&gt;</span> x<span class="op">.</span><span class="at">seats_sen</span> <span class="op">&gt;=</span> <span class="dv">50</span>)<span class="op">;</span></span>
+<span id="cb8-242"><a href="#cb8-242" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-243"><a href="#cb8-243" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> win_party <span class="op">=</span> dem_lead <span class="op">?</span> <span class="st">"Democrats"</span> <span class="op">:</span> <span class="st">"Republicans"</span></span>
+<span id="cb8-244"><a href="#cb8-244" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> win_class <span class="op">=</span> dem_lead <span class="op">?</span> <span class="st">"dem"</span> <span class="op">:</span> <span class="st">"rep"</span></span>
+<span id="cb8-245"><a href="#cb8-245" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> pct <span class="op">=</span> <span class="fu">fmt_pct</span>(dem_lead <span class="op">?</span> q50 <span class="op">:</span> <span class="dv">1</span> <span class="op">-</span> q50<span class="op">,</span> <span class="dv">1</span>)<span class="op">;</span></span>
+<span id="cb8-246"><a href="#cb8-246" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> phrase <span class="op">=</span> dem_lead <span class="op">?</span> <span class="st">"controlling"</span> <span class="op">:</span> <span class="st">"flipping"</span></span>
+<span id="cb8-247"><a href="#cb8-247" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> prob_house <span class="op">=</span> dem_lead <span class="op">?</span> dem_prob_house <span class="op">:</span> <span class="dv">1</span> <span class="op">-</span> dem_prob_house</span>
+<span id="cb8-248"><a href="#cb8-248" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> prob_sen <span class="op">=</span> dem_lead <span class="op">?</span> dem_prob_sen <span class="op">:</span> <span class="dv">1</span> <span class="op">-</span> dem_prob_sen</span>
+<span id="cb8-249"><a href="#cb8-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-250"><a href="#cb8-250" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fu">md</span><span class="vs">`</span></span>
+<span id="cb8-251"><a href="#cb8-251" aria-hidden="true" tabindex="-1"></a><span class="vs">Under these conditions, the &lt;b class="</span><span class="sc">${</span>win_class<span class="sc">}</span><span class="vs">"&gt;</span><span class="sc">${</span>win_party<span class="sc">}</span><span class="vs">&lt;/b&gt; would be expected to win</span></span>
+<span id="cb8-252"><a href="#cb8-252" aria-hidden="true" tabindex="-1"></a><span class="vs">**around </span><span class="sc">${</span>pct<span class="sc">}</span><span class="vs"> of the popular vote**.</span></span>
+<span id="cb8-253"><a href="#cb8-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-254"><a href="#cb8-254" aria-hidden="true" tabindex="-1"></a><span class="vs">They would have a **</span><span class="sc">${</span><span class="fu">fmt_pct</span>(prob_house)<span class="sc">}</span><span class="vs"> chance** of </span><span class="sc">${</span>phrase<span class="sc">}</span><span class="vs"> the House and </span></span>
+<span id="cb8-255"><a href="#cb8-255" aria-hidden="true" tabindex="-1"></a><span class="vs">a **</span><span class="sc">${</span><span class="fu">fmt_pct</span>(prob_sen)<span class="sc">}</span><span class="vs"> chance** of </span><span class="sc">${</span>phrase<span class="sc">}</span><span class="vs"> the Senate.</span></span>
+<span id="cb8-256"><a href="#cb8-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-257"><a href="#cb8-257" aria-hidden="true" tabindex="-1"></a><span class="vs">&lt;p class="updated"&gt;</span><span class="sc">${</span>draws_f<span class="op">.</span><span class="at">length</span><span class="sc">}</span><span class="vs"> draws</span></span>
+<span id="cb8-258"><a href="#cb8-258" aria-hidden="true" tabindex="-1"></a><span class="vs">(</span><span class="sc">${</span><span class="fu">fmt_pct</span>(draws_f<span class="op">.</span><span class="at">length</span><span class="op">/</span>draws<span class="op">.</span><span class="at">length</span>)<span class="sc">}</span><span class="vs">) in use.&lt;/p&gt;`</span><span class="op">;</span></span>
+<span id="cb8-259"><a href="#cb8-259" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="cell-output cell-output-display column-screen">
+<div id="summary-1">
+<div id="ojs-cell-5-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div id="summary-2">
+<div id="ojs-cell-5-2" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell page-columns page-full">
+<div class="sourceCode cell-code hidden" id="cb9" data-startfrom="265" data-source-offset="0"><pre class="sourceCode js"><code class="sourceCode javascript" style="counter-reset: source-line 264;"><span id="cb9-265"><a href="#cb9-265" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb9-266"><a href="#cb9-266" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> exag_fac <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sqrt</span>(width)<span class="op">/</span><span class="dv">160</span><span class="op">;</span></span>
+<span id="cb9-267"><a href="#cb9-267" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> last_elec <span class="op">=</span> <span class="dv">50</span><span class="op">;</span></span>
+<span id="cb9-268"><a href="#cb9-268" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> xmin <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">max</span>(<span class="bu">Math</span><span class="op">.</span><span class="fu">min</span>(d_sum<span class="op">.</span><span class="at">sen_q10</span><span class="op">*</span>exag_fac<span class="op">,</span> <span class="dv">50</span> <span class="op">-</span> <span class="dv">10</span>)<span class="op">,</span> <span class="dv">0</span>)</span>
+<span id="cb9-269"><a href="#cb9-269" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> xmax <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">min</span>(<span class="bu">Math</span><span class="op">.</span><span class="fu">max</span>(d_sum<span class="op">.</span><span class="at">sen_q90</span><span class="op">/</span>exag_fac<span class="op">,</span> <span class="dv">50</span> <span class="op">+</span> <span class="dv">10</span>)<span class="op">,</span> <span class="dv">100</span>)</span>
+<span id="cb9-270"><a href="#cb9-270" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> median <span class="op">=</span> d3<span class="op">.</span><span class="fu">median</span>(draws_f<span class="op">,</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">seats_sen</span>)<span class="op">;</span></span>
+<span id="cb9-271"><a href="#cb9-271" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> s_gain <span class="op">=</span> (median <span class="op">&gt;=</span> last_elec <span class="op">?</span> <span class="st">"+"</span> <span class="op">:</span> <span class="st">"-"</span>) <span class="op">+</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">abs</span>(last_elec <span class="op">-</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">round</span>(median))<span class="op">;</span></span>
+<span id="cb9-272"><a href="#cb9-272" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> breaks <span class="op">=</span> <span class="bu">Array</span>(<span class="op">~~</span>(xmax <span class="op">-</span> xmin))<span class="op">.</span><span class="fu">fill</span>()<span class="op">.</span><span class="fu">map</span>((e<span class="op">,</span> i) <span class="kw">=&gt;</span> i <span class="op">+</span> <span class="fl">0.5</span> <span class="op">+</span> <span class="op">~~</span>xmin)<span class="op">;</span></span>
+<span id="cb9-273"><a href="#cb9-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-274"><a href="#cb9-274" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> text_shadow <span class="op">=</span> <span class="kw">function</span>(text<span class="op">,</span> opt) {</span>
+<span id="cb9-275"><a href="#cb9-275" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> opt2 <span class="op">=</span> {<span class="op">...</span>opt}</span>
+<span id="cb9-276"><a href="#cb9-276" aria-hidden="true" tabindex="-1"></a>    opt2<span class="op">.</span><span class="at">dx</span> <span class="op">=</span> opt2<span class="op">.</span><span class="at">dx</span> <span class="op">+</span> <span class="dv">3</span></span>
+<span id="cb9-277"><a href="#cb9-277" aria-hidden="true" tabindex="-1"></a>    opt2<span class="op">.</span><span class="at">dy</span> <span class="op">=</span> opt2<span class="op">.</span><span class="at">dy</span> <span class="op">+</span> <span class="dv">3</span></span>
+<span id="cb9-278"><a href="#cb9-278" aria-hidden="true" tabindex="-1"></a>    opt2<span class="op">.</span><span class="at">fill</span> <span class="op">=</span> <span class="st">"#0007"</span></span>
+<span id="cb9-279"><a href="#cb9-279" aria-hidden="true" tabindex="-1"></a>    opt2<span class="op">.</span><span class="at">strokeWidth</span> <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb9-280"><a href="#cb9-280" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [Plot<span class="op">.</span><span class="fu">text</span>([text]<span class="op">,</span> opt2)<span class="op">,</span> Plot<span class="op">.</span><span class="fu">text</span>([text]<span class="op">,</span> opt)]</span>
+<span id="cb9-281"><a href="#cb9-281" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-282"><a href="#cb9-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-283"><a href="#cb9-283" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> plot <span class="op">=</span> Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<span id="cb9-284"><a href="#cb9-284" aria-hidden="true" tabindex="-1"></a>    <span class="dt">x</span><span class="op">:</span> {</span>
+<span id="cb9-285"><a href="#cb9-285" aria-hidden="true" tabindex="-1"></a>        <span class="dt">domain</span><span class="op">:</span> [xmin<span class="op">,</span> xmax]<span class="op">,</span></span>
+<span id="cb9-286"><a href="#cb9-286" aria-hidden="true" tabindex="-1"></a>        <span class="dt">clamp</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb9-287"><a href="#cb9-287" aria-hidden="true" tabindex="-1"></a>        <span class="dt">inset</span><span class="op">:</span> <span class="dv">10</span><span class="op">,</span></span>
+<span id="cb9-288"><a href="#cb9-288" aria-hidden="true" tabindex="-1"></a>        <span class="dt">tickSize</span><span class="op">:</span> <span class="dv">8</span><span class="op">,</span></span>
+<span id="cb9-289"><a href="#cb9-289" aria-hidden="true" tabindex="-1"></a>        <span class="dt">reverse</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb9-290"><a href="#cb9-290" aria-hidden="true" tabindex="-1"></a>        <span class="dt">axis</span><span class="op">:</span> <span class="st">"top"</span><span class="op">,</span></span>
+<span id="cb9-291"><a href="#cb9-291" aria-hidden="true" tabindex="-1"></a>        <span class="dt">label</span><span class="op">:</span> <span class="kw">null</span><span class="op">,</span></span>
+<span id="cb9-292"><a href="#cb9-292" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
+<span id="cb9-293"><a href="#cb9-293" aria-hidden="true" tabindex="-1"></a>    <span class="dt">y</span><span class="op">:</span> {</span>
+<span id="cb9-294"><a href="#cb9-294" aria-hidden="true" tabindex="-1"></a>        <span class="dt">legend</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span></span>
+<span id="cb9-295"><a href="#cb9-295" aria-hidden="true" tabindex="-1"></a>        <span class="dt">axis</span><span class="op">:</span> <span class="kw">null</span><span class="op">,</span></span>
+<span id="cb9-296"><a href="#cb9-296" aria-hidden="true" tabindex="-1"></a>        <span class="dt">insetBottom</span><span class="op">:</span> <span class="dv">4</span><span class="op">,</span></span>
+<span id="cb9-297"><a href="#cb9-297" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
+<span id="cb9-298"><a href="#cb9-298" aria-hidden="true" tabindex="-1"></a>    <span class="dt">color</span><span class="op">:</span> {</span>
+<span id="cb9-299"><a href="#cb9-299" aria-hidden="true" tabindex="-1"></a>        <span class="dt">legend</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span></span>
+<span id="cb9-300"><a href="#cb9-300" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
+<span id="cb9-301"><a href="#cb9-301" aria-hidden="true" tabindex="-1"></a>    <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb9-302"><a href="#cb9-302" aria-hidden="true" tabindex="-1"></a>        Plot<span class="op">.</span><span class="fu">rectY</span>(draws_f<span class="op">,</span> Plot<span class="op">.</span><span class="fu">binX</span>({</span>
+<span id="cb9-303"><a href="#cb9-303" aria-hidden="true" tabindex="-1"></a>                <span class="dt">y</span><span class="op">:</span> x <span class="kw">=&gt;</span> <span class="op">-</span>x<span class="op">.</span><span class="at">length</span><span class="op">,</span></span>
+<span id="cb9-304"><a href="#cb9-304" aria-hidden="true" tabindex="-1"></a>            }<span class="op">,</span> {</span>
+<span id="cb9-305"><a href="#cb9-305" aria-hidden="true" tabindex="-1"></a>                <span class="dt">x</span><span class="op">:</span> <span class="st">"seats_sen"</span><span class="op">,</span></span>
+<span id="cb9-306"><a href="#cb9-306" aria-hidden="true" tabindex="-1"></a>                <span class="dt">fill</span><span class="op">:</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">seats_sen</span> <span class="op">&gt;=</span> <span class="dv">50</span> <span class="op">?</span> BLUE <span class="op">:</span> RED<span class="op">,</span></span>
+<span id="cb9-307"><a href="#cb9-307" aria-hidden="true" tabindex="-1"></a>                <span class="dt">thresholds</span><span class="op">:</span> breaks<span class="op">,</span> </span>
+<span id="cb9-308"><a href="#cb9-308" aria-hidden="true" tabindex="-1"></a>            }))<span class="op">,</span></span>
+<span id="cb9-309"><a href="#cb9-309" aria-hidden="true" tabindex="-1"></a>        Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])<span class="op">,</span></span>
+<span id="cb9-310"><a href="#cb9-310" aria-hidden="true" tabindex="-1"></a>        Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>]<span class="op">,</span> {</span>
+<span id="cb9-311"><a href="#cb9-311" aria-hidden="true" tabindex="-1"></a>            <span class="dt">dy</span><span class="op">:</span> <span class="dv">2</span><span class="op">,</span></span>
+<span id="cb9-312"><a href="#cb9-312" aria-hidden="true" tabindex="-1"></a>            <span class="dt">strokeWidth</span><span class="op">:</span> <span class="dv">5</span><span class="op">,</span></span>
+<span id="cb9-313"><a href="#cb9-313" aria-hidden="true" tabindex="-1"></a>            <span class="dt">x1</span><span class="op">:</span> d3<span class="op">.</span><span class="fu">quantile</span>(draws_f<span class="op">,</span> <span class="fl">0.1</span><span class="op">,</span> x <span class="kw">=&gt;</span> x<span class="op">.</span><span class="at">seats_sen</span>)<span class="op">,</span></span>
+<span id="cb9-314"><a href="#cb9-314" aria-hidden="true" tabindex="-1"></a>            <span class="dt">x2</span><span class="op">:</span> d3<span class="op">.</span><span class="fu">quantile</span>(draws_f<span class="op">,</span> <span class="fl">0.9</span><span class="op">,</span> x <span class="kw">=&gt;</span> x<span class="op">.</span><span class="at">seats_sen</span>)<span class="op">,</span></span>
+<span id="cb9-315"><a href="#cb9-315" aria-hidden="true" tabindex="-1"></a>            <span class="dt">color</span><span class="op">:</span> <span class="st">"red"</span><span class="op">,</span></span>
+<span id="cb9-316"><a href="#cb9-316" aria-hidden="true" tabindex="-1"></a>            })<span class="op">,</span></span>
+<span id="cb9-317"><a href="#cb9-317" aria-hidden="true" tabindex="-1"></a>        Plot<span class="op">.</span><span class="fu">ruleX</span>([last_elec<span class="op">,</span> median])<span class="op">,</span></span>
+<span id="cb9-318"><a href="#cb9-318" aria-hidden="true" tabindex="-1"></a>        <span class="fu">text_shadow</span>(s_gain<span class="op">,</span> { </span>
+<span id="cb9-319"><a href="#cb9-319" aria-hidden="true" tabindex="-1"></a>            <span class="dt">x</span><span class="op">:</span> median<span class="op">,</span> <span class="dt">dy</span><span class="op">:</span> <span class="dv">48</span><span class="op">,</span> <span class="dt">dx</span><span class="op">:</span> <span class="dv">3</span><span class="op">,</span></span>
+<span id="cb9-320"><a href="#cb9-320" aria-hidden="true" tabindex="-1"></a>            <span class="dt">frameAnchor</span><span class="op">:</span> <span class="st">"top"</span><span class="op">,</span> <span class="dt">textAnchor</span><span class="op">:</span> <span class="st">"start"</span><span class="op">,</span> <span class="dt">lineAnchor</span><span class="op">:</span> <span class="st">"top"</span><span class="op">,</span></span>
+<span id="cb9-321"><a href="#cb9-321" aria-hidden="true" tabindex="-1"></a>            <span class="dt">fill</span><span class="op">:</span> <span class="st">"white"</span><span class="op">,</span> <span class="dt">strokeWidth</span><span class="op">:</span> <span class="dv">4</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"black"</span><span class="op">,</span> <span class="dt">fontSize</span><span class="op">:</span> <span class="dv">40</span><span class="op">,</span> <span class="dt">fontWeight</span><span class="op">:</span> <span class="st">"bold"</span><span class="op">,</span></span>
+<span id="cb9-322"><a href="#cb9-322" aria-hidden="true" tabindex="-1"></a>            })<span class="op">,</span></span>
+<span id="cb9-323"><a href="#cb9-323" aria-hidden="true" tabindex="-1"></a>        <span class="fu">text_shadow</span>(median <span class="op">&gt;=</span> last_elec <span class="op">?</span> <span class="st">"GAIN"</span> <span class="op">:</span> <span class="st">"LOSS"</span><span class="op">,</span> { </span>
+<span id="cb9-324"><a href="#cb9-324" aria-hidden="true" tabindex="-1"></a>            <span class="dt">x</span><span class="op">:</span> median<span class="op">,</span> <span class="dt">dy</span><span class="op">:</span> <span class="dv">42</span><span class="op">,</span> <span class="dt">dx</span><span class="op">:</span> <span class="dv">5</span><span class="op">,</span></span>
+<span id="cb9-325"><a href="#cb9-325" aria-hidden="true" tabindex="-1"></a>            <span class="dt">frameAnchor</span><span class="op">:</span> <span class="st">"top"</span><span class="op">,</span> <span class="dt">textAnchor</span><span class="op">:</span> <span class="st">"start"</span><span class="op">,</span> <span class="dt">lineAnchor</span><span class="op">:</span> <span class="st">"bottom"</span><span class="op">,</span></span>
+<span id="cb9-326"><a href="#cb9-326" aria-hidden="true" tabindex="-1"></a>            <span class="dt">fill</span><span class="op">:</span> <span class="st">"white"</span><span class="op">,</span> <span class="dt">strokeWidth</span><span class="op">:</span> <span class="dv">2</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"black"</span><span class="op">,</span> <span class="dt">fontSize</span><span class="op">:</span> <span class="dv">14</span><span class="op">,</span> <span class="dt">fontWeight</span><span class="op">:</span> <span class="st">"bold"</span><span class="op">,</span></span>
+<span id="cb9-327"><a href="#cb9-327" aria-hidden="true" tabindex="-1"></a>            })<span class="op">,</span></span>
+<span id="cb9-328"><a href="#cb9-328" aria-hidden="true" tabindex="-1"></a>        Plot<span class="op">.</span><span class="fu">text</span>([<span class="st">"← DEM. MAJORITY"</span>]<span class="op">,</span> { </span>
+<span id="cb9-329"><a href="#cb9-329" aria-hidden="true" tabindex="-1"></a>            <span class="dt">x</span><span class="op">:</span> <span class="fl">49.5</span><span class="op">,</span> <span class="dt">dy</span><span class="op">:</span> <span class="dv">8</span><span class="op">,</span> <span class="dt">dx</span><span class="op">:</span> <span class="op">-</span><span class="dv">3</span><span class="op">,</span></span>
+<span id="cb9-330"><a href="#cb9-330" aria-hidden="true" tabindex="-1"></a>            <span class="dt">frameAnchor</span><span class="op">:</span> <span class="st">"top"</span><span class="op">,</span> <span class="dt">textAnchor</span><span class="op">:</span> <span class="st">"end"</span><span class="op">,</span></span>
+<span id="cb9-331"><a href="#cb9-331" aria-hidden="true" tabindex="-1"></a>            <span class="dt">fontWeight</span><span class="op">:</span> <span class="st">"bold"</span><span class="op">,</span> <span class="dt">fill</span><span class="op">:</span> <span class="st">"#111"</span><span class="op">,</span></span>
+<span id="cb9-332"><a href="#cb9-332" aria-hidden="true" tabindex="-1"></a>            })<span class="op">,</span></span>
+<span id="cb9-333"><a href="#cb9-333" aria-hidden="true" tabindex="-1"></a>        Plot<span class="op">.</span><span class="fu">text</span>([<span class="st">"REP. MAJORITY →"</span>]<span class="op">,</span> { </span>
+<span id="cb9-334"><a href="#cb9-334" aria-hidden="true" tabindex="-1"></a>            <span class="dt">x</span><span class="op">:</span> <span class="fl">49.5</span><span class="op">,</span> <span class="dt">dy</span><span class="op">:</span> <span class="dv">8</span><span class="op">,</span> <span class="dt">dx</span><span class="op">:</span> <span class="dv">3</span><span class="op">,</span></span>
+<span id="cb9-335"><a href="#cb9-335" aria-hidden="true" tabindex="-1"></a>            <span class="dt">frameAnchor</span><span class="op">:</span> <span class="st">"top"</span><span class="op">,</span> <span class="dt">textAnchor</span><span class="op">:</span> <span class="st">"start"</span><span class="op">,</span></span>
+<span id="cb9-336"><a href="#cb9-336" aria-hidden="true" tabindex="-1"></a>            <span class="dt">fontWeight</span><span class="op">:</span> <span class="st">"bold"</span><span class="op">,</span> <span class="dt">fill</span><span class="op">:</span> <span class="st">"#111"</span><span class="op">,</span></span>
+<span id="cb9-337"><a href="#cb9-337" aria-hidden="true" tabindex="-1"></a>            })<span class="op">,</span></span>
+<span id="cb9-338"><a href="#cb9-338" aria-hidden="true" tabindex="-1"></a>         Plot<span class="op">.</span><span class="fu">text</span>([last_elec <span class="op">+</span> <span class="st">" LAST ELECTION"</span>]<span class="op">,</span> { </span>
+<span id="cb9-339"><a href="#cb9-339" aria-hidden="true" tabindex="-1"></a>            <span class="dt">x</span><span class="op">:</span> last_elec<span class="op">,</span> <span class="dt">dy</span><span class="op">:</span> <span class="dv">8</span><span class="op">,</span></span>
+<span id="cb9-340"><a href="#cb9-340" aria-hidden="true" tabindex="-1"></a>            <span class="dt">frameAnchor</span><span class="op">:</span> <span class="st">"bottom"</span><span class="op">,</span> <span class="dt">textAnchor</span><span class="op">:</span> <span class="st">"middle"</span><span class="op">,</span> <span class="dt">lineAnchor</span><span class="op">:</span> <span class="st">"bottom"</span><span class="op">,</span></span>
+<span id="cb9-341"><a href="#cb9-341" aria-hidden="true" tabindex="-1"></a>            <span class="dt">fontWeight</span><span class="op">:</span> <span class="st">"bold"</span><span class="op">,</span></span>
+<span id="cb9-342"><a href="#cb9-342" aria-hidden="true" tabindex="-1"></a>            })<span class="op">,</span></span>
+<span id="cb9-343"><a href="#cb9-343" aria-hidden="true" tabindex="-1"></a>         Plot<span class="op">.</span><span class="fu">text</span>([<span class="st">"← DEM. SENATE SEATS"</span>]<span class="op">,</span> { </span>
+<span id="cb9-344"><a href="#cb9-344" aria-hidden="true" tabindex="-1"></a>            <span class="dt">x</span><span class="op">:</span> xmax<span class="op">,</span> <span class="dt">dy</span><span class="op">:</span> <span class="dv">4</span> <span class="op">+</span> (SMALL <span class="op">?</span> <span class="dv">10</span> <span class="op">:</span> <span class="dv">0</span>)<span class="op">,</span> <span class="dt">dx</span><span class="op">:</span> <span class="dv">4</span><span class="op">,</span></span>
+<span id="cb9-345"><a href="#cb9-345" aria-hidden="true" tabindex="-1"></a>            <span class="dt">frameAnchor</span><span class="op">:</span> <span class="st">"top"</span><span class="op">,</span> <span class="dt">textAnchor</span><span class="op">:</span> <span class="st">"start"</span><span class="op">,</span></span>
+<span id="cb9-346"><a href="#cb9-346" aria-hidden="true" tabindex="-1"></a>            <span class="dt">fontWeight</span><span class="op">:</span> <span class="st">"bold"</span><span class="op">,</span></span>
+<span id="cb9-347"><a href="#cb9-347" aria-hidden="true" tabindex="-1"></a>            })<span class="op">,</span></span>
+<span id="cb9-348"><a href="#cb9-348" aria-hidden="true" tabindex="-1"></a>    ]<span class="op">,</span></span>
+<span id="cb9-349"><a href="#cb9-349" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-350"><a href="#cb9-350" aria-hidden="true" tabindex="-1"></a>    <span class="dt">width</span><span class="op">:</span> width<span class="op">,</span></span>
+<span id="cb9-351"><a href="#cb9-351" aria-hidden="true" tabindex="-1"></a>    <span class="dt">height</span><span class="op">:</span> <span class="dv">240</span><span class="op">,</span></span>
+<span id="cb9-352"><a href="#cb9-352" aria-hidden="true" tabindex="-1"></a>    <span class="dt">marginTop</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span></span>
+<span id="cb9-353"><a href="#cb9-353" aria-hidden="true" tabindex="-1"></a>    <span class="dt">marginLeft</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span></span>
+<span id="cb9-354"><a href="#cb9-354" aria-hidden="true" tabindex="-1"></a>    <span class="dt">marginRight</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span></span>
+<span id="cb9-355"><a href="#cb9-355" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-356"><a href="#cb9-356" aria-hidden="true" tabindex="-1"></a>    <span class="dt">style</span><span class="op">:</span> {</span>
+<span id="cb9-357"><a href="#cb9-357" aria-hidden="true" tabindex="-1"></a>        <span class="dt">fontSize</span><span class="op">:</span> <span class="dv">9</span><span class="op">,</span></span>
+<span id="cb9-358"><a href="#cb9-358" aria-hidden="true" tabindex="-1"></a>        <span class="dt">color</span><span class="op">:</span> <span class="st">"#444"</span><span class="op">,</span></span>
+<span id="cb9-359"><a href="#cb9-359" aria-hidden="true" tabindex="-1"></a>        <span class="dt">overflow</span><span class="op">:</span> <span class="st">"visible"</span><span class="op">,</span></span>
+<span id="cb9-360"><a href="#cb9-360" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb9-361"><a href="#cb9-361" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb9-362"><a href="#cb9-362" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> plot<span class="op">;</span></span>
+<span id="cb9-363"><a href="#cb9-363" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div id="plot-hist-sen" class="cell-output cell-output-display column-screen">
+<div id="ojs-cell-6" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+
+
+
+</main> <!-- /main -->
+<script type="ojs-module-contents">
+{"contents":[{"methodName":"interpret","cellName":"ojs-cell-1","inline":false,"source":"import { fmt_pct, rate, fmt_surname, AP, load_image } from \"./utils.js\"\nd3 = require(\"d3\")\n\nd_sum = FileAttachment(\"summary.json\").json()\ndistrs = FileAttachment(\"house_districts.csv\").csv({typed: true});\nstates = FileAttachment(\"senate_races.csv\").csv({typed: true});\nwindow.distrs = distrs;\n\ndraws = {\n    let names = await FileAttachment(\"draws_cols.json\").json()\n    let raw = await load_image(\"draws.png\");\n    let out = new Array(raw.h);\n    \n    const n_house = distrs.reduce((accuml, x) => accuml + !x.unopp, 0);\n    const n_sen = states.reduce((accuml, x) => accuml + !x.unopp, 0);\n    for (let i = 0; i < raw.h; i++) {\n        let obj = {}\n        obj.pred_natl = (raw[i*raw.w + 0] + 2.0) / 5.0;\n        obj.seats_house = Math.round((raw[i*raw.w + 1] + 0.5) * 200.0);\n        obj.seats_sen = Math.round((raw[i*raw.w + 2] + 1.5) * 25.0);\n        for (let j = 3; j < names.length; j++) {\n            obj[names[j]] = raw[i*raw.w + j];\n        }\n        out[i] = obj;\n    }\n    \n    return out;\n}\nwindow.draws = draws;\n\nDARK_BLUE = \"#0063B1\"\nDARK_RED = \"#A0442C\"\nBLUE = \"#3D77BB\"\nRED = \"#B25D4C\"\nw_BODY = 796;\nSMALL = width < 600;\nelec_date = new Date(\"2022-11-08\")\n\nwindow.d3 = d3;\n"},{"methodName":"interpret","cellName":"ojs-cell-2","inline":false,"source":"viewof text = Inputs.textarea({\n    placeholder: `Enter filtering conditions here. For example:\n    WA-8 win D\n    DE-AL < 60%\n    OK-S GOP win\n    NC senate Dem loss\n    `,\n    spellcheck: false,\n    autocomplete: false,\n    autocapitalize: false,\n    rows: 5,\n    resize: true,\n    submit: false,\n    monospace: true,\n});\n"},{"methodName":"interpret","cellName":"ojs-cell-3","inline":false,"source":"constr = {\n    let lines = text.split(/\\r?\\n/)\n        .map(x => x.trim().replaceAll(/\\s+/g, \" \"))\n        .filter(x => x != \"\");\n        \n    const regex_race = /^([A-Z]{2})([- ](\\d{1,2}|AL|at[- ]large|S(?!\\w)|special|senate|S senate|senate special))?/i\n    let races = lines.map(x => {\n        let matches = x.match(regex_race);\n        if (matches === null) return \"\";\n        if (typeof matches[3] == \"undefined\") return matches[1];\n        if (matches[3].toLowerCase() == \"senate\") return matches[1];\n        if (/(AL|at[- ]large)/i.test(matches[3])) matches[3] = \"1\";\n        if (/(S(?!\\w)|special|S senate|senate special)/i.test(matches[3])) return matches[1] + \"-S\";\n        return matches[1] + \"-\" + (+matches[3]);\n    })\n    \n    let lower = lines.map(x => {\n        x = x.replace(\">=\", \">\")\n            .replace(/(win (D|dems?)|(D|dems?) win|(R|GOP|rep) lose|lose (R|GOP|rep))/i, \"> 50%\");\n        let matches = x.match(/> ?(\\d*(?:\\.\\d+)?%?)/);\n        if (matches === null) {\n            return 0.0;\n        } else {\n            let val = parseFloat(matches[1]);\n            if (matches[0].endsWith(\"%\")) val /= 100.0;\n            return val;\n        }\n    })\n    let upper = lines.map(x => {\n        x = x.replace(/<(?!=)/, \"<=\")\n            .replace(/(win (R|GOP|rep)|(R|GOP|rep) win|(D|dems?) los[es]|los[es] (D| dems?))/i, \"<= 50%\");\n        let matches = x.match(/<= ?(\\d*(?:\\.\\d+)?%?)/);\n        if (matches === null) {\n            return 1.0;\n        } else {\n            let val = parseFloat(matches[1]);\n            if (matches[0].endsWith(\"%\")) val /= 100.0;\n            return val;\n        }\n    })\n    \n    return d3.zip(races, lower, upper).map(x => { \n        if (x[1] >= x[2]) x[1] = 0;\n        return { key: x[0], lower: x[1], upper: x[2], };\n    });\n}\nwindow.constr = constr;\n\ndraws_f = draws.filter(x => {\n    for (let c of constr) {\n        if (c.key === null) continue;\n        if (x[c.key] <= c.lower || x[c.key] > c.upper) return false;\n    }\n    return true;\n});\nwindow.draws_f = draws_f;\n"},{"methodName":"interpret","cellName":"ojs-cell-4","inline":false,"source":"{\nlet exag_fac = 1 - Math.sqrt(width)/80;\nlet last_elec = 222;\nlet xmin = Math.max(Math.min(d_sum.house_q10*exag_fac, 218 - 10), 0)\nlet xmax = Math.min(Math.max(d_sum.house_q90/exag_fac, 218 + 10), 435)\nlet median = d3.median(draws_f, d => d.seats_house);\nlet s_gain = (median >= last_elec ? \"+\" : \"-\") + Math.abs(last_elec - Math.round(median));\nlet breaks = Array(~~((xmax - xmin)/2)).fill().map((e, i) => 2*i + 0.5 + ~~xmin);\n\nlet text_shadow = function(text, opt) {\n    let opt2 = {...opt}\n    opt2.dx = opt2.dx + 3\n    opt2.dy = opt2.dy + 3\n    opt2.fill = \"#0007\"\n    opt2.strokeWidth = 0\n    return [Plot.text([text], opt2), Plot.text([text], opt)]\n}\n\nlet plot = Plot.plot({\n    x: {\n        domain: [xmin, xmax],\n        clamp: true,\n        inset: 10,\n        tickSize: 8,\n        reverse: true,\n        label: null,\n    },\n    y: {\n        legend: false,\n        axis: null,\n        insetTop: 4,\n    },\n    color: {\n        legend: false,\n    },\n    marks: [\n        Plot.rectY(draws_f, Plot.binX({y: \"count\"}, {\n                x: \"seats_house\",\n                fill: d => d.seats_house >= 218 ? BLUE : RED,\n                inset: 0,\n                thresholds: breaks, \n            })),\n        Plot.ruleY([0]),\n        Plot.ruleY([0], {\n            dy: 2,\n            strokeWidth: 5,\n            x1: d3.quantile(draws_f, 0.1, x => x.seats_house),\n            x2: d3.quantile(draws_f, 0.9, x => x.seats_house),\n            color: \"red\",\n            }),\n        Plot.ruleX([last_elec, median]),\n        text_shadow(s_gain, { \n            x: median, dy: -48, dx: 3,\n            frameAnchor: \"bottom\", textAnchor: \"start\", lineAnchor: \"bottom\",\n            fill: \"white\", strokeWidth: 4, stroke: \"black\", fontSize: 40, fontWeight: \"bold\",\n            }),\n        text_shadow(median >= last_elec ? \"GAIN\" : \"LOSS\", { \n            x: median, dy: -42, dx: 5,\n            frameAnchor: \"bottom\", textAnchor: \"start\", lineAnchor: \"top\",\n            fill: \"white\", strokeWidth: 2, stroke: \"black\", fontSize: 14, fontWeight: \"bold\",\n            }),\n        Plot.text([\"← DEM. MAJORITY\"], { \n            x: 217.5, dy: -4, dx: -3,\n            frameAnchor: \"bottom\", textAnchor: \"end\",\n            fontWeight: \"bold\", fill: \"#111\",\n            }),\n        Plot.text([\"REP. MAJORITY →\"], { \n            x: 217.5, dy: -4, dx: 3,\n            frameAnchor: \"bottom\", textAnchor: \"start\",\n            fontWeight: \"bold\", fill: \"#111\",\n            }),\n         Plot.text([last_elec + \" LAST ELECTION\"], { \n            x: last_elec, dy: -4,\n            frameAnchor: \"top\", textAnchor: \"middle\", lineAnchor: \"bottom\",\n            fontWeight: \"bold\",\n            }),\n         Plot.text([\"← DEM. HOUSE SEATS\"], { \n            x: xmax, dy: -4 - (SMALL ? 10 : 0), dx: 4,\n            frameAnchor: \"bottom\", textAnchor: \"start\",\n            fontWeight: \"bold\",\n            }),\n    ],\n    \n    width: width,\n    height: 240,\n    marginTop: 24,\n    marginBottom: 0,\n    marginLeft: 0,\n    marginRight: 0,\n    \n    style: {\n        fontSize: 9,\n        color: \"#444\",\n        overflow: \"visible\",\n    }\n})\nreturn plot;\n}\n"},{"methodName":"interpret","cellName":"ojs-cell-5","inline":false,"source":"\ndem_lead = true; // d_sum.house_prob > 0.5\n{\n    let q50 = d3.median(draws_f, x => x.pred_natl);\n    let dem_prob_house = d3.mean(draws_f, x => x.seats_house >= 218);\n    let dem_prob_sen = d3.mean(draws_f, x => x.seats_sen >= 50);\n    \n    let win_party = dem_lead ? \"Democrats\" : \"Republicans\"\n    let win_class = dem_lead ? \"dem\" : \"rep\"\n    let pct = fmt_pct(dem_lead ? q50 : 1 - q50, 1);\n    let phrase = dem_lead ? \"controlling\" : \"flipping\"\n    let prob_house = dem_lead ? dem_prob_house : 1 - dem_prob_house\n    let prob_sen = dem_lead ? dem_prob_sen : 1 - dem_prob_sen\n\n    return md`\nUnder these conditions, the <b class=\"${win_class}\">${win_party}</b> would be expected to win\n**around ${pct} of the popular vote**.\n\nThey would have a **${fmt_pct(prob_house)} chance** of ${phrase} the House and \na **${fmt_pct(prob_sen)} chance** of ${phrase} the Senate.\n\n<p class=\"updated\">${draws_f.length} draws\n(${fmt_pct(draws_f.length/draws.length)}) in use.</p>`;\n}\n"},{"methodName":"interpret","cellName":"ojs-cell-6","inline":false,"source":"{\nlet exag_fac = 1 - Math.sqrt(width)/160;\nlet last_elec = 50;\nlet xmin = Math.max(Math.min(d_sum.sen_q10*exag_fac, 50 - 10), 0)\nlet xmax = Math.min(Math.max(d_sum.sen_q90/exag_fac, 50 + 10), 100)\nlet median = d3.median(draws_f, d => d.seats_sen);\nlet s_gain = (median >= last_elec ? \"+\" : \"-\") + Math.abs(last_elec - Math.round(median));\nlet breaks = Array(~~(xmax - xmin)).fill().map((e, i) => i + 0.5 + ~~xmin);\n\nlet text_shadow = function(text, opt) {\n    let opt2 = {...opt}\n    opt2.dx = opt2.dx + 3\n    opt2.dy = opt2.dy + 3\n    opt2.fill = \"#0007\"\n    opt2.strokeWidth = 0\n    return [Plot.text([text], opt2), Plot.text([text], opt)]\n}\n\nlet plot = Plot.plot({\n    x: {\n        domain: [xmin, xmax],\n        clamp: true,\n        inset: 10,\n        tickSize: 8,\n        reverse: true,\n        axis: \"top\",\n        label: null,\n    },\n    y: {\n        legend: false,\n        axis: null,\n        insetBottom: 4,\n    },\n    color: {\n        legend: false,\n    },\n    marks: [\n        Plot.rectY(draws_f, Plot.binX({\n                y: x => -x.length,\n            }, {\n                x: \"seats_sen\",\n                fill: d => d.seats_sen >= 50 ? BLUE : RED,\n                thresholds: breaks, \n            })),\n        Plot.ruleY([0]),\n        Plot.ruleY([0], {\n            dy: 2,\n            strokeWidth: 5,\n            x1: d3.quantile(draws_f, 0.1, x => x.seats_sen),\n            x2: d3.quantile(draws_f, 0.9, x => x.seats_sen),\n            color: \"red\",\n            }),\n        Plot.ruleX([last_elec, median]),\n        text_shadow(s_gain, { \n            x: median, dy: 48, dx: 3,\n            frameAnchor: \"top\", textAnchor: \"start\", lineAnchor: \"top\",\n            fill: \"white\", strokeWidth: 4, stroke: \"black\", fontSize: 40, fontWeight: \"bold\",\n            }),\n        text_shadow(median >= last_elec ? \"GAIN\" : \"LOSS\", { \n            x: median, dy: 42, dx: 5,\n            frameAnchor: \"top\", textAnchor: \"start\", lineAnchor: \"bottom\",\n            fill: \"white\", strokeWidth: 2, stroke: \"black\", fontSize: 14, fontWeight: \"bold\",\n            }),\n        Plot.text([\"← DEM. MAJORITY\"], { \n            x: 49.5, dy: 8, dx: -3,\n            frameAnchor: \"top\", textAnchor: \"end\",\n            fontWeight: \"bold\", fill: \"#111\",\n            }),\n        Plot.text([\"REP. MAJORITY →\"], { \n            x: 49.5, dy: 8, dx: 3,\n            frameAnchor: \"top\", textAnchor: \"start\",\n            fontWeight: \"bold\", fill: \"#111\",\n            }),\n         Plot.text([last_elec + \" LAST ELECTION\"], { \n            x: last_elec, dy: 8,\n            frameAnchor: \"bottom\", textAnchor: \"middle\", lineAnchor: \"bottom\",\n            fontWeight: \"bold\",\n            }),\n         Plot.text([\"← DEM. SENATE SEATS\"], { \n            x: xmax, dy: 4 + (SMALL ? 10 : 0), dx: 4,\n            frameAnchor: \"top\", textAnchor: \"start\",\n            fontWeight: \"bold\",\n            }),\n    ],\n    \n    width: width,\n    height: 240,\n    marginTop: 0,\n    marginLeft: 0,\n    marginRight: 0,\n    \n    style: {\n        fontSize: 9,\n        color: \"#444\",\n        overflow: \"visible\",\n    }\n})\nreturn plot;\n}\n"},{"methodName":"interpretQuiet","source":"shinyInput('text')"}]}
+</script>
+<script type="module">
+window._ojs.paths.runtimeToDoc = "../..";
+window._ojs.paths.runtimeToRoot = "../..";
+window._ojs.paths.docToRoot = "";
+window._ojs.selfContained = false;
+window._ojs.runtime.interpretFromScriptTags();
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

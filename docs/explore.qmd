@@ -1,0 +1,365 @@
+---
+title: "Explore Midterm Forecasts"
+execute: 
+    echo: false
+    warning: false
+---
+
+```{ojs setup}
+//| include: false
+import { fmt_pct, rate, fmt_surname, AP, load_image } from "./utils.js"
+d3 = require("d3")
+
+d_sum = FileAttachment("summary.json").json()
+distrs = FileAttachment("house_districts.csv").csv({typed: true});
+states = FileAttachment("senate_races.csv").csv({typed: true});
+window.distrs = distrs;
+
+draws = {
+    let names = await FileAttachment("draws_cols.json").json()
+    let raw = await load_image("draws.png");
+    let out = new Array(raw.h);
+    
+    const n_house = distrs.reduce((accuml, x) => accuml + !x.unopp, 0);
+    const n_sen = states.reduce((accuml, x) => accuml + !x.unopp, 0);
+    for (let i = 0; i < raw.h; i++) {
+        let obj = {}
+        obj.pred_natl = (raw[i*raw.w + 0] + 2.0) / 5.0;
+        obj.seats_house = Math.round((raw[i*raw.w + 1] + 0.5) * 200.0);
+        obj.seats_sen = Math.round((raw[i*raw.w + 2] + 1.5) * 25.0);
+        for (let j = 3; j < names.length; j++) {
+            obj[names[j]] = raw[i*raw.w + j];
+        }
+        out[i] = obj;
+    }
+    
+    return out;
+}
+window.draws = draws;
+
+DARK_BLUE = "#0063B1"
+DARK_RED = "#A0442C"
+BLUE = "#3D77BB"
+RED = "#B25D4C"
+w_BODY = 796;
+SMALL = width < 600;
+elec_date = new Date("2022-11-08")
+
+window.d3 = d3;
+```
+
+```{ojs}
+viewof text = Inputs.textarea({
+    placeholder: `Enter filtering conditions here. For example:
+    WA-8 win D
+    DE-AL < 60%
+    OK-S GOP win
+    NC senate Dem loss
+    `,
+    spellcheck: false,
+    autocomplete: false,
+    autocapitalize: false,
+    rows: 5,
+    resize: true,
+    submit: false,
+    monospace: true,
+});
+```
+
+```{ojs}
+//| include: false
+constr = {
+    let lines = text.split(/\r?\n/)
+        .map(x => x.trim().replaceAll(/\s+/g, " "))
+        .filter(x => x != "");
+        
+    const regex_race = /^([A-Z]{2})([- ](\d{1,2}|AL|at[- ]large|S(?!\w)|special|senate|S senate|senate special))?/i
+    let races = lines.map(x => {
+        let matches = x.match(regex_race);
+        if (matches === null) return "";
+        if (typeof matches[3] == "undefined") return matches[1];
+        if (matches[3].toLowerCase() == "senate") return matches[1];
+        if (/(AL|at[- ]large)/i.test(matches[3])) matches[3] = "1";
+        if (/(S(?!\w)|special|S senate|senate special)/i.test(matches[3])) return matches[1] + "-S";
+        return matches[1] + "-" + (+matches[3]);
+    })
+    
+    let lower = lines.map(x => {
+        x = x.replace(">=", ">")
+            .replace(/(win (D|dems?)|(D|dems?) win|(R|GOP|rep) lose|lose (R|GOP|rep))/i, "> 50%");
+        let matches = x.match(/> ?(\d*(?:\.\d+)?%?)/);
+        if (matches === null) {
+            return 0.0;
+        } else {
+            let val = parseFloat(matches[1]);
+            if (matches[0].endsWith("%")) val /= 100.0;
+            return val;
+        }
+    })
+    let upper = lines.map(x => {
+        x = x.replace(/<(?!=)/, "<=")
+            .replace(/(win (R|GOP|rep)|(R|GOP|rep) win|(D|dems?) los[es]|los[es] (D| dems?))/i, "<= 50%");
+        let matches = x.match(/<= ?(\d*(?:\.\d+)?%?)/);
+        if (matches === null) {
+            return 1.0;
+        } else {
+            let val = parseFloat(matches[1]);
+            if (matches[0].endsWith("%")) val /= 100.0;
+            return val;
+        }
+    })
+    
+    return d3.zip(races, lower, upper).map(x => { 
+        if (x[1] >= x[2]) x[1] = 0;
+        return { key: x[0], lower: x[1], upper: x[2], };
+    });
+}
+window.constr = constr;
+
+draws_f = draws.filter(x => {
+    for (let c of constr) {
+        if (c.key === null) continue;
+        if (x[c.key] <= c.lower || x[c.key] > c.upper) return false;
+    }
+    return true;
+});
+window.draws_f = draws_f;
+```
+
+```{ojs}
+//| label: plot-hist-house
+//| column: screen
+{
+let exag_fac = 1 - Math.sqrt(width)/80;
+let last_elec = 222;
+let xmin = Math.max(Math.min(d_sum.house_q10*exag_fac, 218 - 10), 0)
+let xmax = Math.min(Math.max(d_sum.house_q90/exag_fac, 218 + 10), 435)
+let median = d3.median(draws_f, d => d.seats_house);
+let s_gain = (median >= last_elec ? "+" : "-") + Math.abs(last_elec - Math.round(median));
+let breaks = Array(~~((xmax - xmin)/2)).fill().map((e, i) => 2*i + 0.5 + ~~xmin);
+
+let text_shadow = function(text, opt) {
+    let opt2 = {...opt}
+    opt2.dx = opt2.dx + 3
+    opt2.dy = opt2.dy + 3
+    opt2.fill = "#0007"
+    opt2.strokeWidth = 0
+    return [Plot.text([text], opt2), Plot.text([text], opt)]
+}
+
+let plot = Plot.plot({
+    x: {
+        domain: [xmin, xmax],
+        clamp: true,
+        inset: 10,
+        tickSize: 8,
+        reverse: true,
+        label: null,
+    },
+    y: {
+        legend: false,
+        axis: null,
+        insetTop: 4,
+    },
+    color: {
+        legend: false,
+    },
+    marks: [
+        Plot.rectY(draws_f, Plot.binX({y: "count"}, {
+                x: "seats_house",
+                fill: d => d.seats_house >= 218 ? BLUE : RED,
+                inset: 0,
+                thresholds: breaks, 
+            })),
+        Plot.ruleY([0]),
+        Plot.ruleY([0], {
+            dy: 2,
+            strokeWidth: 5,
+            x1: d3.quantile(draws_f, 0.1, x => x.seats_house),
+            x2: d3.quantile(draws_f, 0.9, x => x.seats_house),
+            color: "red",
+            }),
+        Plot.ruleX([last_elec, median]),
+        text_shadow(s_gain, { 
+            x: median, dy: -48, dx: 3,
+            frameAnchor: "bottom", textAnchor: "start", lineAnchor: "bottom",
+            fill: "white", strokeWidth: 4, stroke: "black", fontSize: 40, fontWeight: "bold",
+            }),
+        text_shadow(median >= last_elec ? "GAIN" : "LOSS", { 
+            x: median, dy: -42, dx: 5,
+            frameAnchor: "bottom", textAnchor: "start", lineAnchor: "top",
+            fill: "white", strokeWidth: 2, stroke: "black", fontSize: 14, fontWeight: "bold",
+            }),
+        Plot.text(["← DEM. MAJORITY"], { 
+            x: 217.5, dy: -4, dx: -3,
+            frameAnchor: "bottom", textAnchor: "end",
+            fontWeight: "bold", fill: "#111",
+            }),
+        Plot.text(["REP. MAJORITY →"], { 
+            x: 217.5, dy: -4, dx: 3,
+            frameAnchor: "bottom", textAnchor: "start",
+            fontWeight: "bold", fill: "#111",
+            }),
+         Plot.text([last_elec + " LAST ELECTION"], { 
+            x: last_elec, dy: -4,
+            frameAnchor: "top", textAnchor: "middle", lineAnchor: "bottom",
+            fontWeight: "bold",
+            }),
+         Plot.text(["← DEM. HOUSE SEATS"], { 
+            x: xmax, dy: -4 - (SMALL ? 10 : 0), dx: 4,
+            frameAnchor: "bottom", textAnchor: "start",
+            fontWeight: "bold",
+            }),
+    ],
+    
+    width: width,
+    height: 240,
+    marginTop: 24,
+    marginBottom: 0,
+    marginLeft: 0,
+    marginRight: 0,
+    
+    style: {
+        fontSize: 9,
+        color: "#444",
+        overflow: "visible",
+    }
+})
+return plot;
+}
+```
+
+::: {.banner}
+```{ojs}
+//| label: summary
+//| column: screen
+
+dem_lead = true; // d_sum.house_prob > 0.5
+{
+    let q50 = d3.median(draws_f, x => x.pred_natl);
+    let dem_prob_house = d3.mean(draws_f, x => x.seats_house >= 218);
+    let dem_prob_sen = d3.mean(draws_f, x => x.seats_sen >= 50);
+    
+    let win_party = dem_lead ? "Democrats" : "Republicans"
+    let win_class = dem_lead ? "dem" : "rep"
+    let pct = fmt_pct(dem_lead ? q50 : 1 - q50, 1);
+    let phrase = dem_lead ? "controlling" : "flipping"
+    let prob_house = dem_lead ? dem_prob_house : 1 - dem_prob_house
+    let prob_sen = dem_lead ? dem_prob_sen : 1 - dem_prob_sen
+
+    return md`
+Under these conditions, the <b class="${win_class}">${win_party}</b> would be expected to win
+**around ${pct} of the popular vote**.
+
+They would have a **${fmt_pct(prob_house)} chance** of ${phrase} the House and 
+a **${fmt_pct(prob_sen)} chance** of ${phrase} the Senate.
+
+<p class="updated">${draws_f.length} draws
+(${fmt_pct(draws_f.length/draws.length)}) in use.</p>`;
+}
+```
+:::
+
+```{ojs}
+//| label: plot-hist-sen
+//| column: screen
+{
+let exag_fac = 1 - Math.sqrt(width)/160;
+let last_elec = 50;
+let xmin = Math.max(Math.min(d_sum.sen_q10*exag_fac, 50 - 10), 0)
+let xmax = Math.min(Math.max(d_sum.sen_q90/exag_fac, 50 + 10), 100)
+let median = d3.median(draws_f, d => d.seats_sen);
+let s_gain = (median >= last_elec ? "+" : "-") + Math.abs(last_elec - Math.round(median));
+let breaks = Array(~~(xmax - xmin)).fill().map((e, i) => i + 0.5 + ~~xmin);
+
+let text_shadow = function(text, opt) {
+    let opt2 = {...opt}
+    opt2.dx = opt2.dx + 3
+    opt2.dy = opt2.dy + 3
+    opt2.fill = "#0007"
+    opt2.strokeWidth = 0
+    return [Plot.text([text], opt2), Plot.text([text], opt)]
+}
+
+let plot = Plot.plot({
+    x: {
+        domain: [xmin, xmax],
+        clamp: true,
+        inset: 10,
+        tickSize: 8,
+        reverse: true,
+        axis: "top",
+        label: null,
+    },
+    y: {
+        legend: false,
+        axis: null,
+        insetBottom: 4,
+    },
+    color: {
+        legend: false,
+    },
+    marks: [
+        Plot.rectY(draws_f, Plot.binX({
+                y: x => -x.length,
+            }, {
+                x: "seats_sen",
+                fill: d => d.seats_sen >= 50 ? BLUE : RED,
+                thresholds: breaks, 
+            })),
+        Plot.ruleY([0]),
+        Plot.ruleY([0], {
+            dy: 2,
+            strokeWidth: 5,
+            x1: d3.quantile(draws_f, 0.1, x => x.seats_sen),
+            x2: d3.quantile(draws_f, 0.9, x => x.seats_sen),
+            color: "red",
+            }),
+        Plot.ruleX([last_elec, median]),
+        text_shadow(s_gain, { 
+            x: median, dy: 48, dx: 3,
+            frameAnchor: "top", textAnchor: "start", lineAnchor: "top",
+            fill: "white", strokeWidth: 4, stroke: "black", fontSize: 40, fontWeight: "bold",
+            }),
+        text_shadow(median >= last_elec ? "GAIN" : "LOSS", { 
+            x: median, dy: 42, dx: 5,
+            frameAnchor: "top", textAnchor: "start", lineAnchor: "bottom",
+            fill: "white", strokeWidth: 2, stroke: "black", fontSize: 14, fontWeight: "bold",
+            }),
+        Plot.text(["← DEM. MAJORITY"], { 
+            x: 49.5, dy: 8, dx: -3,
+            frameAnchor: "top", textAnchor: "end",
+            fontWeight: "bold", fill: "#111",
+            }),
+        Plot.text(["REP. MAJORITY →"], { 
+            x: 49.5, dy: 8, dx: 3,
+            frameAnchor: "top", textAnchor: "start",
+            fontWeight: "bold", fill: "#111",
+            }),
+         Plot.text([last_elec + " LAST ELECTION"], { 
+            x: last_elec, dy: 8,
+            frameAnchor: "bottom", textAnchor: "middle", lineAnchor: "bottom",
+            fontWeight: "bold",
+            }),
+         Plot.text(["← DEM. SENATE SEATS"], { 
+            x: xmax, dy: 4 + (SMALL ? 10 : 0), dx: 4,
+            frameAnchor: "top", textAnchor: "start",
+            fontWeight: "bold",
+            }),
+    ],
+    
+    width: width,
+    height: 240,
+    marginTop: 0,
+    marginLeft: 0,
+    marginRight: 0,
+    
+    style: {
+        fontSize: 9,
+        color: "#444",
+        overflow: "visible",
+    }
+})
+return plot;
+}
+```

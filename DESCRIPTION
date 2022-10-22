@@ -8,6 +8,8 @@ Imports:
     lubridate,
     MASS,
     tidybayes,
+    png,
+    jsonlite,
     loo,
     here
 suggests:

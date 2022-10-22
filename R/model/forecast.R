@@ -286,7 +286,7 @@ pred_senate <- function(d_senate, mix_natl, N_mix_natl) {
          out = out)
 }
 
-save_forecast <- function(forecast, elec_date, from_date) {
+save_forecast <- function(forecast, elec_date, from_date, detail=FALSE) {
     tt_elec = round(elec_date - from_date)
     fmt_trunc = \(x) as.character(round(x, digits=5))
 
@@ -345,8 +345,6 @@ save_forecast <- function(forecast, elec_date, from_date) {
                    across(where(is.numeric), fmt_trunc)) |>
             write_csv(here("docs/seats_hist_senate.csv"))
 
-        # write_rds(forecast$m_pred, here("docs/draws_matrix.rds"), compress="gz")
-
         forecast$d_polls |>
             mutate(across(where(is.numeric), fmt_trunc)) |>
             slice_head(n=50) |>
@@ -368,5 +366,17 @@ save_forecast <- function(forecast, elec_date, from_date) {
                       q95 = quantile(seats, 0.95),
                       q99 = quantile(seats, 0.99)) |>
             write_csv(here("docs/house_shifts.csv"))
+
+        if (isTRUE(detail)) {
+            # save matrix as image for JS
+            colnames(forecast$senate$m_pred)[26] = "OK-S"
+            m_out = cbind(pred_natl = rep(5*plogis(forecast$mix_natl) - 2, each=N_rep), # scale to 0-1
+                          seats_house = forecast$house$pred_seats/200 - 0.5, # scale to 0-1
+                          seats_sen = forecast$senate$pred_seats/25 - 1.5, # scale to 0-1
+                          plogis(forecast$house$m_pred),
+                          plogis(forecast$senate$m_pred))
+            png::writePNG(m_out, here("docs/draws.png"))
+            write_json(colnames(m_out), here("docs/draws_cols.json"))
+        }
     }
 }

@@ -30,7 +30,9 @@ option_list = list(
     make_option("--chains", type="integer", default=4,
                 help="Number of MCMC chains for voter intent estimation."),
     make_option("--refresh_polls", action="store_true", default=F,
-                help="Force redownloading of polls")
+                help="Force redownloading of polls"),
+    make_option("--detail", action="store_true", default=F,
+                help="Save detailed matrix output for further exploration.")
 )
 opt = parse_args(OptionParser(option_list=option_list,
                               description="Forecast the 2022 U.S. House election."))
@@ -72,6 +74,6 @@ with(forecast$out, cat(str_glue("\n
 system("osascript -e 'display notification \"Model run complete.\" with title \"Midterms Forecast\"'")
 
 if (isFALSE(opt$dry)) {
-    save_forecast(forecast, elec_date, from_date)
+    save_forecast(forecast, elec_date, from_date, detail=opt$detail)
     cli_alert_success("Forecast saved.")
 }
