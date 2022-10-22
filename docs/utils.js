@@ -40,6 +40,39 @@ export function fmt_surname(x) {
         .replace(/ DI([SLG])([AEIOU])/, " Di$1$2");
 }
 
+let addImageProcess = function(src) {
+    return new Promise((resolve, reject) => {
+        let img = new Image()
+        img.onload = () => resolve(img)
+        img.onerror = reject
+        img.src = src
+    })
+};
+
+export async function load_image(url) {
+    const img = await addImageProcess(url);
+
+    let canvas = document.createElement("canvas");
+    const h = (canvas.height = img.height);
+    const w = (canvas.width = img.width);
+
+    let ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    let raw = ctx.getImageData(0, 0, w, h);
+
+    let out = new Float32Array(w*h);
+    for (let i = 0; i < w*h; i++) {
+        out[i] = raw.data[4*i] / 256.0;
+    }
+
+    out.h = h;
+    out.w = w;
+
+    return out;
+}
+
+
+
 export const AP = {AK: "Alaska", AL: "Ala.", AR: "Ark.", AZ: "Ariz.", CA: "Calif.",
     CO: "Colo.", CT: "Conn.", DC: "D.C.", DE: "Del.", FL: "Fla.", GA: "Ga.",
     HI: "Hawaii", IA: "Iowa", ID: "Idaho", IL: "Ill.", IN: "Ind.", KS: "Kan.",
