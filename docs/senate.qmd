@@ -69,7 +69,7 @@ let exag_fac = 1 - Math.sqrt(width)/160;
 let last_elec = 50;
 let xmin = Math.max(Math.min(d_sum.sen_q10*exag_fac, 50 - 10), 0)
 let xmax = Math.min(Math.max(d_sum.sen_q90/exag_fac, 50 + 10), 100)
-let s_gain = "+" + Math.abs(last_elec - Math.round(d_sum.sen_med));
+let s_gain = (d_sum.sen_med >= last_elec ? "+" : "-") + Math.abs(last_elec - Math.round(d_sum.sen_med));
 let overl = 0.45;
 
 let text_shadow = function(text, opt) {
@@ -118,7 +118,7 @@ window.plot = Plot.plot({
             frameAnchor: "bottom", textAnchor: "start", lineAnchor: "bottom",
             fill: "white", fontSize: 40, fontWeight: "bold", stroke: "#0003",
             }),
-        text_shadow("GAIN", { 
+        text_shadow(d_sum.sen_med >= last_elec ? "GAIN" : "LOSS", { 
             x: d_sum.sen_med, dy: -42, dx: 5,
             frameAnchor: "bottom", textAnchor: "start", lineAnchor: "top",
             fill: "white", fontSize: 14, fontWeight: "bold", stroke: "#0003",
