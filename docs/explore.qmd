@@ -13,7 +13,8 @@ d3 = require("d3")
 d_sum = FileAttachment("summary.json").json()
 distrs = FileAttachment("house_districts.csv").csv({typed: true});
 states = FileAttachment("senate_races.csv").csv({typed: true});
-window.distrs = distrs;
+geom_hex = FileAttachment("hex.json").json()
+geom_states = FileAttachment("states.json").json()
 
 draws = {
     let names = await FileAttachment("draws_cols.json").json()
@@ -35,7 +36,49 @@ draws = {
     
     return out;
 }
-window.draws = draws;
+
+d_distrs = d3.index(distrs.map(d => {
+        let at_large = ["AK", "DE", "ND", "SD", "VT", "WY"].includes(d.state);
+        d.name = AP[d.state] + " " + (at_large ? "At-Large" : d.district);
+        d.name_short = AP[d.state] +  (at_large ? "" : " " + d.district);
+        d.rcv = ["AK", "ME"].includes(d.state);
+        d.interval = [d.dem_mean, d.dem_q10, d.dem_q25, d.dem_q75, d.dem_q90, d.rcv];
+        d.rating = rate(d.pr_dem);
+        d.margin = Math.abs(d.dem_mean - 0.5);
+        d.dem_cand = fmt_surname(d.dem_cand);
+        d.rep_cand = fmt_surname(d.rep_cand);
+        if (d.state == "AK") {
+            d.dem_cand = null;
+            d.rep_cand = null;
+        }
+        d.cands = [d.dem_cand, d.rep_cand, d.inc_seat];
+        d.search = {dem: "incumbent dem. ", open: "open seat ", gop: "incumbent rep. incumbent gop. "}[d.inc_seat] 
+                + ["contested ", "unopposed uncontested "][d.unopp];
+        return d;
+    }), 
+    d => d.state, d => d.district);
+d_states = d3.index(states.map(d => {
+        d.name = AP[d.state];
+        d.rcv = ["AK", "ME"].includes(d.state);
+        if (d.state == "OK" && d.rep_cand == "M. MULLIN") {
+            d.state = "OK-S";
+            d.name += " Special"
+        }
+        d.interval = [d.dem_mean, d.dem_q10, d.dem_q25, d.dem_q75, d.dem_q90, d.rcv];
+        d.rating = rate(d.pr_dem);
+        d.margin = Math.abs(d.dem_mean - 0.5);
+        d.dem_cand = fmt_surname(d.dem_cand);
+        d.rep_cand = fmt_surname(d.rep_cand);
+        if (d.state == "AK") {
+            d.dem_cand = null;
+            d.rep_cand = null;
+        }
+        d.cands = [d.dem_cand, d.rep_cand, d.inc_seat];
+        d.search = {dem: "incumbent dem. ", open: "open seat ", gop: "incumbent rep. incumbent gop. "}[d.inc_seat] 
+                + ["contested ", "unopposed uncontested "][d.unopp];
+        return d;
+    }), 
+    d => d.state);
 
 DARK_BLUE = "#0063B1"
 DARK_RED = "#A0442C"
@@ -44,6 +87,18 @@ RED = "#B25D4C"
 w_BODY = 796;
 SMALL = width < 600;
 elec_date = new Date("2022-11-08")
+
+
+color = {
+    let midpt = "#fafffa";
+    let color_dem = d3.scaleLinear()
+        .domain([0.5, 1.0])
+        .range([midpt, DARK_BLUE]);
+    let color_gop = d3.scaleLinear()
+        .domain([0.0, 0.5])
+        .range([DARK_RED, midpt]);
+    return x => x <= 0.5 ? color_gop(x) : color_dem(x);
+}
 
 window.d3 = d3;
 ```
@@ -68,8 +123,9 @@ viewof text = Inputs.textarea({
 
 ```{ojs}
 //| include: false
+db_text = debounce(viewof text, 300);
 constr = {
-    let lines = text.split(/\r?\n/)
+    let lines = db_text.split(/\r?\n/)
         .map(x => x.trim().replaceAll(/\s+/g, " "))
         .filter(x => x != "");
         
@@ -98,7 +154,7 @@ constr = {
     })
     let upper = lines.map(x => {
         x = x.replace(/<(?!=)/, "<=")
-            .replace(/(win (R|GOP|rep)|(R|GOP|rep) win|(D|dems?) los[es]|los[es] (D| dems?))/i, "<= 50%");
+            .replace(/(win (R|GOP|rep)|(R|GOP|rep) win|(D|dems?) los[es]|los[es] (D| dems?))/i, "<= 49.999%");
         let matches = x.match(/<= ?(\d*(?:\.\d+)?%?)/);
         if (matches === null) {
             return 1.0;
@@ -124,6 +180,18 @@ draws_f = draws.filter(x => {
     return true;
 });
 window.draws_f = draws_f;
+
+prob_distr = Object.fromEntries(Array.from(d_distrs).map(function([state, v0]) {
+    window.x = v0
+    return [state, Object.fromEntries(Array.from(v0).map(function([distr, v1]) {
+        let key = state + "-" + (+distr);
+        let prob = d3.mean(draws_f, x => x[key] >= 0.5)
+        return [+distr, prob];
+    }))]
+}));
+prob_state = Object.fromEntries(Array.from(d_states).map(
+    ([key, _]) => [key, d3.mean(draws_f, x => x[key] >= 0.5)]
+));
 ```
 
 ```{ojs}
@@ -136,7 +204,8 @@ let xmin = Math.max(Math.min(d_sum.house_q10*exag_fac, 218 - 10), 0)
 let xmax = Math.min(Math.max(d_sum.house_q90/exag_fac, 218 + 10), 435)
 let median = d3.median(draws_f, d => d.seats_house);
 let s_gain = (median >= last_elec ? "+" : "-") + Math.abs(last_elec - Math.round(median));
-let breaks = Array(~~((xmax - xmin)/2)).fill().map((e, i) => 2*i + 0.5 + ~~xmin);
+let breaks = Array(~~((xmax - xmin)/1)).fill().map((e, i) => 1*i + 0.25 + ~~xmin);
+window.breaks=breaks;
 
 let text_shadow = function(text, opt) {
     let opt2 = {...opt}
@@ -150,6 +219,7 @@ let text_shadow = function(text, opt) {
 let plot = Plot.plot({
     x: {
         domain: [xmin, xmax],
+        round: true,
         clamp: true,
         inset: 10,
         tickSize: 8,
@@ -233,7 +303,7 @@ return plot;
 ```{ojs}
 //| label: summary
 //| column: screen
-
+//| 
 dem_lead = true; // d_sum.house_prob > 0.5
 {
     let q50 = d3.median(draws_f, x => x.pred_natl);
@@ -246,7 +316,7 @@ dem_lead = true; // d_sum.house_prob > 0.5
     let phrase = dem_lead ? "controlling" : "flipping"
     let prob_house = dem_lead ? dem_prob_house : 1 - dem_prob_house
     let prob_sen = dem_lead ? dem_prob_sen : 1 - dem_prob_sen
-
+    
     return md`
 Under these conditions, the <b class="${win_class}">${win_party}</b> would be expected to win
 **around ${pct} of the popular vote**.
@@ -363,3 +433,330 @@ let plot = Plot.plot({
 return plot;
 }
 ```
+
+# House and Senate Maps
+
+:::{.column-screen-inset layout-ncol=2}
+```{ojs}
+//| label: plot-house-map
+house_map = {
+let distrs = topojson.feature(geom_hex, geom_hex.objects.foo).features.map(d => {
+    d.match = d_distrs.get(d.properties.state).get(d.properties.district);
+    d.flip = ((d.match.pr_dem > 0.5 && d.match.inc_seat == "gop") 
+                || (d.match.pr_dem < 0.5 && d.match.inc_seat == "dem"))
+            && (Math.abs(d.match.pr_dem - 0.5) > 0.01);
+    return d;
+})
+    
+const w = 960;
+const h = w * 0.72;
+const GOLD = "#bc1";
+
+const svg = d3
+    .create("svg")
+    .attr("viewBox", [0, 0, w, h])
+    .style("width", "100%")
+    .style("height", "auto");
+
+let proj = d3.geoAlbers()
+    .scale(0.92*w)
+    .translate([0.97*w/2, 0.94*h/2]);
+let path = d3.geoPath(proj);
+
+let geom_distrs = svg
+    .append("g")
+    .attr("class", "distrs")
+    .selectAll("path")
+    .data(distrs)
+    .enter().append("path")
+    .attr("fill", "#fff")
+    .attr("stroke", "#111")
+    .attr("stroke-width", 0.5)
+    .attr("d", path);
+
+let geom_distrs_hover = svg
+    .append("g")
+    .attr("class", "distrs")
+    .selectAll("path")
+    .data(distrs)
+    .enter().append("path")
+    .attr("fill", d => d.flip ? "url(#diagonalHatch)" : "none")
+    .attr("stroke", "#000")
+    .attr("stroke-width", 0.0)
+    .attr("d", path);    
+
+let tt = d3.select("#plot-house-map").append("div")
+        .attr("class", "map-tooltip")
+        .style("visibility", "hidden");
+let prob_table;
+    
+let mmv = function(e, d) {
+    let [mx, my] = d3.pointer(e);
+    let svg_dim = svg.node().getBoundingClientRect();
+    let w_fac = svg_dim.width/w;
+    if (mx < 50/w_fac) mx = 50/w_fac;
+    if (mx > w - 190/w_fac) mx = w - 190/w_fac;
+    
+    let prob = prob_table[d.match.state][d.match.district];
+    let cand;
+    let miss;
+    if (prob > 0.5) {
+        cand = !d.match.dem_cand ? "Democrats" : d.match.dem_cand;
+        miss = !d.match.dem_cand;
+    } else {
+        cand = !d.match.rep_cand ? "Republicans" : d.match.rep_cand;
+        miss = !d.match.rep_cand;
+    }
+    let inc = {
+        dem: `<b style='color: ${DARK_BLUE}'>Dem.</b> incumbent`,
+        gop: `<b style='color: ${DARK_RED}'>Rep.</b> incumbent`,
+        open: "<b>Open</b> seat",
+    }[d.match.inc_seat]
+    let prob_text;
+    let prob_color = prob > 0.5 ? DARK_BLUE : DARK_RED;
+    if (d.match.unopp == 1) {
+        prob_text = `<b style="color: ${prob_color}">${cand}</b>
+            ${miss ? "are" : "is"} running unopposed and will win the seat.`
+    } else {
+        prob_text = `<b style="color: ${prob_color}">${cand}</b> 
+            would have a 
+            <b>${fmt_pct(prob > 0.5 ? prob : 1 - prob)}</b> chance of winning.`
+    }
+    let disclaimer = d.match.rcv ? `<p style="color: #777; font-size: 0.75em; font-style: italic; margin-top: 0.5em;">
+        Estimates do not account for rank-choice voting.
+    </p>` : "";
+    
+    d3.select(this).attr("stroke-width", 2.4);
+    
+    let txt = `<h3>${d.match.name}</h3>
+        <p>${inc}</p>
+        <div style="width: 100%; height: 1rem; margin: 4px 0; display: flex;">
+        <div style="background: ${BLUE}; flex-basis: ${100*prob}%"></div>
+        <div style="background: ${RED}; flex-basis: ${100 - 100*prob}%"></div>
+        </div>
+        <p>${prob_text}</p>
+        ${disclaimer}
+        `;
+
+    tt.style("visibility", "visible")
+      .html(txt)
+      .style("left", (mx - 50)*svg_dim.width/w + "px")
+      .style("bottom", (h - my + 25)*svg_dim.height/h + "px");
+}
+let mout = function(d) {
+    geom_distrs_hover.attr("stroke-width", 0.0);
+    tt.style("visibility", "hidden");
+}
+
+geom_distrs_hover.on("mousemove", mmv);
+geom_distrs_hover.on("touchmove", mmv);
+svg.on("mouseout", mout);
+svg.on("touchend", mout);
+
+let node = svg.node();
+Object.defineProperty(node, "value", {
+    get() {
+        return draws;
+    },
+    set(v) {
+        prob_table = v;
+        geom_distrs.attr("fill", d => {
+            return color(prob_table[d.match.state][d.match.district]);
+        })
+    }
+});
+
+return node;
+}
+```
+
+```{ojs}
+//| label: plot-sen-map
+sen_map = {
+let states = topojson.feature(geom_states, geom_states.objects.foo).features.map(d => {
+    d.match = d_states.get(d.properties.state);
+    if (typeof d.match == "undefined") {
+        d.flip = false;
+        d.match = null;
+    } else {
+        d.flip = ((d.match.pr_dem > 0.5 && d.match.inc_seat == "gop") 
+                    || (d.match.pr_dem < 0.5 && d.match.inc_seat == "dem"))
+                && (Math.abs(d.match.pr_dem - 0.5) > 0.01);
+    }
+    return d;
+})
+    
+const w = 960;
+const h = w * 0.70;
+const GOLD = "#bc1";
+
+const svg = d3
+    .create("svg")
+    .attr("viewBox", [0, 0, w, h])
+    .style("width", "100%")
+    .style("height", "auto");
+
+let proj = d3.geoAlbers()
+    .scale(1.40*w)
+    .translate([0.78*w/2, 0.14*h/2]);
+let path = d3.geoPath(proj);
+
+let geom_distrs = svg
+    .append("g")
+    .attr("class", "distrs")
+    .selectAll("path")
+    .data(states)
+    .enter().append("path")
+    .attr("fill", "#fff")
+    .attr("stroke", "#111")
+    .attr("stroke-width", 0.5)
+    .attr("d", path);
+
+let geom_distrs_hover = svg
+    .append("g")
+    .attr("class", "distrs")
+    .selectAll("path")
+    .data(states)
+    .enter().append("path")
+    .attr("fill", d => d.flip ? "url(#diagonalHatch)" : "none")
+    .attr("stroke", "#000")
+    .attr("stroke-width", 0.0)
+    .attr("d", path);    
+
+let tt = d3.select("#plot-sen-map").append("div")
+        .attr("class", "map-tooltip")
+        .style("visibility", "hidden");
+let prob_table;
+    
+let mmv = function(e, d) {
+    let [mx, my] = d3.pointer(e);
+    let svg_dim = svg.node().getBoundingClientRect();
+    let w_fac = svg_dim.width/w;
+    if (mx < 50/w_fac) mx = 50/w_fac;
+    if (mx > w - 190/w_fac) mx = w - 190/w_fac;
+    
+    d3.select(this).attr("stroke-width", 2.4);
+    
+    let txt;
+    if (d.match === null) {
+        txt = `<h3>${AP[d.properties.state]}</h3><p></p>
+            <p>No election this year.</p>`;
+    } else {
+        let prob = prob_table[d.match.state];
+        let cand;
+        let miss;
+        if (prob > 0.5) {
+            cand = !d.match.dem_cand ? "Democrats" : d.match.dem_cand;
+            miss = !d.match.dem_cand;
+        } else {
+            cand = !d.match.rep_cand ? "Republicans" : d.match.rep_cand;
+            miss = !d.match.rep_cand;
+        }
+        let inc = {
+            dem: `<b style='color: ${DARK_BLUE}'>Dem.</b> incumbent`,
+            gop: `<b style='color: ${DARK_RED}'>Rep.</b> incumbent`,
+            open: "<b>Open</b> seat",
+        }[d.match.inc_seat]
+        let prob_text;
+        let prob_color = prob > 0.5 ? DARK_BLUE : DARK_RED;
+        if (d.match.unopp == 1) {
+            prob_text = `<b style="color: ${prob_color}">${cand}</b>
+                ${miss ? "are" : "is"} running unopposed and will win the seat.`
+        } else {
+            prob_text = `<b style="color: ${prob_color}">${cand}</b> 
+                would have a 
+                <b>${fmt_pct(prob > 0.5 ? prob : 1 - prob)}</b> chance of winning.`
+        }
+        let disclaimer = d.match.rcv ? `<p style="color: #777; font-size: 0.75em; font-style: italic; margin-top: 0.5em;">
+            Estimates do not account for rank-choice voting.
+        </p>` : "";
+        
+        txt = `<h3>${d.match.name}</h3>
+            <p>${inc}</p>
+            <div style="width: 100%; height: 1rem; margin: 4px 0; display: flex;">
+            <div style="background: ${BLUE}; flex-basis: ${100*prob}%"></div>
+            <div style="background: ${RED}; flex-basis: ${100 - 100*prob}%"></div>
+            </div>
+            <p>${prob_text}</p>
+            ${disclaimer}
+            `;
+    }
+
+    tt.style("visibility", "visible")
+      .html(txt)
+      .style("left", (mx - 50)*svg_dim.width/w + "px")
+      .style("bottom", (h - my + 25)*svg_dim.height/h + "px");
+}
+let mout = function(d) {
+    geom_distrs_hover.attr("stroke-width", 0.0);
+    tt.style("visibility", "hidden");
+}
+
+geom_distrs_hover.on("mousemove", mmv);
+geom_distrs_hover.on("touchmove", mmv);
+svg.on("mouseout", mout);
+svg.on("touchend", mout);
+
+let node = svg.node();
+
+Object.defineProperty(node, "value", {
+    get() {
+        return draws;
+    },
+    set(v) {
+        prob_table = v;
+        geom_distrs.attr("fill", d => {
+            if (d.match === null) {
+                return "#c0c0c0";
+            } else {
+                return color(prob_table[d.match.state]);
+            }
+        })
+    }
+})
+
+return node;
+}
+```
+:::
+
+```{ojs}
+//| include: false
+house_map.value = prob_distr;
+sen_map.value = prob_state;
+
+function debounce(input, delay = 1000) {
+  return Generators.observe(notify => {
+    let timer = null;
+    let value;
+
+    // On input, check if we recently reported a value.
+    // If we did, do nothing and wait for a delay;
+    // otherwise, report the current value and set a timeout.
+    function inputted() {
+      if (timer !== null) {
+          clearTimeout(timer);
+      }
+      timer = setTimeout(delayed, delay);
+      /*
+      } else {
+          notify(value = input.value);
+          timer = setTimeout(delayed, delay);
+      }
+      */
+    }
+
+    // After a delay, check if the last-reported value is the current value.
+    // If it’s not, report the new value.
+    function delayed() {
+      timer = null;
+      if (value === input.value) return;
+      notify(value = input.value);
+    }
+
+    input.addEventListener("input", inputted), inputted();
+    return () => input.removeEventListener("input", inputted);
+  });
+}
+```
+

@@ -50,7 +50,14 @@
     overflow: visible;
 }
 
-#plot-map {
+#plot-sen-map, #plot-house-map {
+    margin-top: 0em !important;
+}
+.column-screen-inset .cell.quarto-layout-cell {
+    width: 100%;
+}
+
+#plot-map, #plot-sen-map, #plot-house-map {
     position: relative;
     max-width: 1080px;
     margin: -1rem auto 0;
@@ -58,6 +65,7 @@
 
     svg {
         display: block;
+        overflow: visible;
 
         .distrs > path {
             pointer-events: all;
