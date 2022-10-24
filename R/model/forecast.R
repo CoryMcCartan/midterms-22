@@ -172,6 +172,15 @@ pred_house <- function(d_house, mix_natl, N_mix_natl) {
                           sample_new_levels="uncertainty", allow_new_levels=TRUE, cores=1)
     }))
     colnames(m_pred) = with(d_house$pred, str_c(state, "-", district))
+
+    # adjust Alaska based on special election
+    sd_prior = E(brms::as_draws_rvars(m_outcomes, "sd_dem_cand__Intercept")[[1]])
+    sd_obs = sd(m_pred[, "AK-1"])
+    overperf = qlogis(0.515) - qlogis(0.425) # spec elec - part baseline
+    adj_AK = (overperf / sd_obs^2) / (sd_prior^-2 + sd_obs^-2)
+    ranef_other = ranef(m_outcomes)$dem_cand["<other>", , 1]
+    m_pred[, "AK-1"] = m_pred[, "AK-1"] - ranef_other + adj_AK # no extra variance b/c cand ranef already providing variance
+
     cli_progress_done()
     cli_alert_success("House predictions complete.")
 
