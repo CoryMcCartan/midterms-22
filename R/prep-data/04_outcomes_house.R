@@ -77,7 +77,7 @@ d_pres_20 = map_dfr(state.abb, function(abbr) {
 d_22 <- full_join(d_22, d_pres_20, by=c("year", "state", "district"))
 
 # FEC data
-d_dk_raw <- read_sheet("1WveGDjicdkFlTcuW1MYwXzvrzf78igsi7Gz9d_X8qa8", sheet="House")
+d_dk_raw <- read_sheet("136bwBUl0XxFKO_nX1Kq2gZq1rMyc7E6y1zJ8cgqX6LU", sheet="House")
 d_cand_names <- read_csv(here("data-raw/dfp/house_candidates_2010_2022.csv"), show_col_types=FALSE) |>
     filter(year == 2022) |>
     mutate(party = c(DEMOCRATIC="dem", REPUBLICAN="gop")[party_affiliation]) |>
