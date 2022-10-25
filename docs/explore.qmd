@@ -184,14 +184,22 @@ window.draws_f = draws_f;
 prob_distr = Object.fromEntries(Array.from(d_distrs).map(function([state, v0]) {
     window.x = v0
     return [state, Object.fromEntries(Array.from(v0).map(function([distr, v1]) {
-        let key = state + "-" + (+distr);
-        let prob = d3.mean(draws_f, x => x[key] >= 0.5)
-        return [+distr, prob];
+        if (d_distrs.get(state).get(+distr).unopp == 1) {
+            return [+distr, d_distrs.get(state).get(+distr).pr_dem];
+        } else {
+            let key = state + "-" + (+distr);
+            let prob = d3.mean(draws_f, x => x[key] >= 0.5)
+            return [+distr, prob];
+        }
     }))]
 }));
-prob_state = Object.fromEntries(Array.from(d_states).map(
-    ([key, _]) => [key, d3.mean(draws_f, x => x[key] >= 0.5)]
-));
+prob_state = Object.fromEntries(Array.from(d_states).map(function([key, _]) {
+    if (d_states.get(key).unopp == 1) {
+        return [key, d_states.get(key).pr_dem];
+    } else {
+        return [key, d3.mean(draws_f, x => x[key] >= 0.5)]
+    }
+}));
 ```
 
 ```{ojs}
