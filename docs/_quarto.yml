@@ -24,7 +24,6 @@ website:
               aria-label: GitHub
     google-analytics:
         tracking-id: "G-2KH5JZ6JS1"
-        storage: none
 
 format:
     html:
