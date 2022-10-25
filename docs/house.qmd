@@ -441,7 +441,7 @@ window.d_shift = d_shift
 ```{ojs}
 Plot.plot({
     x: {
-        domain: [0.45, 0.535],
+        domain: [0.435, 0.535],
         tickFormat: "%",
         label: "National Democratic vote share",
         grid: true,
@@ -485,7 +485,7 @@ Plot.plot({
             }),
         () => Plot.plot({
             x: {
-                domain: [0.45, 0.535],
+                domain: [0.435, 0.535],
                 axis: null
             },
             y: {

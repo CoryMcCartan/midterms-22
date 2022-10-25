@@ -204,7 +204,7 @@ let xmin = Math.max(Math.min(d_sum.house_q10*exag_fac, 218 - 10), 0)
 let xmax = Math.min(Math.max(d_sum.house_q90/exag_fac, 218 + 10), 435)
 let median = d3.median(draws_f, d => d.seats_house);
 let s_gain = (median >= last_elec ? "+" : "-") + Math.abs(last_elec - Math.round(median));
-let breaks = Array(~~((xmax - xmin)/1)).fill().map((e, i) => 1*i + 0.25 + ~~xmin);
+let breaks = Array(~~((xmax - xmin)/4)).fill().map((e, i) => 4*i + 0.5 + ~~xmin);
 window.breaks=breaks;
 
 let text_shadow = function(text, opt) {

@@ -380,7 +380,7 @@ save_forecast <- function(forecast, elec_date, from_date, detail=FALSE) {
             # save matrix as image for JS
             colnames(forecast$senate$m_pred)[26] = "OK-S"
             m_out = cbind(pred_natl = rep(5*plogis(forecast$mix_natl) - 2, each=N_rep), # scale to 0-1
-                          seats_house = forecast$house$pred_seats/200 - 0.5, # scale to 0-1
+                          seats_house = round(256*(forecast$house$pred_seats/200 - 0.5))/256, # scale to 0-1
                           seats_sen = forecast$senate$pred_seats/25 - 1.5, # scale to 0-1
                           plogis(forecast$house$m_pred),
                           plogis(forecast$senate$m_pred))
