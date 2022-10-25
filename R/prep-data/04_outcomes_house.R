@@ -58,6 +58,10 @@ d_pres_20 = map_dfr(state.abb, function(abbr) {
         perm = c(1L, 2L, 3L, 5L, 4L, 7L, 6L, 9L, 8L)
         st_map$cd_2020 = perm[st_map$cd_2020]
     }
+    if (abbr == "NE") {
+        perm = c(1L, 3L, 2L)
+        st_map$cd_2020 = perm[st_map$cd_2020]
+    }
 
     if (!"pre_20_dem_bid" %in% colnames(st_map)) {
         st_map = select(st_map, GEOID, cd_2020, geometry) |>
@@ -83,7 +87,7 @@ d_cand_names <- read_csv(here("data-raw/dfp/house_candidates_2010_2022.csv"), sh
 d_fec22 <- d_dk_raw |>
     clean_names() |>
     transmute(district = str_replace(cd, "-AL", "-01"),
-              name = str_to_upper(actual_name),
+              name = str_to_upper(name),
               initials = str_replace_all(str_c(" ", str_squish(name)), "[ -.](\\w)(\\w*)", "\\1"),
               party = if_else(str_detect(party, "\\(D"), "dem", "gop"),
               exp = spent_ctd) |>
