@@ -1,51 +1,51 @@
 date,firm,type,lv,firm_bias,est,impact
-2022-10-22,Morning Consult,online,1,0.01333,0.51613,-0.00226
-2022-10-21,Greenberg Quinlan Rosner,online,0,0.02274,0.5,-0.01146
-2022-10-18,Emerson College Polling Society,ivr,0,-0.00042,0.47161,0.0019
-2022-10-18,Rasmussen (Pulse Opinion Research),ivr,1,0.00123,0.47778,-0.04115
-2022-10-18,YouGov,online,0,0.01909,0.51807,0.00304
-2022-10-17,Ipsos,online,0,0.02319,0.50704,-0.00376
-2022-10-17,YouGov,online,0,0.01909,0.50562,-0.04822
-2022-10-17,YouGov,online,1,0.01909,0.49462,0.01163
-2022-10-16,Hart Research Associates/Public Opinion Strategies,phone,1,0.01833,0.49474,0.05243
-2022-10-16,Hart Research Associates/Public Opinion Strategies,phone,0,0.01833,0.50538,0.00579
-2022-10-15,Monmouth U.,phone,0,0.01244,0.47872,-0.0471
-2022-10-15,Monmouth U.,phone,0,0.01244,0.46809,-0.02215
-2022-10-15,YouGov,online,0,0.01909,0.51111,0.00583
-2022-10-14,McLaughlin,online,1,-0.01063,0.46739,-0.02015
-2022-10-14,Hart Research Associates/Public Opinion Strategies,unknown,0,0.01833,0.48936,-0.00166
-2022-10-13,Pew,online,0,0.0171,0.50617,0.0028
-2022-10-13,YouGov,online,1,0.01909,0.48913,-0.0468
-2022-10-12,Harris Poll,online,1,0.0167,0.47,0.00525
-2022-10-12,Harris Poll,online,0,0.0167,0.5,-0.05583
-2022-10-12,Data for Progress,online,1,0.01456,0.48387,-0.01207
-2022-10-11,Rasmussen (Pulse Opinion Research),ivr,1,0.00123,0.46067,-0.0329
-2022-10-11,Trafalgar Group,ivr,1,0.01175,0.47091,0.06038
-2022-10-10,Beacon Research/Shaw & Company,phone,0,0.01219,0.51765,-0.0175
-2022-10-10,Ipsos,online,0,0.02319,0.52941,-0.00684
-2022-10-10,Siena College/NYT Upshot,phone,0,0.01288,0.49673,0.00683
-2022-10-10,Siena College/NYT Upshot,phone,1,0.01288,0.48383,0.01018
-2022-10-09,POS,unknown,1,0.02401,0.51136,-0.02511
-2022-10-09,YouGov,online,1,0.01909,0.51064,-0.06728
-2022-10-08,Morning Consult,online,1,0.01333,0.51613,-0.00376
-2022-10-08,AP-NORC,mixed,0,0.02099,0.54667,-0.01872
-2022-10-08,Global Strategy Group/GBAO/Navigator Research,online,0,0.02308,0.52688,-0.00586
-2022-10-07,Susquehanna,phone,1,0.01283,0.5,-0.01151
-2022-10-06,Big Village,online,0,0.01735,0.52927,-0.26686
-2022-10-06,Big Village,online,1,0.01735,0.52824,-0.00999
-2022-10-06,TIPP,online,0,-0.00052,0.50588,0.00345
-2022-10-05,Morning Consult,online,1,0.01333,0.51613,-0.00903
-2022-10-05,John Zogby Strategies,online,1,0.01311,0.512,-0.0297
-2022-10-04,Rasmussen (Pulse Opinion Research),ivr,1,0.00123,0.47778,-0.01392
-2022-10-03,Ipsos,online,0,0.02319,0.50769,-0.01492
-2022-10-03,InsiderAdvantage,unknown,1,0.01237,0.48845,-0.02722
-2022-10-02,YouGov,online,1,0.01909,0.50538,-0.01906
-2022-10-01,SurveyMonkey/PORES,online,1,0.00519,0.49,-0.01387
-2022-09-29,Morning Consult,online,1,0.01333,0.52688,0.0041
-2022-09-28,Marist,online,0,0.01611,0.51111,0.00066
-2022-09-27,Rasmussen (Pulse Opinion Research),ivr,1,0.00123,0.49438,-0.0229
-2022-09-27,NewsNation/Decision Desk HQ,online,0,0.0126,0.5057,0.01893
-2022-09-26,Ipsos,online,0,0.02319,0.53623,0.02112
-2022-09-26,Trafalgar Group,ivr,1,0.01175,0.47059,-0.0236
-2022-09-25,YouGov,online,0,0.01909,0.52326,-0.01753
-2022-09-25,YouGov,online,0,0.01909,0.49772,0.04532
+2022-10-23,YouGov,online,0,0.01888,0.52273,0.00156
+2022-10-22,Morning Consult,online,0,0.0139,0.52809,-0.00074
+2022-10-21,Greenberg Quinlan Rosner,online,0,0.0226,0.5,-0.02139
+2022-10-21,Morning Consult,online,1,0.0139,0.51087,-0.00555
+2022-10-20,Morning Consult,online,1,0.0139,0.51087,-0.01028
+2022-10-18,Emerson College Polling Society,ivr,0,-0.00073,0.47161,-0.03055
+2022-10-18,Rasmussen (Pulse Opinion Research),ivr,1,0.00112,0.47778,-0.05554
+2022-10-17,Ipsos,online,0,0.02313,0.50704,-0.00789
+2022-10-17,YouGov,online,1,0.01888,0.49462,-0.01654
+2022-10-16,Hart Research Associates/Public Opinion Strategies,phone,0,0.01813,0.50538,-0.01728
+2022-10-16,Hart Research Associates/Public Opinion Strategies,phone,1,0.01813,0.49474,-0.0269
+2022-10-15,Monmouth U.,phone,0,0.01214,0.46809,-0.00068
+2022-10-15,Monmouth U.,phone,0,0.01214,0.47872,-0.00177
+2022-10-15,YouGov,online,0,0.01888,0.52778,-0.01577
+2022-10-14,McLaughlin,online,1,-0.01073,0.46739,0.03706
+2022-10-14,Hart Research Associates/Public Opinion Strategies,unknown,0,0.01813,0.48936,-0.01671
+2022-10-13,Morning Consult,online,1,0.0139,0.51613,0.03418
+2022-10-13,Pew,online,0,0.017,0.50617,0.01254
+2022-10-13,YouGov,online,1,0.01888,0.48913,0.01497
+2022-10-12,Harris Poll,online,0,0.01662,0.5,0.0208
+2022-10-12,Harris Poll,online,1,0.01662,0.47,0.00202
+2022-10-12,Data for Progress,online,1,0.01426,0.48387,-0.00373
+2022-10-11,Rasmussen (Pulse Opinion Research),ivr,1,0.00112,0.46067,-0.00612
+2022-10-11,Trafalgar Group,ivr,1,0.0117,0.47091,-0.01116
+2022-10-10,Beacon Research/Shaw & Company,phone,0,0.01207,0.51765,0.0494
+2022-10-10,Ipsos,online,0,0.02313,0.52941,-0.00231
+2022-10-10,Siena College/NYT Upshot,phone,1,0.01283,0.48383,-0.0026
+2022-10-10,Siena College/NYT Upshot,phone,0,0.01283,0.49673,-0.00856
+2022-10-09,POS,unknown,1,0.02386,0.51136,0.04447
+2022-10-09,YouGov,online,1,0.01888,0.51064,0.01393
+2022-10-09,YouGov,online,0,0.01888,0.51444,-0.02555
+2022-10-09,Pioneer Polling/Tarrance,online,1,0.01299,0.49462,0.0013
+2022-10-08,AP-NORC,mixed,0,0.0211,0.54667,0.01335
+2022-10-08,Global Strategy Group/GBAO/Navigator Research,online,0,0.02315,0.52688,-0.01012
+2022-10-07,Morning Consult,online,1,0.0139,0.51087,-0.00845
+2022-10-07,Susquehanna,phone,1,0.01283,0.5,0.01414
+2022-10-06,Big Village,online,0,0.01707,0.52927,-0.04635
+2022-10-06,Big Village,online,1,0.01707,0.52824,-0.015
+2022-10-06,TIPP,online,0,-0.00054,0.50588,0.02581
+2022-10-05,John Zogby Strategies,online,1,0.01313,0.512,0.01697
+2022-10-04,Morning Consult,online,1,0.0139,0.51613,-0.01261
+2022-10-04,Rasmussen (Pulse Opinion Research),ivr,1,0.00112,0.47778,-0.08043
+2022-10-03,Ipsos,online,0,0.02313,0.50769,0.01119
+2022-10-03,InsiderAdvantage,unknown,1,0.01237,0.48845,0.0047
+2022-10-02,YouGov,online,1,0.01888,0.50538,0.03885
+2022-10-02,YouGov,online,0,0.01888,0.50395,0.0025
+2022-10-01,SurveyMonkey/PORES,online,1,0.00516,0.49,-0.0167
+2022-09-28,Marist,online,0,0.01607,0.51111,-0.02669
+2022-09-27,Rasmussen (Pulse Opinion Research),ivr,1,0.00112,0.49438,-0.00302
+2022-09-27,NewsNation/Decision Desk HQ,online,0,0.01258,0.5057,-0.01197
