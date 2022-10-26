@@ -22,13 +22,13 @@ d_distr_list = {
         d.name = AP[d.state] + " " + (at_large ? "At-Large" : d.district);
         d.name_short = AP[d.state] +  (at_large ? "" : " " + d.district);
         d.rcv = ["AK", "ME"].includes(d.state);
-        d.interval = [d.dem_mean, d.dem_q10, d.dem_q25, d.dem_q75, d.dem_q90, d.rcv];
+        d.interval = [d.dem_mean, d.dem_q10, d.dem_q25, d.dem_q75, d.dem_q90, d.rcv && (!d.state == "AK")];
         d.rating = rate(d.pr_dem);
         d.margin = Math.abs(d.dem_mean - 0.5);
         d.dem_cand = fmt_surname(d.dem_cand);
         d.rep_cand = fmt_surname(d.rep_cand);
         if (d.state == "AK") {
-            d.dem_cand = null;
+            //d.dem_cand = null;
             d.rep_cand = null;
         }
         d.cands = [d.dem_cand, d.rep_cand, d.inc_seat];
