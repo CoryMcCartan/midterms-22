@@ -296,6 +296,11 @@ let mmv = function(e, d) {
     let disclaimer = d.match.rcv ? `<p style="color: #777; font-size: 0.75em; font-style: italic; margin-top: 0.5em;">
         Estimates do not account for rank-choice voting.
     </p>` : "";
+    if (d.match.rcv && d.match.state == "AK") {
+        disclaimer = `<p style="color: #777; font-size: 0.75em; font-style: italic; margin-top: 0.5em;">
+            Estimates approximate but do not fully account for rank-choice voting dynamics.
+        </p>`;
+    }
     
     d3.select(this).attr("stroke-width", 2.4);
     
