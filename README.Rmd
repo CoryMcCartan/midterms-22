@@ -269,3 +269,10 @@ Posterior summaries for all coefficients are shown below.
 The overall model $R^2$ is around 0.89.
 
 ![Senate outcome model summary](readme-doc/outcomes_model_sen_ests.svg)
+
+#### Alaska RCV adjustment
+There are two Republican candidates running against a single Democrat in the Alaska at-large district.
+This poses a challenge to predicting a winner, since the dynamics of rank-choice voting could be determinative.
+As an ad-hoc adjustment, we simulate hypothetical Alaska at-large elections based on the results of the 2022 special election, with randomness added.
+We use the results of this simulation to understand the probability of a Democratic win based on the first-round balloting results.
+We can then translate this into a (random) vote boost to apply to the Democratic candidate in the first round in order to produce a rough approximation of the final rank-choice reallocated vote.
