@@ -1,51 +1,51 @@
 date,firm,type,lv,firm_bias,est,impact
-2022-10-27,YouGov,online,1,0.01891,0.48913,0.00716
-2022-10-26,Trafalgar Group,ivr,1,0.01154,0.46799,-0.0046
-2022-10-26,Data for Progress,online,1,0.01367,0.47872,0.02212
-2022-10-26,Tufts,online,1,0.01305,0.50526,0.00692
-2022-10-25,Big Village,online,0,0.01805,0.52315,0.0043
-2022-10-25,Big Village,online,1,0.01805,0.52233,-0.02046
-2022-10-25,InsiderAdvantage,unknown,1,0.01219,0.47437,-0.03842
-2022-10-25,Rasmussen (Pulse Opinion Research),ivr,1,0.00108,0.46154,-0.0743
-2022-10-25,Echelon Insights,online,0,0.02335,0.51613,-0.03986
-2022-10-25,Echelon Insights,online,1,0.02335,0.51064,0.01328
-2022-10-24,Ipsos,online,0,0.02298,0.51515,0.00271
-2022-10-23,YouGov,online,1,0.01891,0.52128,0.02469
-2022-10-22,Morning Consult,online,1,0.01393,0.51613,-0.00667
-2022-10-22,Global Strategy Group/GBAO/Navigator Research,online,0,0.023,0.51613,-0.02853
-2022-10-21,Greenberg Quinlan Rosner,online,0,0.02266,0.5,-0.01131
-2022-10-21,Suffolk,phone,1,0.01792,0.47614,0.02481
-2022-10-20,Morning Consult,online,1,0.01393,0.51087,-0.06064
-2022-10-18,Emerson College Polling Society,ivr,0,-0.00045,0.47161,0.00678
-2022-10-18,Ipsos,online,1,0.02298,0.50515,0.01879
-2022-10-18,Ipsos,online,0,0.02298,0.51613,0.03112
-2022-10-18,Rasmussen (Pulse Opinion Research),ivr,1,0.00108,0.47778,0.01631
-2022-10-18,Winston,unknown,0,0.01102,0.51111,0.04742
-2022-10-18,YouGov,online,0,0.01891,0.51807,-0.01507
-2022-10-17,Ipsos,online,0,0.02298,0.50704,0.00967
-2022-10-17,YouGov,online,1,0.01891,0.49462,0.02004
-2022-10-17,YouGov,online,0,0.01891,0.50562,0.02713
-2022-10-16,Hart Research Associates/Public Opinion Strategies,phone,0,0.0182,0.50538,-0.00681
-2022-10-16,Hart Research Associates/Public Opinion Strategies,phone,1,0.0182,0.49474,-0.00218
-2022-10-15,Monmouth U.,phone,0,0.0124,0.47872,0.06742
-2022-10-15,Monmouth U.,phone,0,0.0124,0.46809,0.04134
-2022-10-15,Morning Consult,online,0,0.01393,0.50562,-0.00123
-2022-10-15,YouGov,online,0,0.01891,0.51111,-0.01437
-2022-10-14,McLaughlin,online,1,-0.01062,0.46739,0.01255
-2022-10-14,Hart Research Associates/Public Opinion Strategies,unknown,0,0.0182,0.48936,0.00926
-2022-10-13,Pew,online,0,0.01706,0.50617,-0.06948
-2022-10-13,YouGov,online,1,0.01891,0.48913,0.04182
-2022-10-12,Harris Poll,online,1,0.01665,0.47,-0.03173
-2022-10-12,Harris Poll,online,0,0.01665,0.5,0.01651
-2022-10-12,Data for Progress,online,1,0.01367,0.48387,0.00729
-2022-10-11,Rasmussen (Pulse Opinion Research),ivr,1,0.00108,0.46067,0.01769
-2022-10-11,Trafalgar Group,ivr,1,0.01154,0.47091,-0.04815
-2022-10-10,Beacon Research/Shaw & Company,phone,0,0.01209,0.51765,-0.01408
-2022-10-10,Ipsos,online,0,0.02298,0.52941,0.01662
-2022-10-10,Siena College/NYT Upshot,phone,1,0.01283,0.48383,-0.08598
-2022-10-10,Siena College/NYT Upshot,phone,0,0.01283,0.49673,0.01919
-2022-10-09,Morning Consult,online,1,0.01393,0.51064,0.01546
-2022-10-09,POS,unknown,1,0.02406,0.51136,0.038
-2022-10-09,YouGov,online,0,0.01891,0.51444,0.03871
-2022-10-09,Pioneer Polling/Tarrance,online,1,0.01298,0.49462,0.00983
-2022-10-08,AP-NORC,mixed,0,0.02108,0.54667,0.0307
+2022-10-27,YouGov,online,1,0.01929,0.48913,-0.02648
+2022-10-26,Trafalgar Group,ivr,1,0.01166,0.46799,-0.00515
+2022-10-26,Data for Progress,online,1,0.01409,0.47872,-0.00901
+2022-10-26,Tufts,online,1,0.01307,0.50526,0.006
+2022-10-25,Big Village,online,0,0.01827,0.52315,-0.10687
+2022-10-25,Big Village,online,1,0.01827,0.52233,-0.05658
+2022-10-25,InsiderAdvantage,unknown,1,0.01226,0.47437,-0.00043
+2022-10-25,Rasmussen (Pulse Opinion Research),ivr,1,0.00122,0.46154,-0.00784
+2022-10-25,Echelon Insights,online,1,0.02392,0.51064,-0.00536
+2022-10-25,Echelon Insights,online,0,0.02392,0.51613,-0.0031
+2022-10-24,Ipsos,online,0,0.02297,0.51515,-0.01961
+2022-10-23,YouGov,online,1,0.01929,0.52128,-0.02344
+2022-10-23,YouGov,online,0,0.01929,0.52273,0.01785
+2022-10-22,Morning Consult,online,1,0.0133,0.51613,0.0094
+2022-10-22,Global Strategy Group/GBAO/Navigator Research,online,0,0.02283,0.51613,0.03756
+2022-10-21,Greenberg Quinlan Rosner,online,0,0.02274,0.5,-0.00492
+2022-10-21,Suffolk,phone,1,0.01809,0.47614,-0.04595
+2022-10-18,Emerson College Polling Society,ivr,0,-0.00037,0.47161,0.05042
+2022-10-18,Ipsos,online,1,0.02297,0.50515,-0.0258
+2022-10-18,Ipsos,online,0,0.02297,0.51613,-0.00496
+2022-10-18,Rasmussen (Pulse Opinion Research),ivr,1,0.00122,0.47778,-0.00343
+2022-10-18,Winston,unknown,0,0.01108,0.51111,-0.00432
+2022-10-18,YouGov,online,0,0.01929,0.51807,0.00071
+2022-10-17,Ipsos,online,0,0.02297,0.50704,0.07131
+2022-10-16,Hart Research Associates/Public Opinion Strategies,phone,1,0.01831,0.49474,-0.02885
+2022-10-16,Hart Research Associates/Public Opinion Strategies,phone,0,0.01831,0.50538,0.0081
+2022-10-15,Monmouth U.,phone,0,0.01245,0.47872,0.02706
+2022-10-15,Monmouth U.,phone,0,0.01245,0.46809,-0.02506
+2022-10-15,YouGov,online,0,0.01929,0.52778,-0.00326
+2022-10-15,YouGov,online,0,0.01929,0.51111,-0.00693
+2022-10-14,McLaughlin,online,1,-0.01039,0.46739,-0.02167
+2022-10-14,Hart Research Associates/Public Opinion Strategies,unknown,0,0.01831,0.48936,0.00615
+2022-10-13,Pew,online,0,0.01711,0.50617,-0.02261
+2022-10-13,YouGov,online,1,0.01929,0.48913,-0.0007
+2022-10-12,Harris Poll,online,0,0.0167,0.5,-0.00965
+2022-10-12,Harris Poll,online,1,0.0167,0.47,-0.01322
+2022-10-12,Data for Progress,online,1,0.01409,0.48387,0.0048
+2022-10-11,Rasmussen (Pulse Opinion Research),ivr,1,0.00122,0.46067,-0.00432
+2022-10-11,Trafalgar Group,ivr,1,0.01166,0.47091,0.00436
+2022-10-10,Beacon Research/Shaw & Company,phone,0,0.01226,0.51765,0.09065
+2022-10-10,Ipsos,online,0,0.02297,0.52941,0.07196
+2022-10-10,Siena College/NYT Upshot,phone,0,0.0129,0.49673,0.02812
+2022-10-10,Siena College/NYT Upshot,phone,1,0.0129,0.48383,0.00047
+2022-10-09,POS,unknown,1,0.02409,0.51136,-0.00981
+2022-10-09,Pioneer Polling/Tarrance,online,1,0.01297,0.49462,-0.00585
+2022-10-08,AP-NORC,mixed,0,0.02101,0.54667,0.05427
+2022-10-08,Global Strategy Group/GBAO/Navigator Research,online,0,0.02283,0.52688,0.00729
+2022-10-07,Susquehanna,phone,1,0.0128,0.5,0.08104
+2022-10-06,Big Village,online,0,0.01827,0.52927,0.06988
+2022-10-06,Big Village,online,1,0.01827,0.52824,-0.15309
