@@ -1,51 +1,51 @@
 date,firm,type,lv,firm_bias,est,impact
-2022-11-04,Hart Research Associates/Public Opinion Strategies,phone,1,0.01836,0.50526,0.0026
-2022-11-04,Hart Research Associates/Public Opinion Strategies,phone,0,0.01836,0.5,0.0244
-2022-11-04,YouGov,online,1,0.01911,0.49485,-0.00708
-2022-11-04,YouGov,online,0,0.01911,0.50538,-0.0098
-2022-11-04,Data for Progress,online,1,0.01278,0.48,0.00075
-2022-11-03,Big Village,online,1,0.01967,0.51975,-0.00594
-2022-11-03,Big Village,online,0,0.01967,0.51285,-0.10632
-2022-11-01,Big Village,online,0,0.01967,0.53942,-0.02518
-2022-11-01,Big Village,online,1,0.01967,0.53423,0.00901
-2022-11-01,Rasmussen (Pulse Opinion Research),ivr,1,0.00108,0.47253,-0.01692
-2022-10-31,ABC/Washington Post,phone,1,0.0163,0.4898,-0.03397
-2022-10-31,ABC/Washington Post,phone,0,0.0163,0.49485,-0.05576
-2022-10-31,Ipsos,online,0,0.023,0.50685,-0.0095
-2022-10-30,YouGov,online,0,0.01911,0.5,-0.03506
-2022-10-30,YouGov,online,1,0.01911,0.5,-0.0133
-2022-10-29,Cygnal Political,unknown,1,0.01286,0.484,0.00204
-2022-10-29,YouGov,online,0,0.01911,0.51111,-0.01519
-2022-10-29,Data for Progress,online,1,0.01278,0.47959,-0.02513
-2022-10-29,NewsNation/Decision Desk HQ,online,0,0.0126,0.49302,0.02391
-2022-10-28,Benenson,online,0,0.01289,0.48837,0.3266
-2022-10-28,Quinnipiac,phone,0,0.02046,0.48889,-0.02395
-2022-10-28,Quinnipiac,phone,0,0.02046,0.47826,-0.00908
-2022-10-28,SSRS,mixed,0,0.0245,0.49462,-0.00188
-2022-10-28,SSRS,mixed,1,0.0245,0.47959,-0.02229
-2022-10-27,YouGov,online,1,0.01911,0.48913,0.00023
-2022-10-26,Trafalgar Group,ivr,1,0.0116,0.46799,0.06113
-2022-10-26,Data for Progress,online,1,0.01278,0.47872,0.01306
-2022-10-26,Tufts,online,1,0.01309,0.50526,0.01048
-2022-10-25,Big Village,online,0,0.01967,0.52315,-0.0166
-2022-10-25,Big Village,online,1,0.01967,0.52233,-0.04624
-2022-10-25,Marist,online,0,0.01593,0.5,0.01723
-2022-10-25,InsiderAdvantage,unknown,1,0.01222,0.47437,-0.00735
-2022-10-25,Rasmussen (Pulse Opinion Research),ivr,1,0.00108,0.46154,-0.01389
-2022-10-25,Echelon Insights,online,0,0.0234,0.51613,0.00176
-2022-10-25,Echelon Insights,online,1,0.0234,0.51064,-0.0029
-2022-10-24,Impact Research,unknown,1,0.01297,0.48718,0.21223
-2022-10-24,Ipsos,online,0,0.023,0.51515,0.01708
-2022-10-24,Fabrizio/Impact,phone,0,0.01276,0.48889,-0.00634
-2022-10-23,YouGov,online,1,0.01911,0.52128,8e-05
-2022-10-23,YouGov,online,0,0.01911,0.52149,0.03012
-2022-10-22,Global Strategy Group/GBAO/Navigator Research,online,0,0.02339,0.51613,0.01244
-2022-10-21,Greenberg Quinlan Rosner,online,0,0.02281,0.5,0.02487
-2022-10-21,Ipsos,online,0,0.023,0.52113,0.00225
-2022-10-21,Suffolk,phone,1,0.01824,0.47614,0.01077
-2022-10-20,Cygnal Political,online,1,0.01286,0.4911,0.00615
-2022-10-18,Emerson College Polling Society,ivr,0,-0.00037,0.47161,-0.08832
-2022-10-18,Ipsos,online,1,0.023,0.50515,0.01274
-2022-10-18,Ipsos,online,0,0.023,0.51613,0.03809
-2022-10-18,Rasmussen (Pulse Opinion Research),ivr,1,0.00108,0.47778,-0.00673
-2022-10-18,Winston,unknown,0,0.01113,0.51111,0.02099
+2022-11-06,AtlasIntel,online,0,0.0128,0.48092,-0.00074
+2022-11-06,AtlasIntel,online,1,0.0128,0.4839,0.01281
+2022-11-05,Trafalgar Group,ivr,1,0.01141,0.46872,0.0016
+2022-11-04,Hart Research Associates/Public Opinion Strategies,phone,0,0.01824,0.5,0.00057
+2022-11-04,Hart Research Associates/Public Opinion Strategies,phone,1,0.01824,0.50526,-0.00548
+2022-11-04,YouGov,online,0,0.01872,0.50538,-0.07866
+2022-11-04,Data for Progress,online,1,0.01257,0.48,-0.03131
+2022-11-03,Big Village,online,1,0.01992,0.51975,0.09526
+2022-11-03,Big Village,online,0,0.01992,0.51285,-0.03614
+2022-11-01,Big Village,online,0,0.01992,0.53942,0.01349
+2022-11-01,Big Village,online,1,0.01992,0.53423,-0.08621
+2022-11-01,Rasmussen (Pulse Opinion Research),ivr,1,0.00102,0.47253,-0.03624
+2022-10-31,ABC/Washington Post,phone,0,0.01629,0.49485,-0.03759
+2022-10-31,ABC/Washington Post,phone,1,0.01629,0.4898,-0.08765
+2022-10-31,Ipsos,online,0,0.02291,0.50685,0.01079
+2022-10-31,Ipsos,online,0,0.02291,0.51807,0.00625
+2022-10-31,Ipsos,online,1,0.02291,0.51064,-0.01572
+2022-10-30,YouGov,online,0,0.01872,0.5,0.00845
+2022-10-30,YouGov,online,1,0.01872,0.5,0.01657
+2022-10-29,Cygnal Political,unknown,1,0.01287,0.484,-0.06921
+2022-10-29,Morning Consult,online,0,0.01445,0.52809,0.03445
+2022-10-29,YouGov,online,0,0.01872,0.51111,-0.00057
+2022-10-29,Data for Progress,online,1,0.01257,0.47959,0.04666
+2022-10-29,NewsNation/Decision Desk HQ,online,0,0.01257,0.49302,-0.00979
+2022-10-28,Benenson,online,0,0.0129,0.48837,0.02091
+2022-10-28,Quinnipiac,phone,0,0.02028,0.47826,-0.01299
+2022-10-28,Quinnipiac,phone,0,0.02028,0.48889,-0.01841
+2022-10-28,SSRS,mixed,0,0.02435,0.49462,-0.00793
+2022-10-28,SSRS,mixed,1,0.02435,0.47959,-0.00622
+2022-10-27,YouGov,online,1,0.01872,0.48913,-0.00693
+2022-10-26,Trafalgar Group,ivr,1,0.01141,0.46799,-0.00583
+2022-10-26,Data for Progress,online,1,0.01257,0.47872,-0.01244
+2022-10-26,Tufts,online,1,0.01309,0.50526,0.0096
+2022-10-25,Big Village,online,1,0.01992,0.52233,-0.03225
+2022-10-25,Big Village,online,0,0.01992,0.52315,-0.02706
+2022-10-25,Marist,online,0,0.016,0.5,0.03194
+2022-10-25,InsiderAdvantage,unknown,1,0.01218,0.47437,-0.00204
+2022-10-25,Rasmussen (Pulse Opinion Research),ivr,1,0.00102,0.46154,-0.06846
+2022-10-25,Echelon Insights,online,1,0.02366,0.51064,-0.00136
+2022-10-25,Echelon Insights,online,0,0.02366,0.51613,0.02196
+2022-10-24,Impact Research,unknown,1,0.01298,0.48718,-0.17246
+2022-10-24,Ipsos,online,0,0.02291,0.51515,-0.01331
+2022-10-24,Fabrizio/Impact,phone,0,0.01273,0.48889,0.00252
+2022-10-23,YouGov,online,0,0.01872,0.52149,-0.0094
+2022-10-22,Morning Consult,online,0,0.01445,0.52809,0.01089
+2022-10-22,Global Strategy Group/GBAO/Navigator Research,online,0,0.02326,0.51613,-0.0088
+2022-10-21,Greenberg Quinlan Rosner,online,0,0.02276,0.5,-0.02426
+2022-10-21,Ipsos,online,0,0.02291,0.52113,-0.01911
+2022-10-21,Suffolk,phone,1,0.01818,0.47614,-0.00848
+2022-10-20,Cygnal Political,online,1,0.01287,0.4911,-0.00689
